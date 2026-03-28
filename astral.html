@@ -44,6 +44,8 @@
             position: absolute; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 1;
         }
 
+        canvas { display: block; }
+
         .ui-layer {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             z-index: 10; pointer-events: none;
@@ -111,7 +113,7 @@
 
         <!-- INTRO UPLOAD SCREEN -->
         <div id="intro-screen" class="absolute inset-0 flex items-center justify-center interactive z-50 bg-astral-dark/80 backdrop-blur-sm">
-            <div class="glass-panel p-10 rounded-[2rem] text-center max-w-lg mx-4 border-t-2 border-t-astral-cyan">
+            <div class="glass-panel p-10 rounded-[2rem] text-center max-w-lg mx-4 border-t-2 border-t-astral-cyan shadow-2xl shadow-cyan-500/20">
                 <i class="ph-fill ph-infinity text-6xl text-astral-cyan mb-6 animate-pulse"></i>
                 <h2 class="font-display text-3xl font-bold mb-4 text-white">CONEXIÓN ASTRAL</h2>
                 <p class="text-sm text-gray-400 mb-8 leading-relaxed font-mono">
@@ -196,89 +198,105 @@
         // 1. INICIALIZACIÓN 3D (THREE.JS)
         // ==========================================
         function init3D() {
-            const container = document.getElementById('canvas-container');
-            
-            // Escena y Cámara
-            scene = new THREE.Scene();
-            camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 2000);
-            camera.position.z = 60;
+            try {
+                const container = document.getElementById('canvas-container');
+                const width = window.innerWidth || document.documentElement.clientWidth || 800;
+                const height = window.innerHeight || document.documentElement.clientHeight || 600;
+                
+                // Escena y Cámara
+                scene = new THREE.Scene();
+                camera = new THREE.PerspectiveCamera(60, width / height, 0.1, 2000);
+                camera.position.z = 60;
 
-            renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-            renderer.setSize(window.innerWidth, window.innerHeight);
-            renderer.setPixelRatio(window.devicePixelRatio);
-            container.appendChild(renderer.domElement);
+                renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+                renderer.setSize(width, height);
+                renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2)); // Optimización para móviles
+                container.appendChild(renderer.domElement);
 
-            // A. LA ESFERA INVICTUS (Malla Deformable)
-            const geometry = new THREE.IcosahedronGeometry(20, 6); // Alto detalle
-            
-            // Guardar vértices originales para calcular la deformación
-            const positionAttribute = geometry.attributes.position;
-            for (let i = 0; i < positionAttribute.count; i++) {
-                originalVertices.push(new THREE.Vector3(
-                    positionAttribute.getX(i),
-                    positionAttribute.getY(i),
-                    positionAttribute.getZ(i)
-                ));
+                // A. LA ESFERA INVICTUS (Malla Deformable)
+                // CORRECCIÓN CUÁNTICA: Nivel de detalle 3 (1280 caras) en vez de 6 (80,000 caras). 
+                // Esto previene que el celular se sobrecaliente o colapse.
+                const geometry = new THREE.IcosahedronGeometry(20, 3); 
+                
+                // Guardar vértices originales para calcular la deformación
+                const positionAttribute = geometry.attributes.position;
+                for (let i = 0; i < positionAttribute.count; i++) {
+                    originalVertices.push(new THREE.Vector3(
+                        positionAttribute.getX(i),
+                        positionAttribute.getY(i),
+                        positionAttribute.getZ(i)
+                    ));
+                }
+
+                const material = new THREE.MeshPhongMaterial({
+                    color: 0x00f0ff,
+                    emissive: 0x0a0022,
+                    specular: 0xffffff,
+                    shininess: 100,
+                    wireframe: true,
+                    transparent: true,
+                    opacity: 0.8
+                });
+
+                sphereMesh = new THREE.Mesh(geometry, material);
+                scene.add(sphereMesh);
+
+                // B. NÚCLEO INTERNO GLOW
+                const coreGeometry = new THREE.IcosahedronGeometry(18, 1);
+                const coreMaterial = new THREE.MeshPhongMaterial({
+                    color: 0x000000,
+                    emissive: 0x050110,
+                    transparent: true,
+                    opacity: 0.9,
+                    shininess: 50
+                });
+                const coreMesh = new THREE.Mesh(coreGeometry, coreMaterial);
+                scene.add(coreMesh);
+
+                // C. CAMPO DE ESTRELLAS (Para efecto Warp Speed)
+                starGeo = new THREE.BufferGeometry();
+                const starCount = 2000; // Ligeramente reducido para mayor fluidez
+                const posArray = new Float32Array(starCount * 3);
+                for(let i=0; i < starCount * 3; i++) {
+                    posArray[i] = (Math.random() - 0.5) * 400; // Esparcir en el espacio 3D
+                }
+                starGeo.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+                
+                const starMaterial = new THREE.PointsMaterial({
+                    color: 0xffffff,
+                    size: 0.8,
+                    transparent: true,
+                    opacity: 0.8
+                });
+                stars = new THREE.Points(starGeo, starMaterial);
+                scene.add(stars);
+
+                // D. ILUMINACIÓN (Corregida para iluminar el frente de la esfera)
+                const ambientLight = new THREE.AmbientLight(0x222222);
+                scene.add(ambientLight);
+
+                const pointLight = new THREE.PointLight(0xb026ff, 2, 300);
+                pointLight.position.set(0, 0, 80); // Luz colocada al frente (detrás de la cámara)
+                scene.add(pointLight);
+
+                const pointLight2 = new THREE.PointLight(0x00f0ff, 1.5, 300);
+                pointLight2.position.set(0, 50, -50); // Luz de acento
+                scene.add(pointLight2);
+
+                // Responsive
+                window.addEventListener('resize', () => {
+                    const newW = window.innerWidth;
+                    const newH = window.innerHeight;
+                    camera.aspect = newW / newH;
+                    camera.updateProjectionMatrix();
+                    renderer.setSize(newW, newH);
+                });
+
+                // Iniciar Animación Base
+                animate3D();
+            } catch (error) {
+                console.error("Error iniciando 3D:", error);
             }
-
-            const material = new THREE.MeshPhongMaterial({
-                color: 0x00f0ff,
-                emissive: 0x0a0022,
-                specular: 0xffffff,
-                shininess: 100,
-                wireframe: true,
-                transparent: true,
-                opacity: 0.8
-            });
-
-            sphereMesh = new THREE.Mesh(geometry, material);
-            scene.add(sphereMesh);
-
-            // B. NÚCLEO INTERNO GLOW
-            const coreGeometry = new THREE.IcosahedronGeometry(18, 2);
-            const coreMaterial = new THREE.MeshBasicMaterial({
-                color: 0x050110,
-                transparent: true,
-                opacity: 0.9
-            });
-            const coreMesh = new THREE.Mesh(coreGeometry, coreMaterial);
-            scene.add(coreMesh);
-
-            // C. CAMPO DE ESTRELLAS (Para efecto Warp Speed)
-            starGeo = new THREE.BufferGeometry();
-            const starCount = 3000;
-            const posArray = new Float32Array(starCount * 3);
-            for(let i=0; i < starCount * 3; i++) {
-                posArray[i] = (Math.random() - 0.5) * 400; // Esparcir en el espacio
-            }
-            starGeo.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
-            
-            const starMaterial = new THREE.PointsMaterial({
-                color: 0xffffff,
-                size: 0.7,
-                transparent: true,
-                opacity: 0.8
-            });
-            stars = new THREE.Points(starGeo, starMaterial);
-            scene.add(stars);
-
-            // D. ILUMINACIÓN
-            const ambientLight = new THREE.AmbientLight(0x222222);
-            scene.add(ambientLight);
-
-            const pointLight = new THREE.PointLight(0xb026ff, 2, 200);
-            pointLight.position.set(0, 0, 0);
-            scene.add(pointLight);
-
-            // Responsive
-            window.addEventListener('resize', () => {
-                camera.aspect = window.innerWidth / window.innerHeight;
-                camera.updateProjectionMatrix();
-                renderer.setSize(window.innerWidth, window.innerHeight);
-            });
-
-            // Iniciar Animación Base
-            animate3D();
         }
 
         // --- BUCLE DE ANIMACIÓN 3D ---
@@ -291,64 +309,64 @@
 
             let currentBass = 0;
 
-            if (isPlaying && analyser) {
-                analyser.getByteFrequencyData(dataArray);
+            try {
+                if (isPlaying && analyser && dataArray) {
+                    analyser.getByteFrequencyData(dataArray);
 
-                // Calcular Bajos (Bins bajos)
-                let bassSum = 0;
-                for(let i=0; i<15; i++) bassSum += dataArray[i];
-                currentBass = bassSum / 15; // 0 - 255
-                
-                bassMeter.style.width = `${(currentBass / 255) * 100}%`;
-
-                // Calcular Medios (Color)
-                let midSum = 0;
-                for(let i=20; i<80; i++) midSum += dataArray[i];
-                let mid = midSum / 60;
-
-                // Mutación de Color basada en la música
-                timeHue += 0.1 + (mid * 0.02);
-                if(timeHue > 360) timeHue = 0;
-                sphereMesh.material.color.setHSL(timeHue / 360, 1, 0.6);
-
-                // --- DEFORMACIÓN CUÁNTICA DE LA ESFERA ---
-                const positions = sphereMesh.geometry.attributes.position;
-                
-                for (let i = 0; i < positions.count; i++) {
-                    const orig = originalVertices[i];
-                    // Mapear el índice del vértice a una frecuencia del array de audio
-                    // Usamos mod para no salirnos de los límites del array (1024)
-                    const audioIndex = i % (bufferLength / 2); 
-                    const freqValue = dataArray[audioIndex];
+                    // Calcular Bajos (Bins bajos)
+                    let bassSum = 0;
+                    for(let i=0; i<15; i++) bassSum += dataArray[i];
+                    currentBass = bassSum / 15; // 0 - 255
                     
-                    // Calcular el factor de explosión (picos más afilados)
-                    // Multiplicamos por la agresividad del bajo
-                    const scaleFactor = 1 + (freqValue / 255) * 0.6 * (currentBass/200); 
+                    if (bassMeter) bassMeter.style.width = `${(currentBass / 255) * 100}%`;
 
-                    // Actualizar vértice
-                    positions.setXYZ(i, orig.x * scaleFactor, orig.y * scaleFactor, orig.z * scaleFactor);
-                }
-                positions.needsUpdate = true; // Fundamental en Three.js
+                    // Calcular Medios (Color)
+                    let midSum = 0;
+                    for(let i=20; i<80; i++) midSum += dataArray[i];
+                    let mid = midSum / 60;
 
-                // --- EFECTO WARP SPEED (ESTRELLAS) ---
-                // Si el bajo golpea fuerte (ej. un Drop de Tech House), acelerar estrellas
-                if (currentBass > 210) {
-                    warpSpeed = 10; // Velocidad de la luz
+                    // Mutación de Color basada en la música
+                    timeHue += 0.1 + (mid * 0.02);
+                    if(timeHue > 360) timeHue = 0;
+                    sphereMesh.material.color.setHSL(timeHue / 360, 1, 0.6);
+
+                    // --- DEFORMACIÓN CUÁNTICA DE LA ESFERA ---
+                    const positions = sphereMesh.geometry.attributes.position;
+                    
+                    for (let i = 0; i < positions.count; i++) {
+                        const orig = originalVertices[i];
+                        const audioIndex = i % (bufferLength / 2); 
+                        const freqValue = dataArray[audioIndex] || 0;
+                        
+                        // Calcular el factor de explosión
+                        const scaleFactor = 1 + (freqValue / 255) * 0.5 * (currentBass/255); 
+
+                        // Actualizar vértice
+                        positions.setXYZ(i, orig.x * scaleFactor, orig.y * scaleFactor, orig.z * scaleFactor);
+                    }
+                    positions.needsUpdate = true; // Fundamental en Three.js
+
+                    // --- EFECTO WARP SPEED (ESTRELLAS) ---
+                    if (currentBass > 210) {
+                        warpSpeed = 10; // Velocidad de la luz
+                    } else {
+                        warpSpeed += (0.5 - warpSpeed) * 0.1; // Volver suavemente a vel. normal
+                    }
                 } else {
-                    warpSpeed += (0.5 - warpSpeed) * 0.1; // Volver suavemente a vel. normal
+                    warpSpeed = 0.5;
                 }
-            } else {
-                // Si no hay música, calmar las estrellas
-                warpSpeed = 0.5;
+            } catch (audioError) {
+                // Silenciar errores de audio para no detener la renderización gráfica
             }
 
             // Animar Campo de Estrellas hacia la cámara
+            // CORRECCIÓN: Usamos i=2 para modificar exactamente el eje Z (X=0, Y=1, Z=2)
             const starPositions = starGeo.attributes.position.array;
-            for(let i=1; i < starCount * 3; i+=3) { // Animamos el eje Z
-                starPositions[i+1] += warpSpeed;
-                // Si la estrella pasa la cámara, reiniciarla al fondo
-                if (starPositions[i+1] > 100) {
-                    starPositions[i+1] = -300;
+            for(let i=2; i < starPositions.length; i+=3) { 
+                starPositions[i] += warpSpeed;
+                // Si la estrella pasa la cámara (Z > 100), reiniciarla al fondo (Z = -300)
+                if (starPositions[i] > 100) {
+                    starPositions[i] = -300;
                 }
             }
             starGeo.attributes.position.needsUpdate = true;
@@ -359,38 +377,58 @@
 
 
         // ==========================================
-        // 2. SISTEMA DE AUDIO
+        // 2. SISTEMA DE AUDIO SEGURO
         // ==========================================
         function initAudio(file) {
+            if(!file) return;
+
             if(audio) {
                 audio.pause();
                 URL.revokeObjectURL(audio.src);
             } else {
                 audio = new Audio();
+                audio.crossOrigin = "anonymous";
                 setupAudioNodes();
             }
 
+            // Resumir contexto si el navegador lo suspendió
+            if (audioContext && audioContext.state === 'suspended') {
+                audioContext.resume();
+            }
+
             audio.src = URL.createObjectURL(file);
-            trackNameEl.innerText = file.name.replace(/\.[^/.]+$/, "");
+            if(trackNameEl) trackNameEl.innerText = file.name.replace(/\.[^/.]+$/, "");
             
             audio.load();
-            audio.play();
-            isPlaying = true;
-            playIcon.className = "ph-fill ph-pause text-2xl";
+            const playPromise = audio.play();
+            
+            if (playPromise !== undefined) {
+                playPromise.then(_ => {
+                    isPlaying = true;
+                    if(playIcon) playIcon.className = "ph-fill ph-pause text-2xl";
+                })
+                .catch(error => {
+                    console.error("Autoplay prevent:", error);
+                    isPlaying = false;
+                    if(playIcon) playIcon.className = "ph-fill ph-play text-2xl";
+                });
+            }
 
             audio.addEventListener('timeupdate', updateProgress);
             audio.addEventListener('loadedmetadata', () => {
-                timeTotalEl.innerText = formatTime(audio.duration);
+                if(timeTotalEl) timeTotalEl.innerText = formatTime(audio.duration);
             });
             audio.addEventListener('ended', () => {
                 isPlaying = false;
-                playIcon.className = "ph-fill ph-play text-2xl";
+                if(playIcon) playIcon.className = "ph-fill ph-play text-2xl";
             });
 
             // Transiciones de UI
-            introScreen.classList.add('hidden-intro');
-            playerHud.classList.remove('hud-hidden');
-            playerHud.classList.add('hud-active');
+            if(introScreen) introScreen.classList.add('hidden-intro');
+            if(playerHud) {
+                playerHud.classList.remove('hud-hidden');
+                playerHud.classList.add('hud-active');
+            }
         }
 
         function setupAudioNodes() {
@@ -398,7 +436,7 @@
             audioContext = new AudioContext();
             analyser = audioContext.createAnalyser();
             
-            analyser.fftSize = 2048; // Alta resolución para deformar la esfera
+            analyser.fftSize = 2048; // Alta resolución
             bufferLength = analyser.frequencyBinCount;
             dataArray = new Uint8Array(bufferLength);
 
@@ -409,26 +447,28 @@
 
         // --- CONTROLES Y UTILIDADES ---
         document.getElementById('audio-upload').addEventListener('change', (e) => {
-            if(e.target.files[0]) initAudio(e.target.files[0]);
+            initAudio(e.target.files[0]);
         });
         document.getElementById('audio-upload-2').addEventListener('change', (e) => {
-            if(e.target.files[0]) initAudio(e.target.files[0]);
+            initAudio(e.target.files[0]);
         });
 
-        btnPlay.addEventListener('click', () => {
-            if(!audio) return;
-            if (audioContext.state === 'suspended') audioContext.resume();
+        if (btnPlay) {
+            btnPlay.addEventListener('click', () => {
+                if(!audio) return;
+                if (audioContext && audioContext.state === 'suspended') audioContext.resume();
 
-            if (isPlaying) {
-                audio.pause();
-                isPlaying = false;
-                playIcon.className = "ph-fill ph-play text-2xl";
-            } else {
-                audio.play();
-                isPlaying = true;
-                playIcon.className = "ph-fill ph-pause text-2xl";
-            }
-        });
+                if (isPlaying) {
+                    audio.pause();
+                    isPlaying = false;
+                    playIcon.className = "ph-fill ph-play text-2xl";
+                } else {
+                    audio.play();
+                    isPlaying = true;
+                    playIcon.className = "ph-fill ph-pause text-2xl";
+                }
+            });
+        }
 
         function formatTime(seconds) {
             if (isNaN(seconds)) return "0:00";
@@ -439,13 +479,17 @@
 
         function updateProgress() {
             if (!audio) return;
-            timeCurrentEl.innerText = formatTime(audio.currentTime);
-            const percent = (audio.currentTime / audio.duration) * 100;
-            progressBar.style.width = `${percent}%`;
+            if(timeCurrentEl) timeCurrentEl.innerText = formatTime(audio.currentTime);
+            if(progressBar) {
+                const percent = (audio.currentTime / audio.duration) * 100;
+                progressBar.style.width = `${percent}%`;
+            }
         }
 
         // Iniciar el entorno 3D tan pronto carga la página
-        init3D();
+        window.onload = () => {
+            init3D();
+        };
 
     </script>
 </body>
