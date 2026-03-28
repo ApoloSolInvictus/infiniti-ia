@@ -3,8 +3,59 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>INFINITI IA | by W Studio</title>
-    <meta name="description" content="Agencia de Inteligencia Artificial y Marketing Cuántico. Automatización, Sitios Web y Creación de Contenido potenciado por IA.">
+    
+    <!-- ========================================== -->
+    <!-- 🚀 SEO CUÁNTICO & METADATOS INTERNACIONALES -->
+    <!-- ========================================== -->
+    <title>INFINITI IA | Creadores de Sitios Web con Inteligencia Artificial a Bajo Costo</title>
+    <meta name="description" content="Infiniti IA by W Studio. Agencia global de Inteligencia Artificial. Desarrollo de sitios web con IA a bajo costo, automatización empresarial, chatbots con voz y marketing cuántico a nivel internacional.">
+    <meta name="keywords" content="crear sitio web con ia, inteligencia artificial, AI website builder, low cost web development, desarrollo web económico, automatización empresarial, agentes de ia, chatbots con voz, DALL-E 3, GPT-4, Infiniti IA, W Studio, marketing cuántico, AI agency, costa rica, internacional, automatización de negocios">
+    <meta name="author" content="Apollo Sol Invictus - W Studio">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://infiniti-ia.com/">
+
+    <!-- Open Graph / Facebook / WhatsApp (Genera la vista previa con imagen) -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://infiniti-ia.com/">
+    <meta property="og:title" content="INFINITI IA | El Futuro del Desarrollo Web y la Automatización">
+    <meta property="og:description" content="Diseñamos sitios web impulsados por IA a bajo costo y desarrollamos ecosistemas autónomos para escalar tu negocio a nivel mundial. Pruébalo gratis.">
+    <!-- Se requiere la URL absoluta para que WhatsApp/Facebook la lean correctamente -->
+    <meta property="og:image" content="https://infiniti-ia.com/images/SEO.jpg">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:site_name" content="INFINITI IA by W Studio">
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:url" content="https://infiniti-ia.com/">
+    <meta name="twitter:title" content="INFINITI IA | Automatización & Sitios Web con IA">
+    <meta name="twitter:description" content="Transforma tu negocio con Inteligencia Artificial. Sitios web económicos, asistentes de voz y generadores de imágenes integrados.">
+    <meta name="twitter:image" content="https://infiniti-ia.com/images/SEO.jpg">
+
+    <!-- Favicon Oficial -->
+    <link rel="icon" href="images/A Mark Small.png" type="image/png">
+    <link rel="apple-touch-icon" href="images/A Mark Small.png">
+
+    <!-- Schema.org (JSON-LD) para Google y motores IA (ChatGPT/Perplexity) -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "name": "INFINITI IA by W Studio",
+      "url": "https://infiniti-ia.com/",
+      "logo": "https://infiniti-ia.com/images/A Mark Small.png",
+      "description": "Agencia internacional de Inteligencia Artificial especializada en creación de sitios web a bajo costo, automatización empresarial, herramientas DALL-E 3 y marketing cuántico.",
+      "contactPoint": {
+        "@type": "ContactPoint",
+        "contactType": "Customer Service",
+        "areaServed": "Global",
+        "availableLanguage": ["es", "en"]
+      },
+      "sameAs": [
+        "https://infiniti-ia.com/"
+      ]
+    }
+    </script>
     
     <!-- Librerías: Tailwind, React, Phosphor Icons, Marked.js -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -118,14 +169,13 @@
         // ==========================================
         // CONFIGURACIÓN DE APIS (HEROKU BACKENDS)
         // ==========================================
-        // Utilizamos "abunda" para el Chat, y "marketing-ia" para la Forja (DALL-E 3)
         const API_URL_CHAT = "https://abunda-bca693eb3dbb.herokuapp.com";
         const API_URL_IMAGE = "https://marketing-ia-dca462ac6c86.herokuapp.com";
 
         const SYSTEM_PROMPT = `
             ERES: Quantum Maximus, la IA central de 'Infiniti IA by W Studio'.
             CREADOR: Apollo Sol Invictus.
-            OBJETIVO: Vender nuestros servicios de Inteligencia Artificial, Creación de Sitios Web (ProfCR) y Automatización de Negocios (Infiniti Pits, PropShield).
+            OBJETIVO: Vender nuestros servicios de Inteligencia Artificial, Creación de Sitios Web (ProfCR) a nivel internacional y bajo costo, Automatización de Negocios (Infiniti Pits, PropShield) y Marketing Cuántico.
             TONO: Altamente tecnológico, visionario, persuasivo, pero amable y servicial.
             ACCIONES: Si preguntan precios, invítalos a agendar una reunión o usar los módulos de la web. Convéncelos de que la IA es el futuro y nosotros somos los arquitectos.
         `;
@@ -139,9 +189,11 @@
                     <nav className="glass-panel sticky top-0 z-50 border-b-0 border-b border-nexus-cyan/20">
                         <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
                             <button onClick={() => setActiveModule('hero')} className="flex items-center gap-3 group">
-                                <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-nexus-cyan to-nexus-purple p-[2px] group-hover:shadow-[0_0_20px_rgba(176,38,255,0.5)] transition duration-300">
-                                    <div className="w-full h-full bg-nexus-bg rounded-full flex items-center justify-center">
-                                        <i className="ph-fill ph-infinity text-2xl text-white"></i>
+                                {/* LOGO OFICIAL INFINITI IA */}
+                                <div className="w-12 h-12 rounded-full bg-gradient-to-tr from-nexus-cyan to-nexus-purple p-[2px] group-hover:shadow-[0_0_20px_rgba(176,38,255,0.5)] transition duration-300">
+                                    <div className="w-full h-full bg-nexus-bg rounded-full flex items-center justify-center overflow-hidden p-1">
+                                        <img src="images/A Mark Small.png" alt="Infiniti IA Logo" className="w-full h-full object-contain" onError={(e) => { e.target.style.display='none'; e.target.nextSibling.style.display='block'; }} />
+                                        <i className="ph-fill ph-infinity text-2xl text-white hidden"></i>
                                     </div>
                                 </div>
                                 <span className="font-display font-bold text-xl tracking-widest text-white">INFINITI <span className="text-nexus-cyan">IA</span></span>
@@ -180,7 +232,7 @@
                                     <span className="text-gradient">AUTÓNOMO</span>
                                 </h1>
                                 <p className="text-lg text-gray-400 font-light max-w-2xl mx-auto mb-10 leading-relaxed">
-                                    No somos una agencia tradicional. Somos arquitectos cuánticos. Desarrollamos Sitios Web Inteligentes, Asistentes de Voz y Automatización Empresarial impulsada por Inteligencia Artificial.
+                                    No somos una agencia tradicional. Somos arquitectos cuánticos. Desarrollamos Sitios Web Inteligentes a Bajo Costo, Asistentes de Voz y Automatización Empresarial impulsada por IA a nivel internacional.
                                 </p>
                                 <div className="flex flex-col sm:flex-row gap-4 justify-center">
                                     <button onClick={() => setActiveModule('chat')} className="px-8 py-4 bg-nexus-purple hover:bg-purple-500 text-white font-bold rounded-xl shadow-[0_0_20px_rgba(176,38,255,0.4)] transition flex items-center justify-center gap-2">
@@ -198,14 +250,14 @@
                             <div className="w-full animate-[fadeIn_0.5s_ease-out] py-10">
                                 <div className="text-center mb-16">
                                     <h2 className="text-3xl md:text-5xl font-display font-bold text-white mb-4">Ecosistema <span className="text-nexus-cyan">Infiniti</span></h2>
-                                    <p className="text-gray-400">Soluciones de software que piensan, aprenden y escalan.</p>
+                                    <p className="text-gray-400">Soluciones de software global que piensan, aprenden y escalan.</p>
                                 </div>
                                 <div className="grid md:grid-cols-3 gap-8">
                                     {/* ProfCR */}
                                     <div className="glass-panel p-8 rounded-3xl hover:border-nexus-cyan transition duration-300 group">
                                         <div className="w-14 h-14 bg-nexus-cyan/20 text-nexus-cyan rounded-2xl flex items-center justify-center text-3xl mb-6 group-hover:scale-110 transition"><i className="ph-fill ph-globe-hemisphere-west"></i></div>
                                         <h3 className="text-2xl font-bold text-white mb-3">ProfCR Web Dev</h3>
-                                        <p className="text-sm text-gray-400 leading-relaxed mb-6">Desarrollo de sitios web ultra rápidos para profesionales, integrados con correo workspace e Inteligencia Artificial.</p>
+                                        <p className="text-sm text-gray-400 leading-relaxed mb-6">Desarrollo internacional de sitios web ultra rápidos para profesionales a bajo costo, integrados con correo y IA.</p>
                                         <a href="https://profcr.com" target="_blank" className="text-nexus-cyan text-sm font-bold flex items-center gap-2 hover:gap-3 transition-all">Explorar ProfCR <i className="ph-bold ph-arrow-right"></i></a>
                                     </div>
                                     {/* Infiniti Pits */}
@@ -244,7 +296,7 @@
 
         // --- SUBCOMPONENTE: CHATBOT CON VOZ ---
         const AiChatbot = () => {
-            const [messages, setMessages] = useState([{ role: 'ai', content: 'Sistemas en línea. Soy Quantum Maximus. Usa el micrófono o el teclado para consultar sobre nuestros servicios de IA.' }]);
+            const [messages, setMessages] = useState([{ role: 'ai', content: 'Sistemas en línea. Soy Quantum Maximus. Usa el micrófono o el teclado para consultar sobre nuestros servicios internacionales de desarrollo web e IA.' }]);
             const [input, setInput] = useState('');
             const [loading, setLoading] = useState(false);
             const [isListening, setIsListening] = useState(false);
@@ -252,7 +304,7 @@
 
             useEffect(() => {
                 bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
-                // Precargar voces para evitar silencios en la primera respuesta
+                // Precargar voces para evitar silencios
                 if ('speechSynthesis' in window) {
                     window.speechSynthesis.getVoices(); 
                 }
@@ -262,7 +314,7 @@
                 const messageToSend = text || input;
                 if (!messageToSend.trim()) return;
 
-                // Desbloqueo cuántico de audio: Evita que el navegador silencie a la IA por "esperar mucho"
+                // Desbloqueo cuántico de audio
                 if ('speechSynthesis' in window) {
                     const unlock = new SpeechSynthesisUtterance("");
                     unlock.volume = 0;
@@ -274,13 +326,12 @@
                 setLoading(true);
 
                 try {
-                    // Usamos API_URL_CHAT (Abunda)
                     const response = await fetch(`${API_URL_CHAT}/api/chat`, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ 
                             message: `${SYSTEM_PROMPT}\n\nUSER: ${messageToSend}`, 
-                            history: messages.map(m => ({ role: m.role, content: m.content })) // Enviar "ai" para Backend
+                            history: messages.map(m => ({ role: m.role, content: m.content }))
                         })
                     });
 
@@ -292,7 +343,7 @@
                     
                     setMessages(prev => [...prev, { role: 'ai', content: data.response }]);
                     
-                    // Texto a Voz (Opcional, lectura de respuesta)
+                    // Texto a Voz
                     readAloud(data.response);
 
                 } catch (error) {
@@ -302,7 +353,7 @@
                 }
             };
 
-            // Reconocimiento de Voz (Speech to Text)
+            // Reconocimiento de Voz
             const toggleVoice = () => {
                 if (!('webkitSpeechRecognition' in window)) {
                     alert("Tu navegador no soporta entrada de voz. Usa Chrome.");
@@ -317,7 +368,7 @@
                 
                 recognition.onresult = (event) => {
                     const transcript = event.results[0][0].transcript;
-                    sendMessage(transcript); // Auto-enviar al terminar de hablar
+                    sendMessage(transcript); 
                 };
                 
                 recognition.onerror = (event) => {
@@ -330,16 +381,14 @@
                 recognition.start();
             };
 
-            // Síntesis de Voz (Text to Speech)
+            // Síntesis de Voz
             const readAloud = (text) => {
                 if ('speechSynthesis' in window) {
-                    window.speechSynthesis.cancel(); // Detener anterior
-                    // Limpiar markdown para leer
+                    window.speechSynthesis.cancel(); 
                     const cleanText = text.replace(/[*#_`~]/g, '');
                     const utterance = new SpeechSynthesisUtterance(cleanText);
                     utterance.lang = 'es-ES';
                     
-                    // Buscar la mejor voz en español
                     const voices = window.speechSynthesis.getVoices();
                     const esVoice = voices.find(v => v.lang.startsWith('es') && !v.name.includes('Google español de Estados Unidos'));
                     if (esVoice) utterance.voice = esVoice;
@@ -439,7 +488,6 @@
                 setImageUrl("");
 
                 try {
-                    // Usamos API_URL_IMAGE (Marketing-IA) porque ahí programamos el endpoint de /api/image
                     const response = await fetch(`${API_URL_IMAGE}/api/image`, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
