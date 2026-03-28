@@ -110,7 +110,8 @@
     </script>
 
     <style>
-        body { background-color: #030014; color: #e2e8f0; overflow-x: hidden; }
+        /* El scroll debe estar permitido nativamente en Y para el modo celular */
+        body { background-color: #030014; color: #e2e8f0; overflow-x: hidden; overflow-y: auto; }
         
         .glass-panel {
             background: rgba(15, 10, 41, 0.6);
@@ -143,12 +144,11 @@
             100% { box-shadow: 0 0 0 0 rgba(255, 42, 133, 0); }
         }
 
-        /* Scrollbar */
+        /* Scrollbar general e iframes */
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: #030014; }
         ::-webkit-scrollbar-thumb { background: #b026ff; border-radius: 3px; }
 
-        /* Loader para Iframe */
         .iframe-loader {
             background: linear-gradient(90deg, #0f0a29 25%, #1a1147 50%, #0f0a29 75%);
             background-size: 200% 100%;
@@ -183,13 +183,8 @@
 
         // ==========================================
         // INTEGRACIÓN GOOGLE WORKSPACE
-        // SOBERANO: Reemplaza estos enlaces con los tuyos
         // ==========================================
-        
-        // 1. Enlace de tu página de reservas de Google Calendar (Appointment Scheduling) o Calendly
         const GOOGLE_CALENDAR_EMBED_URL = "https://calendar.google.com/calendar/appointments/schedules/AcZssZ2lNXoCPB_TKZ3JHTZjt3hWUYlg3koP4VpsZnZok1XbJ87g4CXhkuwc-MeCWNAK3su2V14PpUw2?gv=true"; 
-        
-        // 2. Enlace de tu Google Form para subir archivos (que guarda en Google Drive) o un link a una carpeta de Drive compartida
         const GOOGLE_DRIVE_UPLOAD_URL = "https://docs.google.com/forms/d/e/1FAIpQLSfrO3UdMQZ9a2qTcl56XUd9b21CUNMGcAm71FccwdzjF3Nuhw/viewform?embedded=true";
 
         const SYSTEM_PROMPT = `
@@ -209,26 +204,26 @@
             const [activeModule, setActiveModule] = useState('hero'); // hero, chat, forge, services, portal
 
             return (
-                <div className="flex flex-col min-h-screen">
+                <div className="flex flex-col min-h-screen pb-10 lg:pb-0">
                     {/* NAVBAR */}
                     <nav className="glass-panel sticky top-0 z-50 border-b-0 border-b border-nexus-cyan/20">
-                        <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
-                            <button onClick={() => setActiveModule('hero')} className="flex items-center gap-3 group">
+                        <div className="max-w-7xl mx-auto px-4 sm:px-6 h-20 flex items-center justify-between">
+                            <button onClick={() => setActiveModule('hero')} className="flex items-center gap-3 group shrink-0">
                                 {/* LOGO OFICIAL INFINITI IA */}
-                                <div className="w-12 h-12 rounded-full bg-gradient-to-tr from-nexus-cyan to-nexus-purple p-[2px] group-hover:shadow-[0_0_20px_rgba(176,38,255,0.5)] transition duration-300">
+                                <div className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-gradient-to-tr from-nexus-cyan to-nexus-purple p-[2px] group-hover:shadow-[0_0_20px_rgba(176,38,255,0.5)] transition duration-300">
                                     <div className="w-full h-full bg-nexus-bg rounded-full flex items-center justify-center overflow-hidden p-1">
                                         <img src="images/A Mark Small.png" alt="Infiniti IA Logo" className="w-full h-full object-contain" onError={(e) => { e.target.style.display='none'; e.target.nextSibling.style.display='block'; }} />
-                                        <i className="ph-fill ph-infinity text-2xl text-white hidden"></i>
+                                        <i className="ph-fill ph-infinity text-xl text-white hidden"></i>
                                     </div>
                                 </div>
-                                <span className="font-display font-bold text-xl tracking-widest text-white">INFINITI <span className="text-nexus-cyan">IA</span></span>
+                                <span className="font-display font-bold text-lg md:text-xl tracking-widest text-white hidden sm:block">INFINITI <span className="text-nexus-cyan">IA</span></span>
                             </button>
 
+                            {/* Enlaces Desktop */}
                             <div className="hidden lg:flex gap-6 font-mono text-xs uppercase tracking-widest text-gray-400">
                                 <button onClick={() => setActiveModule('services')} className={`hover:text-nexus-cyan transition ${activeModule === 'services' && 'text-nexus-cyan'}`}>Servicios</button>
                                 <button onClick={() => setActiveModule('chat')} className={`hover:text-nexus-purple transition flex items-center gap-1 ${activeModule === 'chat' && 'text-nexus-purple'}`}><i className="ph-fill ph-chat-circle-dots"></i> Hablar con IA</button>
                                 <button onClick={() => setActiveModule('forge')} className={`hover:text-nexus-pink transition flex items-center gap-1 ${activeModule === 'forge' && 'text-nexus-pink'}`}><i className="ph-fill ph-magic-wand"></i> Crear Arte</button>
-                                {/* NUEVO BOTÓN: PORTAL DE CLIENTES */}
                                 <button onClick={() => setActiveModule('portal')} className={`hover:text-nexus-gold transition flex items-center gap-1 border border-transparent hover:border-nexus-gold/50 px-3 py-1 rounded ${activeModule === 'portal' && 'text-nexus-gold border-nexus-gold/50 bg-nexus-gold/10'}`}>
                                     <i className="ph-fill ph-folder-lock"></i> Portal Clientes
                                 </button>
@@ -238,21 +233,22 @@
                                 Contactar
                             </a>
                             
-                            {/* Mobile Menu Button */}
-                            <div className="lg:hidden flex gap-4">
-                                <button onClick={() => setActiveModule('portal')} className="text-nexus-gold text-2xl"><i className="ph-fill ph-folder-lock"></i></button>
-                                <button onClick={() => setActiveModule('chat')} className="text-nexus-purple text-2xl"><i className="ph-fill ph-chat-circle-dots"></i></button>
-                                <button onClick={() => setActiveModule('forge')} className="text-nexus-pink text-2xl"><i className="ph-fill ph-magic-wand"></i></button>
+                            {/* Mobile Menu Button - OPTIMIZADO PARA SUPER RESPONSIVE */}
+                            <div className="lg:hidden flex items-center gap-3 sm:gap-5 px-2">
+                                <button onClick={() => setActiveModule('services')} className={`text-2xl transition ${activeModule === 'services' ? 'text-nexus-cyan' : 'text-gray-500 hover:text-white'}`} title="Servicios"><i className="ph-fill ph-squares-four"></i></button>
+                                <button onClick={() => setActiveModule('portal')} className={`text-2xl transition ${activeModule === 'portal' ? 'text-nexus-gold drop-shadow-[0_0_10px_#fbbf24]' : 'text-gray-500 hover:text-white'}`} title="Portal Clientes"><i className="ph-fill ph-folder-lock"></i></button>
+                                <button onClick={() => setActiveModule('chat')} className={`text-2xl transition ${activeModule === 'chat' ? 'text-nexus-purple drop-shadow-[0_0_10px_#b026ff]' : 'text-gray-500 hover:text-white'}`} title="Hablar con IA"><i className="ph-fill ph-chat-circle-dots"></i></button>
+                                <button onClick={() => setActiveModule('forge')} className={`text-2xl transition ${activeModule === 'forge' ? 'text-nexus-pink drop-shadow-[0_0_10px_#ff2a85]' : 'text-gray-500 hover:text-white'}`} title="Crear Arte"><i className="ph-fill ph-magic-wand"></i></button>
                             </div>
                         </div>
                     </nav>
 
-                    {/* MAIN CONTENT AREA */}
-                    <main className="flex-1 flex flex-col items-center justify-center p-4 md:p-6 w-full max-w-7xl mx-auto relative">
+                    {/* MAIN CONTENT AREA - Se permite justify-start en móvil para hacer scroll y center en desktop */}
+                    <main className="flex-1 flex flex-col items-center justify-start lg:justify-center p-4 md:p-6 w-full max-w-7xl mx-auto relative h-full">
                         
                         {/* HERO MODULE */}
                         {activeModule === 'hero' && (
-                            <div className="text-center animate-[fadeIn_0.5s_ease-out]">
+                            <div className="text-center animate-[fadeIn_0.5s_ease-out] mt-10 lg:mt-0">
                                 <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-nexus-purple/30 bg-nexus-purple/10 text-nexus-purple text-xs font-mono mb-8">
                                     <span className="w-2 h-2 rounded-full bg-nexus-purple animate-pulse"></span>
                                     Sistemas Neurales en Línea
@@ -261,14 +257,14 @@
                                     EL FUTURO ES <br/>
                                     <span className="text-gradient">AUTÓNOMO</span>
                                 </h1>
-                                <p className="text-lg text-gray-400 font-light max-w-2xl mx-auto mb-10 leading-relaxed">
+                                <p className="text-base md:text-lg text-gray-400 font-light max-w-2xl mx-auto mb-10 leading-relaxed px-4">
                                     No somos una agencia tradicional. Somos arquitectos cuánticos. Desarrollamos Sitios Web Inteligentes a Bajo Costo, Asistentes de Voz y Automatización Empresarial impulsada por IA a nivel internacional.
                                 </p>
-                                <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                                    <button onClick={() => setActiveModule('chat')} className="px-8 py-4 bg-nexus-purple hover:bg-purple-500 text-white font-bold rounded-xl shadow-[0_0_20px_rgba(176,38,255,0.4)] transition flex items-center justify-center gap-2">
+                                <div className="flex flex-col sm:flex-row gap-4 justify-center px-4">
+                                    <button onClick={() => setActiveModule('chat')} className="px-6 py-4 bg-nexus-purple hover:bg-purple-500 text-white font-bold rounded-xl shadow-[0_0_20px_rgba(176,38,255,0.4)] transition flex items-center justify-center gap-2">
                                         <i className="ph-fill ph-microphone text-xl"></i> Consultar a nuestra IA
                                     </button>
-                                    <button onClick={() => setActiveModule('portal')} className="px-8 py-4 glass-panel text-white font-bold rounded-xl hover:border-nexus-gold transition flex items-center justify-center gap-2">
+                                    <button onClick={() => setActiveModule('portal')} className="px-6 py-4 glass-panel text-white font-bold rounded-xl hover:border-nexus-gold transition flex items-center justify-center gap-2">
                                         <i className="ph-fill ph-calendar-plus text-xl"></i> Agendar Sesión Meet
                                     </button>
                                 </div>
@@ -277,32 +273,32 @@
 
                         {/* SERVICES MODULE */}
                         {activeModule === 'services' && (
-                            <div className="w-full animate-[fadeIn_0.5s_ease-out] py-10">
-                                <div className="text-center mb-16">
+                            <div className="w-full animate-[fadeIn_0.5s_ease-out] py-8 lg:py-10">
+                                <div className="text-center mb-10 lg:mb-16">
                                     <h2 className="text-3xl md:text-5xl font-display font-bold text-white mb-4">Ecosistema <span className="text-nexus-cyan">Infiniti</span></h2>
-                                    <p className="text-gray-400">Soluciones de software global que piensan, aprenden y escalan.</p>
+                                    <p className="text-gray-400 px-4">Soluciones de software global que piensan, aprenden y escalan.</p>
                                 </div>
-                                <div className="grid md:grid-cols-3 gap-8">
+                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 px-2">
                                     {/* ProfCR */}
-                                    <div className="glass-panel p-8 rounded-3xl hover:border-nexus-cyan transition duration-300 group">
-                                        <div className="w-14 h-14 bg-nexus-cyan/20 text-nexus-cyan rounded-2xl flex items-center justify-center text-3xl mb-6 group-hover:scale-110 transition"><i className="ph-fill ph-globe-hemisphere-west"></i></div>
-                                        <h3 className="text-2xl font-bold text-white mb-3">ProfCR Web Dev</h3>
-                                        <p className="text-sm text-gray-400 leading-relaxed mb-6">Desarrollo internacional de sitios web ultra rápidos para profesionales a bajo costo, integrados con correo y IA.</p>
-                                        <a href="https://profcr.com" target="_blank" className="text-nexus-cyan text-sm font-bold flex items-center gap-2 hover:gap-3 transition-all">Explorar ProfCR <i className="ph-bold ph-arrow-right"></i></a>
+                                    <div className="glass-panel p-6 md:p-8 rounded-3xl hover:border-nexus-cyan transition duration-300 group flex flex-col">
+                                        <div className="w-14 h-14 bg-nexus-cyan/20 text-nexus-cyan rounded-2xl flex items-center justify-center text-3xl mb-6 group-hover:scale-110 transition shrink-0"><i className="ph-fill ph-globe-hemisphere-west"></i></div>
+                                        <h3 className="text-xl md:text-2xl font-bold text-white mb-3">ProfCR Web Dev</h3>
+                                        <p className="text-sm text-gray-400 leading-relaxed mb-6 flex-1">Desarrollo internacional de sitios web ultra rápidos para profesionales a bajo costo, integrados con correo y IA.</p>
+                                        <a href="https://profcr.com" target="_blank" className="text-nexus-cyan text-sm font-bold flex items-center gap-2 hover:gap-3 transition-all w-fit">Explorar ProfCR <i className="ph-bold ph-arrow-right"></i></a>
                                     </div>
                                     {/* Infiniti Pits */}
-                                    <div className="glass-panel p-8 rounded-3xl hover:border-nexus-pink transition duration-300 group">
-                                        <div className="w-14 h-14 bg-nexus-pink/20 text-nexus-pink rounded-2xl flex items-center justify-center text-3xl mb-6 group-hover:scale-110 transition"><i className="ph-fill ph-wrench"></i></div>
-                                        <h3 className="text-2xl font-bold text-white mb-3">Infiniti Pits</h3>
-                                        <p className="text-sm text-gray-400 leading-relaxed mb-6">El primer asistente de IA especializado en mecánica automotriz. Diagnósticos OBD2, torques y diagramas al instante.</p>
-                                        <a href="https://pits.infiniti-ia.com" target="_blank" className="text-nexus-pink text-sm font-bold flex items-center gap-2 hover:gap-3 transition-all">Explorar Pits <i className="ph-bold ph-arrow-right"></i></a>
+                                    <div className="glass-panel p-6 md:p-8 rounded-3xl hover:border-nexus-pink transition duration-300 group flex flex-col">
+                                        <div className="w-14 h-14 bg-nexus-pink/20 text-nexus-pink rounded-2xl flex items-center justify-center text-3xl mb-6 group-hover:scale-110 transition shrink-0"><i className="ph-fill ph-wrench"></i></div>
+                                        <h3 className="text-xl md:text-2xl font-bold text-white mb-3">Infiniti Pits</h3>
+                                        <p className="text-sm text-gray-400 leading-relaxed mb-6 flex-1">El primer asistente de IA especializado en mecánica automotriz. Diagnósticos OBD2, torques y diagramas al instante.</p>
+                                        <a href="https://pits.infiniti-ia.com" target="_blank" className="text-nexus-pink text-sm font-bold flex items-center gap-2 hover:gap-3 transition-all w-fit">Explorar Pits <i className="ph-bold ph-arrow-right"></i></a>
                                     </div>
                                     {/* PropShield */}
-                                    <div className="glass-panel p-8 rounded-3xl hover:border-nexus-purple transition duration-300 group">
-                                        <div className="w-14 h-14 bg-nexus-purple/20 text-nexus-purple rounded-2xl flex items-center justify-center text-3xl mb-6 group-hover:scale-110 transition"><i className="ph-fill ph-shield-check"></i></div>
-                                        <h3 className="text-2xl font-bold text-white mb-3">PropShield Legal</h3>
-                                        <p className="text-sm text-gray-400 leading-relaxed mb-6">Vigilancia registral 24/7 mediante IA. Detecta fraudes inmobiliarios y redacta contratos legales automáticamente.</p>
-                                        <button onClick={() => setActiveModule('chat')} className="text-nexus-purple text-sm font-bold flex items-center gap-2 hover:gap-3 transition-all">Consultar IA <i className="ph-bold ph-arrow-right"></i></button>
+                                    <div className="glass-panel p-6 md:p-8 rounded-3xl hover:border-nexus-purple transition duration-300 group flex flex-col">
+                                        <div className="w-14 h-14 bg-nexus-purple/20 text-nexus-purple rounded-2xl flex items-center justify-center text-3xl mb-6 group-hover:scale-110 transition shrink-0"><i className="ph-fill ph-shield-check"></i></div>
+                                        <h3 className="text-xl md:text-2xl font-bold text-white mb-3">PropShield Legal</h3>
+                                        <p className="text-sm text-gray-400 leading-relaxed mb-6 flex-1">Vigilancia registral 24/7 mediante IA. Detecta fraudes inmobiliarios y redacta contratos legales automáticamente.</p>
+                                        <button onClick={() => setActiveModule('chat')} className="text-nexus-purple text-sm font-bold flex items-center gap-2 hover:gap-3 transition-all w-fit">Consultar IA <i className="ph-bold ph-arrow-right"></i></button>
                                     </div>
                                 </div>
                             </div>
@@ -315,29 +311,36 @@
                         {activeModule === 'forge' && <ImageForge />}
 
                         {/* ========================================== */}
-                        {/* NUEVO MÓDULO: PORTAL DE CLIENTES (AGENDA & DRIVE) */}
+                        {/* PORTAL DE CLIENTES (AGENDA & DRIVE) - SUPER RESPONSIVE */}
                         {/* ========================================== */}
                         {activeModule === 'portal' && (
-                            <div className="w-full animate-[fadeIn_0.5s_ease-out] flex flex-col h-full max-h-[85vh]">
-                                <div className="text-center mb-8 shrink-0">
-                                    <h2 className="text-3xl md:text-5xl font-display font-bold text-white mb-2">NEXUS <span className="text-nexus-gold">PORTAL</span></h2>
-                                    <p className="text-gray-400 font-mono text-xs tracking-widest uppercase">Área Segura de Clientes B2B</p>
+                            <div className="w-full animate-[fadeIn_0.5s_ease-out] flex flex-col py-6 md:py-0 w-full">
+                                
+                                <div className="text-center mb-8 md:mb-12 shrink-0">
+                                    <h2 className="text-4xl md:text-5xl font-display font-bold text-white mb-2">NEXUS <span className="text-nexus-gold">PORTAL</span></h2>
+                                    <p className="text-gray-400 font-mono text-[10px] md:text-xs tracking-widest uppercase px-4">Área Segura de Clientes B2B - Agenda & Recepción</p>
                                 </div>
 
-                                <div className="flex-1 grid lg:grid-cols-2 gap-8 overflow-hidden min-h-[500px]">
+                                {/* En modo móvil (grid-cols-1) se colocarán una sobre otra y permitirán scroll en la página. En escritorio (lg:grid-cols-2) van lado a lado */}
+                                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-10 w-full max-w-6xl mx-auto">
                                     
                                     {/* COLUMNA 1: AGENDA (Google Calendar / Meet) */}
-                                    <div className="glass-panel rounded-3xl p-6 flex flex-col shadow-[0_0_20px_rgba(251,191,36,0.1)] border-nexus-gold/20 h-full overflow-hidden">
-                                        <div className="flex items-center gap-3 mb-6 shrink-0">
-                                            <i className="ph-fill ph-calendar-plus text-3xl text-nexus-gold"></i>
+                                    <div className="glass-panel rounded-3xl p-5 md:p-8 flex flex-col shadow-[0_0_20px_rgba(251,191,36,0.1)] border-nexus-gold/30 min-h-[650px] lg:h-[700px]">
+                                        <div className="flex items-center gap-4 mb-6 shrink-0">
+                                            <div className="w-12 h-12 bg-nexus-gold/20 rounded-xl flex items-center justify-center text-nexus-gold border border-nexus-gold/50 shadow-inner">
+                                                <i className="ph-fill ph-calendar-plus text-2xl"></i>
+                                            </div>
                                             <div>
-                                                <h3 className="font-display font-bold text-xl text-white">Agendamiento Cuántico</h3>
-                                                <p className="text-[10px] text-gray-400 font-mono uppercase tracking-widest">Reuniones Virtuales vía Google Meet</p>
+                                                <h3 className="font-display font-bold text-lg md:text-xl text-white">Agendamiento Cuántico</h3>
+                                                <p className="text-[10px] text-gray-400 font-mono uppercase tracking-widest mt-1">Sincronización Google Meet</p>
                                             </div>
                                         </div>
                                         
-                                        <div className="flex-1 w-full bg-nexus-bg/50 rounded-xl overflow-hidden border border-gray-800 relative">
-                                            {/* SOBERANO: Aquí debes reemplazar el atributo 'src' con tu enlace de Google Calendar Appointments o Calendly */}
+                                        <p className="text-xs md:text-sm text-gray-400 mb-6 leading-relaxed shrink-0">
+                                            Selecciona el espacio de tiempo que mejor se adapte a tu agenda. Generaremos automáticamente un enlace encriptado para nuestra videollamada.
+                                        </p>
+
+                                        <div className="flex-1 w-full bg-black/50 rounded-2xl overflow-hidden border border-gray-800 relative shadow-inner">
                                             <iframe 
                                                 src={GOOGLE_CALENDAR_EMBED_URL} 
                                                 style={{border: 0, width: '100%', height: '100%'}} 
@@ -345,33 +348,30 @@
                                                 className="absolute inset-0 z-10"
                                             ></iframe>
                                             
-                                            {/* Placeholder visual mientras carga el iframe */}
                                             <div className="absolute inset-0 z-0 flex flex-col items-center justify-center iframe-loader">
                                                 <i className="ph ph-circle-notch animate-spin text-nexus-gold text-4xl mb-3"></i>
                                                 <p className="text-xs font-mono text-gray-400 tracking-widest">Sincronizando Agenda...</p>
-                                                <p className="text-[9px] text-gray-600 mt-4 px-4 text-center">
-                                                    (Soberano: Reemplaza GOOGLE_CALENDAR_EMBED_URL en el código con tu enlace real)
-                                                </p>
                                             </div>
                                         </div>
                                     </div>
 
                                     {/* COLUMNA 2: DRIVE & DOCUMENTOS */}
-                                    <div className="glass-panel rounded-3xl p-6 flex flex-col shadow-[0_0_20px_rgba(0,240,255,0.1)] border-nexus-cyan/20 h-full">
-                                        <div className="flex items-center gap-3 mb-6 shrink-0">
-                                            <i className="ph-fill ph-folder-lock text-3xl text-nexus-cyan"></i>
+                                    <div className="glass-panel rounded-3xl p-5 md:p-8 flex flex-col shadow-[0_0_20px_rgba(0,240,255,0.1)] border-nexus-cyan/30 min-h-[650px] lg:h-[700px]">
+                                        <div className="flex items-center gap-4 mb-6 shrink-0">
+                                            <div className="w-12 h-12 bg-nexus-cyan/20 rounded-xl flex items-center justify-center text-nexus-cyan border border-nexus-cyan/50 shadow-inner">
+                                                <i className="ph-fill ph-folder-lock text-2xl"></i>
+                                            </div>
                                             <div>
-                                                <h3 className="font-display font-bold text-xl text-white">Bóveda de Documentos</h3>
-                                                <p className="text-[10px] text-gray-400 font-mono uppercase tracking-widest">Infraestructura Segura Google Drive</p>
+                                                <h3 className="font-display font-bold text-lg md:text-xl text-white">Bóveda de Documentos</h3>
+                                                <p className="text-[10px] text-gray-400 font-mono uppercase tracking-widest mt-1">Infraestructura Segura Drive</p>
                                             </div>
                                         </div>
 
-                                        <p className="text-sm text-gray-400 mb-6 leading-relaxed">
-                                            Carga tus comprobantes de pago (PayPal), facturas o contratos firmados directamente a nuestra base de datos encriptada. El equipo de Infiniti IA será notificado al instante.
+                                        <p className="text-xs md:text-sm text-gray-400 mb-6 leading-relaxed shrink-0">
+                                            Carga tus comprobantes de pago de PayPal, facturas o contratos firmados a nuestra base de datos. Poseemos encriptación de extremo a extremo.
                                         </p>
 
-                                        <div className="flex-1 w-full bg-nexus-bg/50 rounded-xl overflow-hidden border border-gray-800 relative flex flex-col">
-                                             {/* SOBERANO: Aquí debes reemplazar el atributo 'src' con tu enlace de Google Forms (que acepta subida de archivos) */}
+                                        <div className="flex-1 w-full bg-black/50 rounded-2xl overflow-hidden border border-gray-800 relative shadow-inner flex flex-col">
                                              <iframe 
                                                 src={GOOGLE_DRIVE_UPLOAD_URL} 
                                                 style={{border: 0, width: '100%', height: '100%'}} 
@@ -379,13 +379,9 @@
                                                 className="absolute inset-0 z-10"
                                             ></iframe>
 
-                                            {/* Placeholder visual mientras carga el iframe */}
                                             <div className="absolute inset-0 z-0 flex flex-col items-center justify-center iframe-loader">
                                                 <i className="ph ph-cloud-arrow-up text-nexus-cyan text-4xl mb-3 animate-bounce"></i>
                                                 <p className="text-xs font-mono text-gray-400 tracking-widest">Conectando Bóveda...</p>
-                                                <p className="text-[9px] text-gray-600 mt-4 px-4 text-center">
-                                                    (Soberano: Reemplaza GOOGLE_DRIVE_UPLOAD_URL en el código con tu Google Form)
-                                                </p>
                                             </div>
                                         </div>
                                     </div>
@@ -397,8 +393,8 @@
                     </main>
 
                     {/* FOOTER */}
-                    <footer className="border-t border-white/5 bg-nexus-bg/80 backdrop-blur text-center py-6 text-xs text-gray-500 font-mono z-20 relative">
-                        <p>© 2026 INFINITI IA BY W STUDIO. ENGINEERED BY APOLLO SOL INVICTUS & QUANTUM MAXIMUS.</p>
+                    <footer className="border-t border-white/5 bg-nexus-bg/80 backdrop-blur text-center py-6 text-[10px] md:text-xs text-gray-600 font-mono z-20 relative shrink-0">
+                        <p className="px-4">© 2026 INFINITI IA BY W STUDIO. ENGINEERED BY APOLLO SOL INVICTUS & QUANTUM MAXIMUS.</p>
                     </footer>
                 </div>
             );
@@ -414,7 +410,6 @@
 
             useEffect(() => {
                 bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
-                // Precargar voces para evitar silencios
                 if ('speechSynthesis' in window) {
                     window.speechSynthesis.getVoices(); 
                 }
@@ -424,7 +419,6 @@
                 const messageToSend = text || input;
                 if (!messageToSend.trim()) return;
 
-                // Desbloqueo cuántico de audio
                 if ('speechSynthesis' in window) {
                     const unlock = new SpeechSynthesisUtterance("");
                     unlock.volume = 0;
@@ -452,8 +446,6 @@
                     const data = await response.json();
                     
                     setMessages(prev => [...prev, { role: 'ai', content: data.response }]);
-                    
-                    // Texto a Voz
                     readAloud(data.response);
 
                 } catch (error) {
@@ -463,35 +455,28 @@
                 }
             };
 
-            // Reconocimiento de Voz
             const toggleVoice = () => {
                 if (!('webkitSpeechRecognition' in window)) {
                     alert("Tu navegador no soporta entrada de voz. Usa Chrome.");
                     return;
                 }
-
                 const recognition = new webkitSpeechRecognition();
                 recognition.lang = 'es-CR';
                 recognition.interimResults = false;
 
                 recognition.onstart = () => setIsListening(true);
-                
                 recognition.onresult = (event) => {
                     const transcript = event.results[0][0].transcript;
                     sendMessage(transcript); 
                 };
-                
                 recognition.onerror = (event) => {
                     console.error("Speech error", event.error);
                     setIsListening(false);
                 };
-                
                 recognition.onend = () => setIsListening(false);
-
                 recognition.start();
             };
 
-            // Síntesis de Voz
             const readAloud = (text) => {
                 if ('speechSynthesis' in window) {
                     window.speechSynthesis.cancel(); 
@@ -510,24 +495,24 @@
             };
 
             return (
-                <div className="w-full max-w-4xl h-[70vh] glass-panel rounded-3xl flex flex-col overflow-hidden animate-[fadeIn_0.5s_ease-out] shadow-2xl shadow-nexus-purple/20 border border-nexus-purple/30">
-                    <div className="bg-black/40 p-4 border-b border-nexus-purple/20 flex justify-between items-center">
+                <div className="w-full max-w-4xl h-[80vh] md:h-[70vh] mt-4 lg:mt-0 glass-panel rounded-3xl flex flex-col overflow-hidden animate-[fadeIn_0.5s_ease-out] shadow-2xl shadow-nexus-purple/20 border border-nexus-purple/30">
+                    <div className="bg-black/40 p-4 border-b border-nexus-purple/20 flex justify-between items-center shrink-0">
                         <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 bg-nexus-purple/20 rounded-full flex items-center justify-center text-nexus-purple border border-nexus-purple">
+                            <div className="w-10 h-10 bg-nexus-purple/20 rounded-full flex items-center justify-center text-nexus-purple border border-nexus-purple shrink-0">
                                 <i className="ph-fill ph-cpu text-xl"></i>
                             </div>
                             <div>
-                                <h3 className="font-display font-bold text-white tracking-widest">NEXUS ORACLE</h3>
+                                <h3 className="font-display font-bold text-white tracking-widest text-sm md:text-base">NEXUS ORACLE</h3>
                                 <p className="text-[10px] text-nexus-cyan font-mono uppercase">Voz & Texto Activos</p>
                             </div>
                         </div>
-                        <button onClick={() => window.speechSynthesis.cancel()} className="text-gray-500 hover:text-red-400 text-xs font-mono border border-gray-700 px-2 py-1 rounded">SILENCIAR VOZ</button>
+                        <button onClick={() => window.speechSynthesis.cancel()} className="text-gray-500 hover:text-red-400 text-[10px] md:text-xs font-mono border border-gray-700 px-2 py-1 rounded transition shrink-0">SILENCIAR VOZ</button>
                     </div>
 
-                    <div className="flex-1 overflow-y-auto p-6 space-y-6 bg-black/20">
+                    <div className="flex-1 overflow-y-auto p-4 md:p-6 space-y-6 bg-black/20">
                         {messages.map((msg, i) => (
                             <div key={i} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-                                <div className={`max-w-[85%] p-4 rounded-2xl text-sm leading-relaxed shadow-lg ${
+                                <div className={`max-w-[90%] md:max-w-[85%] p-4 rounded-2xl text-sm leading-relaxed shadow-lg ${
                                     msg.role === 'user' 
                                     ? 'bg-nexus-purple text-white rounded-br-none' 
                                     : 'bg-nexus-panel border border-nexus-cyan/30 text-gray-200 rounded-bl-none'
@@ -547,11 +532,11 @@
                         <div ref={bottomRef}></div>
                     </div>
 
-                    <div className="p-4 bg-black/60 border-t border-nexus-purple/20 backdrop-blur">
+                    <div className="p-3 md:p-4 bg-black/60 border-t border-nexus-purple/20 backdrop-blur shrink-0">
                         <div className="relative flex items-center gap-2">
                             <button 
                                 onClick={toggleVoice}
-                                className={`w-12 h-12 rounded-full flex items-center justify-center text-xl transition-all border ${
+                                className={`w-12 h-12 rounded-full flex items-center justify-center text-xl transition-all border shrink-0 ${
                                     isListening 
                                     ? 'bg-nexus-pink/20 text-nexus-pink border-nexus-pink mic-active' 
                                     : 'bg-nexus-panel text-gray-400 border-gray-700 hover:text-nexus-cyan hover:border-nexus-cyan'
@@ -566,15 +551,15 @@
                                 value={input}
                                 onChange={e => setInput(e.target.value)}
                                 onKeyPress={e => e.key === 'Enter' && sendMessage()}
-                                placeholder={isListening ? "Escuchando..." : "Escribe tu comando o presiona el micrófono..."}
-                                className="flex-1 bg-black border border-gray-700 rounded-full px-5 py-3 text-white focus:outline-none focus:border-nexus-purple focus:shadow-[0_0_15px_rgba(176,38,255,0.3)] transition"
+                                placeholder={isListening ? "Escuchando..." : "Escribe tu comando..."}
+                                className="flex-1 bg-black border border-gray-700 rounded-full px-4 md:px-5 py-3 text-white text-sm md:text-base focus:outline-none focus:border-nexus-purple focus:shadow-[0_0_15px_rgba(176,38,255,0.3)] transition"
                                 disabled={loading || isListening}
                             />
                             
                             <button 
                                 onClick={() => sendMessage()}
                                 disabled={loading || !input.trim()}
-                                className="w-12 h-12 bg-nexus-purple text-white rounded-full flex items-center justify-center hover:bg-purple-500 transition disabled:opacity-50"
+                                className="w-12 h-12 bg-nexus-purple text-white rounded-full flex items-center justify-center hover:bg-purple-500 transition disabled:opacity-50 shrink-0"
                             >
                                 <i className="ph-fill ph-paper-plane-right"></i>
                             </button>
@@ -620,11 +605,11 @@
             };
 
             return (
-                <div className="w-full max-w-5xl h-auto min-h-[60vh] glass-panel rounded-3xl p-8 flex flex-col md:flex-row gap-8 animate-[fadeIn_0.5s_ease-out] shadow-2xl shadow-nexus-pink/20 border border-nexus-pink/30">
+                <div className="w-full max-w-5xl mt-6 lg:mt-0 glass-panel rounded-3xl p-5 md:p-8 flex flex-col md:flex-row gap-6 md:gap-8 animate-[fadeIn_0.5s_ease-out] shadow-2xl shadow-nexus-pink/20 border border-nexus-pink/30">
                     
                     {/* Panel de Control */}
                     <div className="w-full md:w-1/3 flex flex-col">
-                        <div className="flex items-center gap-3 mb-6">
+                        <div className="flex items-center gap-3 mb-4 md:mb-6 shrink-0">
                             <i className="ph-fill ph-magic-wand text-3xl text-nexus-pink"></i>
                             <div>
                                 <h3 className="font-display font-bold text-xl text-white">THE FORGE</h3>
@@ -632,35 +617,35 @@
                             </div>
                         </div>
                         
-                        <p className="text-sm text-gray-400 mb-6 leading-relaxed">
+                        <p className="text-xs md:text-sm text-gray-400 mb-6 leading-relaxed shrink-0">
                             Crea imágenes fotorrealistas, arte conceptual o logos al instante. Describe tu visión y nuestra IA la pintará en la realidad.
                         </p>
 
-                        <div className="space-y-4 flex-1">
+                        <div className="space-y-4 flex-1 flex flex-col">
                             <textarea 
                                 value={prompt}
                                 onChange={e => setPrompt(e.target.value)}
-                                className="w-full h-32 bg-black/50 border border-gray-700 rounded-xl p-4 text-white focus:outline-none focus:border-nexus-pink transition resize-none placeholder:text-gray-600"
-                                placeholder="Ej: Un coche deportivo futurista color negro mate con luces neón rojas en un garaje oscuro, hiperrealista, 8k..."
+                                className="w-full flex-1 min-h-[100px] md:h-32 bg-black/50 border border-gray-700 rounded-xl p-4 text-white text-sm focus:outline-none focus:border-nexus-pink transition resize-none placeholder:text-gray-600"
+                                placeholder="Ej: Un coche deportivo futurista negro mate con luces neón..."
                             ></textarea>
 
                             <button 
                                 onClick={generateImage}
                                 disabled={loading || !prompt.trim()}
-                                className="w-full py-4 bg-nexus-pink hover:bg-pink-600 text-white font-bold rounded-xl shadow-[0_0_20px_rgba(255,42,133,0.4)] transition flex items-center justify-center gap-2 disabled:opacity-50 disabled:shadow-none"
+                                className="w-full py-4 bg-nexus-pink hover:bg-pink-600 text-white font-bold rounded-xl shadow-[0_0_20px_rgba(255,42,133,0.4)] transition flex items-center justify-center gap-2 disabled:opacity-50 disabled:shadow-none shrink-0"
                             >
                                 {loading ? <i className="ph ph-spinner-gap animate-spin text-xl"></i> : <i className="ph-bold ph-paint-brush text-xl"></i>}
-                                {loading ? "Renderizando..." : "Generar Obra Maestra"}
+                                {loading ? "Renderizando..." : "Generar Arte"}
                             </button>
 
-                            {error && <div className="p-3 bg-red-900/30 border border-red-500/50 rounded-lg text-xs text-red-400 font-mono">{error}</div>}
+                            {error && <div className="p-3 bg-red-900/30 border border-red-500/50 rounded-lg text-xs text-red-400 font-mono shrink-0">{error}</div>}
                         </div>
                     </div>
 
                     {/* Lienzo Visual */}
-                    <div className="w-full md:w-2/3 bg-black/50 rounded-2xl border border-gray-800 flex items-center justify-center relative overflow-hidden min-h-[300px]">
+                    <div className="w-full md:w-2/3 bg-black/50 rounded-2xl border border-gray-800 flex items-center justify-center relative overflow-hidden min-h-[350px] md:min-h-[400px]">
                         {!imageUrl && !loading && (
-                            <div className="text-center text-gray-600">
+                            <div className="text-center text-gray-600 p-6">
                                 <i className="ph-thin ph-image text-6xl mb-2 opacity-50"></i>
                                 <p className="font-mono text-xs uppercase tracking-widest">Lienzo Vacío</p>
                             </div>
@@ -668,16 +653,16 @@
                         
                         {loading && (
                             <div className="text-center">
-                                <div className="w-20 h-20 border-4 border-nexus-pink/20 border-t-nexus-pink rounded-full animate-spin mx-auto mb-4"></div>
-                                <p className="text-nexus-pink font-mono text-xs animate-pulse tracking-widest">SINTETIZANDO PÍXELES...</p>
+                                <div className="w-16 h-16 md:w-20 md:h-20 border-4 border-nexus-pink/20 border-t-nexus-pink rounded-full animate-spin mx-auto mb-4"></div>
+                                <p className="text-nexus-pink font-mono text-xs animate-pulse tracking-widest px-4 text-center">SINTETIZANDO PÍXELES...</p>
                             </div>
                         )}
 
                         {imageUrl && !loading && (
-                            <div className="w-full h-full relative group p-2">
+                            <div className="w-full h-full relative group p-2 md:p-4">
                                 <img src={imageUrl} alt="AI Generated Art" className="w-full h-full object-contain rounded-xl shadow-2xl" />
-                                <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition duration-300 flex items-center justify-center rounded-xl">
-                                    <a href={imageUrl} target="_blank" download className="px-6 py-3 bg-white text-black font-bold rounded-full hover:scale-105 transition shadow-[0_0_20px_rgba(255,255,255,0.5)] flex items-center gap-2">
+                                <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition duration-300 flex items-center justify-center rounded-xl m-2 md:m-4">
+                                    <a href={imageUrl} target="_blank" download className="px-6 py-3 bg-white text-black font-bold rounded-full hover:scale-105 transition shadow-[0_0_20px_rgba(255,255,255,0.5)] flex items-center gap-2 text-sm md:text-base">
                                         <i className="ph-bold ph-download-simple"></i> Descargar Original
                                     </a>
                                 </div>
