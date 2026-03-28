@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>INFINITI IA | by W Studio</title>
+    <meta name="description" content="Agencia de Inteligencia Artificial y Marketing Cuántico. Automatización, Sitios Web y Creación de Contenido potenciado por IA.">
+    
+    <!-- Librerías: Tailwind, React, Phosphor Icons, Marked.js -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+    <!-- Fuentes -->
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Inter:wght@300;400;500;600&family=Space+Mono&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        display: ['Orbitron', 'sans-serif'],
+                        mono: ['Space Mono', 'monospace'],
+                    },
+                    colors: {
+                        nexus: {
+                            bg: '#030014',
+                            panel: '#0f0a29',
+                            cyan: '#00f0ff',
+                            purple: '#b026ff',
+                            pink: '#ff2a85'
+                        }
+                    },
+                    animation: {
+                        'blob': 'blob 7s infinite',
+                        'scanline': 'scanline 4s linear infinite',
+                    },
+                    keyframes: {
+                        blob: {
+                            '0%': { transform: 'translate(0px, 0px) scale(1)' },
+                            '33%': { transform: 'translate(30px, -50px) scale(1.1)' },
+                            '66%': { transform: 'translate(-20px, 20px) scale(0.9)' },
+                            '100%': { transform: 'translate(0px, 0px) scale(1)' },
+                        },
+                        scanline: {
+                            '0%': { transform: 'translateY(-100%)' },
+                            '100%': { transform: 'translateY(100vh)' }
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body { background-color: #030014; color: #e2e8f0; overflow-x: hidden; }
+        
+        .glass-panel {
+            background: rgba(15, 10, 41, 0.6);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(0, 240, 255, 0.1);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .text-gradient {
+            background: linear-gradient(to right, #00f0ff, #b026ff, #ff2a85);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-size: 200% auto;
+            animation: shine 3s linear infinite;
+        }
+        @keyframes shine { to { background-position: 200% center; } }
+
+        .scan-line {
+            width: 100%; height: 2px;
+            background: linear-gradient(to right, transparent, rgba(0, 240, 255, 0.5), transparent);
+            position: fixed; top: 0; left: 0; z-index: 50; pointer-events: none;
+        }
+
+        /* Mic Animation */
+        .mic-active { animation: pulse-red 1.5s infinite; }
+        @keyframes pulse-red {
+            0% { box-shadow: 0 0 0 0 rgba(255, 42, 133, 0.7); }
+            70% { box-shadow: 0 0 0 15px rgba(255, 42, 133, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(255, 42, 133, 0); }
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #030014; }
+        ::-webkit-scrollbar-thumb { background: #b026ff; border-radius: 3px; }
+    </style>
+</head>
+<body class="antialiased selection:bg-nexus-purple selection:text-white">
+
+    <div class="scan-line animate-scanline"></div>
+
+    <!-- Background Orbs -->
+    <div class="fixed inset-0 overflow-hidden pointer-events-none z-0">
+        <div class="absolute top-0 -left-4 w-72 h-72 bg-nexus-cyan rounded-full mix-blend-screen filter blur-[100px] opacity-20 animate-blob"></div>
+        <div class="absolute top-0 -right-4 w-72 h-72 bg-nexus-purple rounded-full mix-blend-screen filter blur-[100px] opacity-20 animate-blob animation-delay-2000"></div>
+        <div class="absolute -bottom-8 left-20 w-72 h-72 bg-nexus-pink rounded-full mix-blend-screen filter blur-[100px] opacity-20 animate-blob animation-delay-4000"></div>
+        <div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/stardust.png')] opacity-10"></div>
+    </div>
+
+    <!-- REACT ROOT -->
+    <div id="root" class="relative z-10 min-h-screen flex flex-col"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect, useRef } = React;
+
+        // ==========================================
+        // CONFIGURACIÓN DE APIS (HEROKU BACKEND)
+        // ==========================================
+        // Utilizamos el backend que sabemos que tiene OpenAI y los endpoints configurados
+        const API_URL = "https://abunda-bca693eb3dbb.herokuapp.com";
+
+        const SYSTEM_PROMPT = `
+            ERES: Quantum Maximus, la IA central de 'Infiniti IA by W Studio'.
+            CREADOR: Apollo Sol Invictus.
+            OBJETIVO: Vender nuestros servicios de Inteligencia Artificial, Creación de Sitios Web (ProfCR) y Automatización de Negocios (Infiniti Pits, PropShield).
+            TONO: Altamente tecnológico, visionario, persuasivo, pero amable y servicial.
+            ACCIONES: Si preguntan precios, invítalos a agendar una reunión o usar los módulos de la web. Convéncelos de que la IA es el futuro y nosotros somos los arquitectos.
+        `;
+
+        const App = () => {
+            const [activeModule, setActiveModule] = useState('hero'); // hero, chat, forge, services
+
+            return (
+                <div className="flex flex-col min-h-screen">
+                    {/* NAVBAR */}
+                    <nav className="glass-panel sticky top-0 z-50 border-b-0 border-b border-nexus-cyan/20">
+                        <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+                            <button onClick={() => setActiveModule('hero')} className="flex items-center gap-3 group">
+                                <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-nexus-cyan to-nexus-purple p-[2px] group-hover:shadow-[0_0_20px_rgba(176,38,255,0.5)] transition duration-300">
+                                    <div className="w-full h-full bg-nexus-bg rounded-full flex items-center justify-center">
+                                        <i className="ph-fill ph-infinity text-2xl text-white"></i>
+                                    </div>
+                                </div>
+                                <span className="font-display font-bold text-xl tracking-widest text-white">INFINITI <span className="text-nexus-cyan">IA</span></span>
+                            </button>
+
+                            <div className="hidden md:flex gap-6 font-mono text-xs uppercase tracking-widest text-gray-400">
+                                <button onClick={() => setActiveModule('services')} className={`hover:text-nexus-cyan transition ${activeModule === 'services' && 'text-nexus-cyan'}`}>Servicios</button>
+                                <button onClick={() => setActiveModule('chat')} className={`hover:text-nexus-purple transition flex items-center gap-1 ${activeModule === 'chat' && 'text-nexus-purple'}`}><i className="ph-fill ph-chat-circle-dots"></i> Hablar con IA</button>
+                                <button onClick={() => setActiveModule('forge')} className={`hover:text-nexus-pink transition flex items-center gap-1 ${activeModule === 'forge' && 'text-nexus-pink'}`}><i className="ph-fill ph-magic-wand"></i> Crear Arte IA</button>
+                            </div>
+
+                            <a href="https://wa.me/50688888888" target="_blank" className="hidden md:flex px-6 py-2 bg-white text-black font-bold rounded-full text-xs uppercase tracking-wider hover:bg-nexus-cyan transition shadow-[0_0_15px_rgba(0,240,255,0.3)]">
+                                Contactar
+                            </a>
+                            
+                            {/* Mobile Menu Button */}
+                            <div className="md:hidden flex gap-4">
+                                <button onClick={() => setActiveModule('chat')} className="text-nexus-purple text-2xl"><i className="ph-fill ph-chat-circle-dots"></i></button>
+                                <button onClick={() => setActiveModule('forge')} className="text-nexus-pink text-2xl"><i className="ph-fill ph-magic-wand"></i></button>
+                            </div>
+                        </div>
+                    </nav>
+
+                    {/* MAIN CONTENT AREA */}
+                    <main className="flex-1 flex flex-col items-center justify-center p-4 md:p-6 w-full max-w-7xl mx-auto relative">
+                        
+                        {/* HERO MODULE */}
+                        {activeModule === 'hero' && (
+                            <div className="text-center animate-[fadeIn_0.5s_ease-out]">
+                                <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-nexus-purple/30 bg-nexus-purple/10 text-nexus-purple text-xs font-mono mb-8">
+                                    <span className="w-2 h-2 rounded-full bg-nexus-purple animate-pulse"></span>
+                                    Sistemas Neurales en Línea
+                                </div>
+                                <h1 className="text-5xl md:text-7xl lg:text-8xl font-display font-black mb-6 leading-tight">
+                                    EL FUTURO ES <br/>
+                                    <span className="text-gradient">AUTÓNOMO</span>
+                                </h1>
+                                <p className="text-lg text-gray-400 font-light max-w-2xl mx-auto mb-10 leading-relaxed">
+                                    No somos una agencia tradicional. Somos arquitectos cuánticos. Desarrollamos Sitios Web Inteligentes, Asistentes de Voz y Automatización Empresarial impulsada por Inteligencia Artificial.
+                                </p>
+                                <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                                    <button onClick={() => setActiveModule('chat')} className="px-8 py-4 bg-nexus-purple hover:bg-purple-500 text-white font-bold rounded-xl shadow-[0_0_20px_rgba(176,38,255,0.4)] transition flex items-center justify-center gap-2">
+                                        <i className="ph-fill ph-microphone text-xl"></i> Consultar a nuestra IA
+                                    </button>
+                                    <button onClick={() => setActiveModule('forge')} className="px-8 py-4 glass-panel text-white font-bold rounded-xl hover:border-nexus-cyan transition flex items-center justify-center gap-2">
+                                        <i className="ph-fill ph-image text-xl"></i> Probar Generador de Arte
+                                    </button>
+                                </div>
+                            </div>
+                        )}
+
+                        {/* SERVICES MODULE */}
+                        {activeModule === 'services' && (
+                            <div className="w-full animate-[fadeIn_0.5s_ease-out] py-10">
+                                <div className="text-center mb-16">
+                                    <h2 className="text-3xl md:text-5xl font-display font-bold text-white mb-4">Ecosistema <span className="text-nexus-cyan">Infiniti</span></h2>
+                                    <p className="text-gray-400">Soluciones de software que piensan, aprenden y escalan.</p>
+                                </div>
+                                <div className="grid md:grid-cols-3 gap-8">
+                                    {/* ProfCR */}
+                                    <div className="glass-panel p-8 rounded-3xl hover:border-nexus-cyan transition duration-300 group">
+                                        <div className="w-14 h-14 bg-nexus-cyan/20 text-nexus-cyan rounded-2xl flex items-center justify-center text-3xl mb-6 group-hover:scale-110 transition"><i className="ph-fill ph-globe-hemisphere-west"></i></div>
+                                        <h3 className="text-2xl font-bold text-white mb-3">ProfCR Web Dev</h3>
+                                        <p className="text-sm text-gray-400 leading-relaxed mb-6">Desarrollo de sitios web ultra rápidos para profesionales, integrados con correo workspace e Inteligencia Artificial.</p>
+                                        <a href="https://profcr.com" target="_blank" className="text-nexus-cyan text-sm font-bold flex items-center gap-2 hover:gap-3 transition-all">Explorar ProfCR <i className="ph-bold ph-arrow-right"></i></a>
+                                    </div>
+                                    {/* Infiniti Pits */}
+                                    <div className="glass-panel p-8 rounded-3xl hover:border-nexus-pink transition duration-300 group">
+                                        <div className="w-14 h-14 bg-nexus-pink/20 text-nexus-pink rounded-2xl flex items-center justify-center text-3xl mb-6 group-hover:scale-110 transition"><i className="ph-fill ph-wrench"></i></div>
+                                        <h3 className="text-2xl font-bold text-white mb-3">Infiniti Pits</h3>
+                                        <p className="text-sm text-gray-400 leading-relaxed mb-6">El primer asistente de IA especializado en mecánica automotriz. Diagnósticos OBD2, torques y diagramas al instante.</p>
+                                        <a href="https://pits.infiniti-ia.com" target="_blank" className="text-nexus-pink text-sm font-bold flex items-center gap-2 hover:gap-3 transition-all">Explorar Pits <i className="ph-bold ph-arrow-right"></i></a>
+                                    </div>
+                                    {/* PropShield */}
+                                    <div className="glass-panel p-8 rounded-3xl hover:border-nexus-purple transition duration-300 group">
+                                        <div className="w-14 h-14 bg-nexus-purple/20 text-nexus-purple rounded-2xl flex items-center justify-center text-3xl mb-6 group-hover:scale-110 transition"><i className="ph-fill ph-shield-check"></i></div>
+                                        <h3 className="text-2xl font-bold text-white mb-3">PropShield Legal</h3>
+                                        <p className="text-sm text-gray-400 leading-relaxed mb-6">Vigilancia registral 24/7 mediante IA. Detecta fraudes inmobiliarios y redacta contratos legales automáticamente.</p>
+                                        <button onClick={() => setActiveModule('chat')} className="text-nexus-purple text-sm font-bold flex items-center gap-2 hover:gap-3 transition-all">Consultar IA <i className="ph-bold ph-arrow-right"></i></button>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+
+                        {/* CHAT MODULE (VOICE & TEXT) */}
+                        {activeModule === 'chat' && <AiChatbot />}
+
+                        {/* IMAGE GENERATOR MODULE */}
+                        {activeModule === 'forge' && <ImageForge />}
+
+                    </main>
+
+                    {/* FOOTER */}
+                    <footer className="border-t border-white/5 bg-nexus-bg/80 backdrop-blur text-center py-6 text-xs text-gray-500 font-mono z-20 relative">
+                        <p>© 2026 INFINITI IA BY W STUDIO. ENGINEERED BY APOLLO SOL INVICTUS & QUANTUM MAXIMUS.</p>
+                    </footer>
+                </div>
+            );
+        };
+
+        // --- SUBCOMPONENTE: CHATBOT CON VOZ ---
+        const AiChatbot = () => {
+            const [messages, setMessages] = useState([{ role: 'ai', content: 'Sistemas en línea. Soy Quantum Maximus. Usa el micrófono o el teclado para consultar sobre nuestros servicios de IA.' }]);
+            const [input, setInput] = useState('');
+            const [loading, setLoading] = useState(false);
+            const [isListening, setIsListening] = useState(false);
+            const bottomRef = useRef(null);
+
+            useEffect(() => bottomRef.current?.scrollIntoView({ behavior: 'smooth' }), [messages]);
+
+            const sendMessage = async (text) => {
+                const messageToSend = text || input;
+                if (!messageToSend.trim()) return;
+
+                setMessages(prev => [...prev, { role: 'user', content: messageToSend }]);
+                setInput('');
+                setLoading(true);
+
+                try {
+                    const response = await fetch(`${API_URL}/api/chat`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ 
+                            message: `${SYSTEM_PROMPT}\n\nUSER: ${messageToSend}`, 
+                            history: messages.map(m => ({ role: m.role === 'ai' ? 'assistant' : 'user', content: m.content }))
+                        })
+                    });
+
+                    if (!response.ok) throw new Error("Fallo en la red cuántica");
+                    const data = await response.json();
+                    
+                    setMessages(prev => [...prev, { role: 'ai', content: data.response }]);
+                    
+                    // Texto a Voz (Opcional, lectura de respuesta)
+                    readAloud(data.response);
+
+                } catch (error) {
+                    setMessages(prev => [...prev, { role: 'ai', content: `⚠️ Error: ${error.message}` }]);
+                } finally {
+                    setLoading(false);
+                }
+            };
+
+            // Reconocimiento de Voz (Speech to Text)
+            const toggleVoice = () => {
+                if (!('webkitSpeechRecognition' in window)) {
+                    alert("Tu navegador no soporta entrada de voz. Usa Chrome.");
+                    return;
+                }
+
+                const recognition = new webkitSpeechRecognition();
+                recognition.lang = 'es-CR';
+                recognition.interimResults = false;
+
+                recognition.onstart = () => setIsListening(true);
+                
+                recognition.onresult = (event) => {
+                    const transcript = event.results[0][0].transcript;
+                    sendMessage(transcript); // Auto-enviar al terminar de hablar
+                };
+                
+                recognition.onerror = (event) => {
+                    console.error("Speech error", event.error);
+                    setIsListening(false);
+                };
+                
+                recognition.onend = () => setIsListening(false);
+
+                recognition.start();
+            };
+
+            // Síntesis de Voz (Text to Speech)
+            const readAloud = (text) => {
+                if ('speechSynthesis' in window) {
+                    window.speechSynthesis.cancel(); // Detener anterior
+                    // Limpiar markdown para leer
+                    const cleanText = text.replace(/[*#_]/g, '');
+                    const utterance = new SpeechSynthesisUtterance(cleanText);
+                    utterance.lang = 'es-ES';
+                    utterance.pitch = 0.9;
+                    utterance.rate = 1.0;
+                    window.speechSynthesis.speak(utterance);
+                }
+            };
+
+            return (
+                <div className="w-full max-w-4xl h-[70vh] glass-panel rounded-3xl flex flex-col overflow-hidden animate-[fadeIn_0.5s_ease-out] shadow-2xl shadow-nexus-purple/20 border border-nexus-purple/30">
+                    <div className="bg-black/40 p-4 border-b border-nexus-purple/20 flex justify-between items-center">
+                        <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 bg-nexus-purple/20 rounded-full flex items-center justify-center text-nexus-purple border border-nexus-purple">
+                                <i className="ph-fill ph-cpu text-xl"></i>
+                            </div>
+                            <div>
+                                <h3 className="font-display font-bold text-white tracking-widest">NEXUS ORACLE</h3>
+                                <p className="text-[10px] text-nexus-cyan font-mono uppercase">Voz & Texto Activos</p>
+                            </div>
+                        </div>
+                        <button onClick={() => window.speechSynthesis.cancel()} className="text-gray-500 hover:text-red-400 text-xs font-mono border border-gray-700 px-2 py-1 rounded">SILENCIAR VOZ</button>
+                    </div>
+
+                    <div className="flex-1 overflow-y-auto p-6 space-y-6 bg-black/20">
+                        {messages.map((msg, i) => (
+                            <div key={i} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+                                <div className={`max-w-[85%] p-4 rounded-2xl text-sm leading-relaxed shadow-lg ${
+                                    msg.role === 'user' 
+                                    ? 'bg-nexus-purple text-white rounded-br-none' 
+                                    : 'bg-nexus-panel border border-nexus-cyan/30 text-gray-200 rounded-bl-none'
+                                }`}>
+                                    <div dangerouslySetInnerHTML={{__html: marked.parse(msg.content)}}></div>
+                                </div>
+                            </div>
+                        ))}
+                        {loading && (
+                            <div className="flex justify-start">
+                                <div className="bg-nexus-panel p-4 rounded-2xl border border-nexus-cyan/30 rounded-bl-none flex gap-2 items-center">
+                                    <i className="ph ph-spinner-gap animate-spin text-nexus-cyan text-xl"></i>
+                                    <span className="text-xs font-mono text-nexus-cyan">Procesando Consulta...</span>
+                                </div>
+                            </div>
+                        )}
+                        <div ref={bottomRef}></div>
+                    </div>
+
+                    <div className="p-4 bg-black/60 border-t border-nexus-purple/20 backdrop-blur">
+                        <div className="relative flex items-center gap-2">
+                            <button 
+                                onClick={toggleVoice}
+                                className={`w-12 h-12 rounded-full flex items-center justify-center text-xl transition-all border ${
+                                    isListening 
+                                    ? 'bg-nexus-pink/20 text-nexus-pink border-nexus-pink mic-active' 
+                                    : 'bg-nexus-panel text-gray-400 border-gray-700 hover:text-nexus-cyan hover:border-nexus-cyan'
+                                }`}
+                                title="Hablar"
+                            >
+                                <i className={`ph-fill ${isListening ? 'ph-waveform' : 'ph-microphone'}`}></i>
+                            </button>
+                            
+                            <input 
+                                type="text" 
+                                value={input}
+                                onChange={e => setInput(e.target.value)}
+                                onKeyPress={e => e.key === 'Enter' && sendMessage()}
+                                placeholder={isListening ? "Escuchando..." : "Escribe tu comando o presiona el micrófono..."}
+                                className="flex-1 bg-black border border-gray-700 rounded-full px-5 py-3 text-white focus:outline-none focus:border-nexus-purple focus:shadow-[0_0_15px_rgba(176,38,255,0.3)] transition"
+                                disabled={loading || isListening}
+                            />
+                            
+                            <button 
+                                onClick={() => sendMessage()}
+                                disabled={loading || !input.trim()}
+                                className="w-12 h-12 bg-nexus-purple text-white rounded-full flex items-center justify-center hover:bg-purple-500 transition disabled:opacity-50"
+                            >
+                                <i className="ph-fill ph-paper-plane-right"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
+        // --- SUBCOMPONENTE: GENERADOR DE IMÁGENES DALL-E 3 ---
+        const ImageForge = () => {
+            const [prompt, setPrompt] = useState("");
+            const [imageUrl, setImageUrl] = useState("");
+            const [loading, setLoading] = useState(false);
+            const [error, setError] = useState("");
+
+            const generateImage = async () => {
+                if (!prompt.trim()) return;
+                setLoading(true);
+                setError("");
+                setImageUrl("");
+
+                try {
+                    const response = await fetch(`${API_URL}/api/image`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ prompt: prompt })
+                    });
+
+                    if (!response.ok) throw new Error("Fallo en la renderización cuántica.");
+                    const data = await response.json();
+                    setImageUrl(data.url);
+                } catch (e) {
+                    setError(e.message);
+                } finally {
+                    setLoading(false);
+                }
+            };
+
+            return (
+                <div className="w-full max-w-5xl h-auto min-h-[60vh] glass-panel rounded-3xl p-8 flex flex-col md:flex-row gap-8 animate-[fadeIn_0.5s_ease-out] shadow-2xl shadow-nexus-pink/20 border border-nexus-pink/30">
+                    
+                    {/* Panel de Control */}
+                    <div className="w-full md:w-1/3 flex flex-col">
+                        <div className="flex items-center gap-3 mb-6">
+                            <i className="ph-fill ph-magic-wand text-3xl text-nexus-pink"></i>
+                            <div>
+                                <h3 className="font-display font-bold text-xl text-white">THE FORGE</h3>
+                                <p className="text-[10px] text-gray-400 font-mono uppercase tracking-widest">Motor DALL-E 3</p>
+                            </div>
+                        </div>
+                        
+                        <p className="text-sm text-gray-400 mb-6 leading-relaxed">
+                            Crea imágenes fotorrealistas, arte conceptual o logos al instante. Describe tu visión y nuestra IA la pintará en la realidad.
+                        </p>
+
+                        <div className="space-y-4 flex-1">
+                            <textarea 
+                                value={prompt}
+                                onChange={e => setPrompt(e.target.value)}
+                                className="w-full h-32 bg-black/50 border border-gray-700 rounded-xl p-4 text-white focus:outline-none focus:border-nexus-pink transition resize-none placeholder:text-gray-600"
+                                placeholder="Ej: Un coche deportivo futurista color negro mate con luces neón rojas en un garaje oscuro, hiperrealista, 8k..."
+                            ></textarea>
+
+                            <button 
+                                onClick={generateImage}
+                                disabled={loading || !prompt.trim()}
+                                className="w-full py-4 bg-nexus-pink hover:bg-pink-600 text-white font-bold rounded-xl shadow-[0_0_20px_rgba(255,42,133,0.4)] transition flex items-center justify-center gap-2 disabled:opacity-50 disabled:shadow-none"
+                            >
+                                {loading ? <i className="ph ph-spinner-gap animate-spin text-xl"></i> : <i className="ph-bold ph-paint-brush text-xl"></i>}
+                                {loading ? "Renderizando..." : "Generar Obra Maestra"}
+                            </button>
+
+                            {error && <div className="p-3 bg-red-900/30 border border-red-500/50 rounded-lg text-xs text-red-400 font-mono">{error}</div>}
+                        </div>
+                    </div>
+
+                    {/* Lienzo Visual */}
+                    <div className="w-full md:w-2/3 bg-black/50 rounded-2xl border border-gray-800 flex items-center justify-center relative overflow-hidden min-h-[300px]">
+                        {!imageUrl && !loading && (
+                            <div className="text-center text-gray-600">
+                                <i className="ph-thin ph-image text-6xl mb-2 opacity-50"></i>
+                                <p className="font-mono text-xs uppercase tracking-widest">Lienzo Vacío</p>
+                            </div>
+                        )}
+                        
+                        {loading && (
+                            <div className="text-center">
+                                <div className="w-20 h-20 border-4 border-nexus-pink/20 border-t-nexus-pink rounded-full animate-spin mx-auto mb-4"></div>
+                                <p className="text-nexus-pink font-mono text-xs animate-pulse tracking-widest">SINTETIZANDO PÍXELES...</p>
+                            </div>
+                        )}
+
+                        {imageUrl && !loading && (
+                            <div className="w-full h-full relative group p-2">
+                                <img src={imageUrl} alt="AI Generated Art" className="w-full h-full object-contain rounded-xl shadow-2xl" />
+                                <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition duration-300 flex items-center justify-center rounded-xl">
+                                    <a href={imageUrl} target="_blank" download className="px-6 py-3 bg-white text-black font-bold rounded-full hover:scale-105 transition shadow-[0_0_20px_rgba(255,255,255,0.5)] flex items-center gap-2">
+                                        <i className="ph-bold ph-download-simple"></i> Descargar Original
+                                    </a>
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                </div>
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
