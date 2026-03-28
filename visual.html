@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OPUS VISUALIZER | Quantum Maximus</title>
+    
+    <!-- Librerías -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+
+    <style>
+        body { 
+            margin: 0; 
+            padding: 0; 
+            background-color: #020005; 
+            color: #fff; 
+            font-family: 'Space Mono', monospace; 
+            overflow: hidden; 
+        }
+        
+        .font-orbitron { font-family: 'Orbitron', sans-serif; }
+
+        #visualizer-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 1;
+        }
+
+        .ui-layer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            pointer-events: none;
+        }
+
+        .interactive { pointer-events: auto; }
+
+        .glass-panel {
+            background: rgba(5, 2, 10, 0.4);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(0, 255, 255, 0.1);
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.8);
+        }
+
+        /* Animación del botón de carga */
+        .upload-btn {
+            background: linear-gradient(45deg, #ff2a85, #b026ff, #00f0ff);
+            background-size: 200% 200%;
+            animation: gradientMove 3s ease infinite;
+            transition: all 0.3s ease;
+        }
+        .upload-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 40px rgba(176, 38, 255, 0.6);
+        }
+
+        @keyframes gradientMove {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .hud-text {
+            text-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+        }
+
+        /* Ocultar input real */
+        input[type="file"] { display: none; }
+        
+        /* Controles ocultos inicialmente */
+        #player-ui {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.5s ease;
+        }
+        #player-ui.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        #upload-ui {
+            transition: all 0.5s ease;
+        }
+        #upload-ui.hidden-ui {
+            opacity: 0;
+            pointer-events: none;
+            transform: scale(0.9);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- LIENZO CUÁNTICO -->
+    <canvas id="visualizer-canvas"></canvas>
+
+    <!-- CAPA DE INTERFAZ -->
+    <div class="ui-layer">
+        
+        <!-- HEADER HUD -->
+        <header class="p-6 flex justify-between items-start opacity-50">
+            <div>
+                <h1 class="font-orbitron font-bold tracking-widest text-2xl text-cyan-400 hud-text">OPUS AETERNA</h1>
+                <p class="text-[10px] tracking-[0.4em] uppercase mt-1">Motor Sinestésico V1.0</p>
+            </div>
+            <div class="text-right">
+                <p class="text-[10px] text-cyan-500 uppercase tracking-widest">Estado del Análisis FFT</p>
+                <p id="fft-status" class="font-bold text-red-500 animate-pulse">ESPERANDO SEÑAL</p>
+            </div>
+        </header>
+
+        <!-- ZONA DE CARGA (UPLOAD UI) -->
+        <div id="upload-ui" class="flex-1 flex items-center justify-center interactive">
+            <div class="glass-panel p-10 rounded-3xl text-center max-w-lg mx-4 border-t border-t-cyan-400/30">
+                <div class="w-20 h-20 bg-black/50 rounded-full flex items-center justify-center mx-auto mb-6 border border-cyan-500/30 shadow-[0_0_30px_rgba(0,255,255,0.2)]">
+                    <i class="ph-fill ph-waveform text-4xl text-cyan-400"></i>
+                </div>
+                <h2 class="font-orbitron text-3xl font-bold mb-4">INICIAR CONEXIÓN</h2>
+                <p class="text-sm text-gray-400 mb-8 leading-relaxed">
+                    Sube cualquier pista de audio (MP3, WAV). El motor cuántico analizará las frecuencias en tiempo real para generar un universo visual único.
+                </p>
+                
+                <label class="upload-btn cursor-pointer px-8 py-4 rounded-xl font-bold uppercase tracking-widest text-sm inline-flex items-center gap-3">
+                    <i class="ph-bold ph-upload-simple text-xl"></i>
+                    Seleccionar Pista
+                    <input type="file" id="audio-upload" accept="audio/*">
+                </label>
+            </div>
+        </div>
+
+        <!-- REPRODUCTOR (PLAYER UI) -->
+        <div id="player-ui" class="mt-auto p-6 interactive">
+            <div class="glass-panel max-w-4xl mx-auto rounded-2xl p-4 md:p-6 flex flex-col md:flex-row items-center gap-6">
+                
+                <!-- Info de Pista -->
+                <div class="flex-1 w-full text-center md:text-left overflow-hidden">
+                    <p class="text-[10px] text-cyan-400 uppercase tracking-widest mb-1">Pista Activa</p>
+                    <h3 id="track-name" class="font-orbitron font-bold text-lg md:text-xl truncate">Desconocido</h3>
+                    <div class="flex items-center justify-center md:justify-start gap-4 mt-2 text-xs text-gray-400">
+                        <span id="current-time">0:00</span>
+                        <div class="flex-1 h-1 bg-gray-800 rounded-full overflow-hidden max-w-[200px]">
+                            <div id="progress-bar" class="h-full bg-gradient-to-r from-cyan-400 to-purple-500 w-0"></div>
+                        </div>
+                        <span id="total-time">0:00</span>
+                    </div>
+                </div>
+
+                <!-- Controles -->
+                <div class="flex items-center gap-4">
+                    <button id="btn-play" class="w-14 h-14 rounded-full bg-white text-black flex items-center justify-center hover:scale-105 hover:shadow-[0_0_20px_rgba(255,255,255,0.5)] transition">
+                        <i id="play-icon" class="ph-fill ph-pause text-2xl"></i>
+                    </button>
+                    
+                    <label class="w-10 h-10 rounded-full border border-gray-600 flex items-center justify-center hover:bg-gray-800 hover:text-cyan-400 transition cursor-pointer" title="Cargar otra pista">
+                        <i class="ph-bold ph-eject text-lg"></i>
+                        <input type="file" id="audio-upload-2" accept="audio/*">
+                    </label>
+                </div>
+                
+                <!-- Stats en vivo -->
+                <div class="hidden lg:block w-32 text-right">
+                    <div class="text-[9px] text-gray-500 mb-1">BASS INTENSITY</div>
+                    <div class="w-full h-1 bg-gray-800 rounded-full overflow-hidden">
+                        <div id="bass-meter" class="h-full bg-pink-500 w-0 transition-all duration-75"></div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+    <!-- LÓGICA DEL MOTOR AUDIO-VISUAL -->
+    <script>
+        // --- VARIABLES GLOBALES ---
+        let audioContext, analyser, source, audio;
+        let canvas, ctx;
+        let animationId;
+        let isPlaying = false;
+        
+        // Arrays de datos de audio
+        let dataArray, bufferLength;
+
+        // Elementos UI
+        const uploadInput1 = document.getElementById('audio-upload');
+        const uploadInput2 = document.getElementById('audio-upload-2');
+        const uploadUI = document.getElementById('upload-ui');
+        const playerUI = document.getElementById('player-ui');
+        const trackNameEl = document.getElementById('track-name');
+        const btnPlay = document.getElementById('btn-play');
+        const playIcon = document.getElementById('play-icon');
+        const fftStatus = document.getElementById('fft-status');
+        const progressBar = document.getElementById('progress-bar');
+        const currentTimeEl = document.getElementById('current-time');
+        const totalTimeEl = document.getElementById('total-time');
+        const bassMeter = document.getElementById('bass-meter');
+
+        // Geometría visual
+        let particles = [];
+        let timeHue = 0;
+
+        // --- INICIALIZACIÓN ---
+        function initSystem(file) {
+            // Configurar Audio
+            if(audio) {
+                audio.pause();
+                URL.revokeObjectURL(audio.src);
+            } else {
+                audio = new Audio();
+                setupAudioNodes();
+            }
+
+            audio.src = URL.createObjectURL(file);
+            trackNameEl.innerText = file.name.replace(/\.[^/.]+$/, ""); // Quita la extensión
+            
+            audio.load();
+            audio.play();
+            isPlaying = true;
+            playIcon.className = "ph-fill ph-pause text-2xl";
+
+            // Eventos de audio
+            audio.addEventListener('timeupdate', updateProgress);
+            audio.addEventListener('loadedmetadata', () => {
+                totalTimeEl.innerText = formatTime(audio.duration);
+            });
+            audio.addEventListener('ended', () => {
+                isPlaying = false;
+                playIcon.className = "ph-fill ph-play text-2xl";
+            });
+
+            // Cambiar UI
+            uploadUI.classList.add('hidden-ui');
+            playerUI.classList.add('active');
+            fftStatus.innerText = "FFT ONLINE (1024 BINS)";
+            fftStatus.className = "font-bold text-cyan-400";
+
+            // Iniciar Lienzo
+            if (!ctx) initCanvas();
+            createParticles();
+            
+            // Iniciar Bucle Visual si no está corriendo
+            if (!animationId) renderLoop();
+        }
+
+        function setupAudioNodes() {
+            // Crear contexto tras la primera interacción (Regla de navegadores)
+            audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            analyser = audioContext.createAnalyser();
+            
+            // Tamaño de la muestra (Resolución de las barras)
+            analyser.fftSize = 1024; 
+            bufferLength = analyser.frequencyBinCount;
+            dataArray = new Uint8Array(bufferLength);
+
+            source = audioContext.createMediaElementSource(audio);
+            source.connect(analyser);
+            analyser.connect(audioContext.destination);
+        }
+
+        // --- CONTROLADORES UI ---
+        uploadInput1.addEventListener('change', (e) => {
+            if(e.target.files[0]) initSystem(e.target.files[0]);
+        });
+        uploadInput2.addEventListener('change', (e) => {
+            if(e.target.files[0]) initSystem(e.target.files[0]);
+        });
+
+        btnPlay.addEventListener('click', () => {
+            if(!audio) return;
+            
+            if (audioContext.state === 'suspended') {
+                audioContext.resume();
+            }
+
+            if (isPlaying) {
+                audio.pause();
+                isPlaying = false;
+                playIcon.className = "ph-fill ph-play text-2xl";
+            } else {
+                audio.play();
+                isPlaying = true;
+                playIcon.className = "ph-fill ph-pause text-2xl";
+            }
+        });
+
+        function formatTime(seconds) {
+            if (isNaN(seconds)) return "0:00";
+            const min = Math.floor(seconds / 60);
+            const sec = Math.floor(seconds % 60);
+            return `${min}:${sec < 10 ? '0' : ''}${sec}`;
+        }
+
+        function updateProgress() {
+            if (!audio) return;
+            currentTimeEl.innerText = formatTime(audio.currentTime);
+            const percent = (audio.currentTime / audio.duration) * 100;
+            progressBar.style.width = `${percent}%`;
+        }
+
+        // --- MOTOR GRÁFICO (CANVAS) ---
+        function initCanvas() {
+            canvas = document.getElementById('visualizer-canvas');
+            ctx = canvas.getContext('2d');
+            window.addEventListener('resize', resizeCanvas);
+            resizeCanvas();
+        }
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+
+        class Particle {
+            constructor() {
+                this.reset();
+            }
+            reset() {
+                this.x = canvas.width / 2;
+                this.y = canvas.height / 2;
+                this.angle = Math.random() * Math.PI * 2;
+                this.speed = Math.random() * 5 + 1;
+                this.radius = Math.random() * 2 + 1;
+                this.distance = 0;
+            }
+            update(bass) {
+                // Las partículas se alejan del centro. El bajo las acelera.
+                this.speed = this.speed + (bass * 0.005);
+                this.distance += this.speed;
+                this.x = (canvas.width / 2) + Math.cos(this.angle) * this.distance;
+                this.y = (canvas.height / 2) + Math.sin(this.angle) * this.distance;
+                
+                // Si salen de la pantalla, reiniciar en el centro
+                if (this.x < 0 || this.x > canvas.width || this.y < 0 || this.y > canvas.height) {
+                    this.reset();
+                    // Salto inicial para no amontonarse en el centro absoluto
+                    this.distance = 50 + Math.random() * 50; 
+                }
+            }
+            draw(ctx, color) {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                ctx.fillStyle = color;
+                ctx.fill();
+            }
+        }
+
+        function createParticles() {
+            particles = [];
+            for (let i = 0; i < 200; i++) {
+                particles.push(new Particle());
+            }
+        }
+
+        function renderLoop() {
+            animationId = requestAnimationFrame(renderLoop);
+
+            if (!isPlaying || !analyser) {
+                // Pequeño giro lento incluso si está en pausa para que no se vea muerto
+                ctx.fillStyle = 'rgba(2, 0, 5, 0.05)';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                return;
+            }
+
+            // Obtener datos de frecuencias
+            analyser.getByteFrequencyData(dataArray);
+
+            // --- ANÁLISIS DE AUDIO ---
+            // Promedio de Bajos (Kicks/Bass) - Bins 0 a 10
+            let bassSum = 0;
+            for(let i=0; i<10; i++) bassSum += dataArray[i];
+            let bass = bassSum / 10; // Valor entre 0 y 255
+
+            // Promedio de Altos (Voces/Platillos) - Bins 100 a 200
+            let trebleSum = 0;
+            for(let i=100; i<200; i++) trebleSum += dataArray[i];
+            let treble = trebleSum / 100;
+
+            // Actualizar UI
+            bassMeter.style.width = `${(bass / 255) * 100}%`;
+
+            // --- RENDERIZADO ---
+            
+            // 1. Limpiar pantalla con estela (Motion Blur)
+            // Si el bajo es muy fuerte, aclaramos el fondo para un efecto de "flash"
+            const bgAlpha = bass > 230 ? 0.2 : 0.1;
+            ctx.fillStyle = `rgba(2, 0, 5, ${bgAlpha})`;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            const centerX = canvas.width / 2;
+            const centerY = canvas.height / 2;
+
+            // Cambiar color base en el tiempo y con el agudo
+            timeHue += 0.5 + (treble * 0.01);
+            if (timeHue > 360) timeHue = 0;
+
+            // 2. Dibujar Espectro Circular
+            // El radio base late con el bajo
+            const baseRadius = 100 + (bass * 0.5); 
+            const bars = 120; // Cuántas barras dibujar
+            const step = Math.floor(bufferLength / bars);
+
+            for (let i = 0; i < bars; i++) {
+                // Extraer el valor de frecuencia para esta barra
+                const value = dataArray[i * step];
+                const amplitude = value * 0.8; // Altura de la barra
+                
+                const angle = (i / bars) * Math.PI * 2;
+                
+                // Color vibrante basado en la posición y el tiempo
+                const barColor = `hsl(${timeHue + i}, 100%, 60%)`;
+
+                // Posición inicial de la barra en el círculo
+                const x1 = centerX + Math.cos(angle) * baseRadius;
+                const y1 = centerY + Math.sin(angle) * baseRadius;
+                
+                // Posición final (hacia afuera)
+                const x2 = centerX + Math.cos(angle) * (baseRadius + amplitude);
+                const y2 = centerY + Math.sin(angle) * (baseRadius + amplitude);
+
+                // Dibujar línea
+                ctx.beginPath();
+                ctx.moveTo(x1, y1);
+                ctx.lineTo(x2, y2);
+                ctx.lineWidth = 3;
+                ctx.lineCap = 'round';
+                ctx.strokeStyle = barColor;
+                ctx.stroke();
+
+                // Dibuja un círculo interno si el bajo es potente
+                if (bass > 200 && i % 2 === 0) {
+                     ctx.beginPath();
+                     ctx.arc(centerX + Math.cos(angle) * (baseRadius - 20), centerY + Math.sin(angle) * (baseRadius - 20), 2, 0, Math.PI * 2);
+                     ctx.fillStyle = barColor;
+                     ctx.fill();
+                }
+            }
+
+            // 3. Dibujar Partículas (Estrellas voladoras)
+            particles.forEach(p => {
+                p.update(bass);
+                p.draw(ctx, `hsla(${timeHue + 180}, 100%, 70%, 0.8)`);
+            });
+
+            // 4. El "Núcleo" (Círculo Central)
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, baseRadius - 5, 0, Math.PI * 2);
+            // Gradiente radial para el centro
+            const grad = ctx.createRadialGradient(centerX, centerY, 0, centerX, centerY, baseRadius);
+            grad.addColorStop(0, `hsla(${timeHue}, 100%, 50%, ${bass/500})`);
+            grad.addColorStop(1, 'transparent');
+            ctx.fillStyle = grad;
+            ctx.fill();
+            
+            // Borde del núcleo brillando
+            ctx.strokeStyle = `hsla(${timeHue + 50}, 100%, 50%, 0.5)`;
+            ctx.lineWidth = 2;
+            ctx.stroke();
+        }
+
+    </script>
+</body>
+</html>
