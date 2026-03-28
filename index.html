@@ -249,11 +249,24 @@
             const [isListening, setIsListening] = useState(false);
             const bottomRef = useRef(null);
 
-            useEffect(() => bottomRef.current?.scrollIntoView({ behavior: 'smooth' }), [messages]);
+            useEffect(() => {
+                bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
+                // Precargar voces para evitar silencios en la primera respuesta
+                if ('speechSynthesis' in window) {
+                    window.speechSynthesis.getVoices(); 
+                }
+            }, [messages]);
 
             const sendMessage = async (text) => {
                 const messageToSend = text || input;
                 if (!messageToSend.trim()) return;
+
+                // Desbloqueo cuántico de audio: Evita que el navegador silencie a la IA por "esperar mucho"
+                if ('speechSynthesis' in window) {
+                    const unlock = new SpeechSynthesisUtterance("");
+                    unlock.volume = 0;
+                    window.speechSynthesis.speak(unlock);
+                }
 
                 setMessages(prev => [...prev, { role: 'user', content: messageToSend }]);
                 setInput('');
@@ -265,11 +278,14 @@
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ 
                             message: `${SYSTEM_PROMPT}\n\nUSER: ${messageToSend}`, 
-                            history: messages.map(m => ({ role: m.role === 'ai' ? 'assistant' : 'user', content: m.content }))
+                            history: messages.map(m => ({ role: m.role, content: m.content })) // CORRECCIÓN: Enviar "ai" para que el Backend Python lo reconozca
                         })
                     });
 
-                    if (!response.ok) throw new Error("Fallo en la red cuántica");
+                    if (!response.ok) {
+                        const err = await response.json().catch(() => ({}));
+                        throw new Error(err.detail || "Fallo en la red cuántica");
+                    }
                     const data = await response.json();
                     
                     setMessages(prev => [...prev, { role: 'ai', content: data.response }]);
@@ -317,9 +333,15 @@
                 if ('speechSynthesis' in window) {
                     window.speechSynthesis.cancel(); // Detener anterior
                     // Limpiar markdown para leer
-                    const cleanText = text.replace(/[*#_]/g, '');
+                    const cleanText = text.replace(/[*#_`~]/g, '');
                     const utterance = new SpeechSynthesisUtterance(cleanText);
                     utterance.lang = 'es-ES';
+                    
+                    // Buscar la mejor voz en español (prefiere una local estable)
+                    const voices = window.speechSynthesis.getVoices();
+                    const esVoice = voices.find(v => v.lang.startsWith('es') && !v.name.includes('Google español de Estados Unidos'));
+                    if (esVoice) utterance.voice = esVoice;
+
                     utterance.pitch = 0.9;
                     utterance.rate = 1.0;
                     window.speechSynthesis.speak(utterance);
@@ -401,7 +423,7 @@
             );
         };
 
-        // --- SUBCOMPONENTE: GENERADOR DE IMÁGENES DALL-E 3 ---
+       // --- SUBCOMPONENTE: GENERADOR DE IMÁGENES DALL-E 3 ---
         const ImageForge = () => {
             const [prompt, setPrompt] = useState("");
             const [imageUrl, setImageUrl] = useState("");
@@ -421,16 +443,21 @@
                         body: JSON.stringify({ prompt: prompt })
                     });
 
-                    if (!response.ok) throw new Error("Fallo en la renderización cuántica.");
+                    if (!response.ok) {
+                        const errData = await response.json().catch(() => ({}));
+                        throw new Error(errData.detail || `Error del servidor (${response.status})`);
+                    }
+                    
                     const data = await response.json();
+                    if (!data.url) throw new Error("URL vacía recibida del servidor.");
                     setImageUrl(data.url);
                 } catch (e) {
-                    setError(e.message);
+                    setError(`Fallo en la forja: ${e.message}`);
                 } finally {
                     setLoading(false);
                 }
             };
-
+            
             return (
                 <div className="w-full max-w-5xl h-auto min-h-[60vh] glass-panel rounded-3xl p-8 flex flex-col md:flex-row gap-8 animate-[fadeIn_0.5s_ease-out] shadow-2xl shadow-nexus-pink/20 border border-nexus-pink/30">
                     
