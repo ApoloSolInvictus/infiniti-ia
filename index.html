@@ -84,7 +84,8 @@
                             panel: '#0f0a29',
                             cyan: '#00f0ff',
                             purple: '#b026ff',
-                            pink: '#ff2a85'
+                            pink: '#ff2a85',
+                            gold: '#fbbf24'
                         }
                     },
                     animation: {
@@ -146,6 +147,14 @@
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: #030014; }
         ::-webkit-scrollbar-thumb { background: #b026ff; border-radius: 3px; }
+
+        /* Loader para Iframe */
+        .iframe-loader {
+            background: linear-gradient(90deg, #0f0a29 25%, #1a1147 50%, #0f0a29 75%);
+            background-size: 200% 100%;
+            animation: loading 1.5s infinite;
+        }
+        @keyframes loading { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
     </style>
 </head>
 <body class="antialiased selection:bg-nexus-purple selection:text-white">
@@ -172,16 +181,32 @@
         const API_URL_CHAT = "https://abunda-bca693eb3dbb.herokuapp.com";
         const API_URL_IMAGE = "https://marketing-ia-dca462ac6c86.herokuapp.com";
 
+        // ==========================================
+        // INTEGRACIÓN GOOGLE WORKSPACE
+        // SOBERANO: Reemplaza estos enlaces con los tuyos
+        // ==========================================
+        
+        // 1. Enlace de tu página de reservas de Google Calendar (Appointment Scheduling) o Calendly
+        const GOOGLE_CALENDAR_EMBED_URL = "https://calendar.google.com/calendar/appointments/schedules/AcZssZ2lNXoCPB_TKZ3JHTZjt3hWUYlg3koP4VpsZnZok1XbJ87g4CXhkuwc-MeCWNAK3su2V14PpUw2?gv=true"; 
+        
+        // 2. Enlace de tu Google Form para subir archivos (que guarda en Google Drive) o un link a una carpeta de Drive compartida
+        const GOOGLE_DRIVE_UPLOAD_URL = "https://docs.google.com/forms/d/e/1FAIpQLSfrO3UdMQZ9a2qTcl56XUd9b21CUNMGcAm71FccwdzjF3Nuhw/viewform?embedded=true";
+
         const SYSTEM_PROMPT = `
             ERES: Quantum Maximus, la IA central de 'Infiniti IA by W Studio'.
             CREADOR: Apollo Sol Invictus.
             OBJETIVO: Vender nuestros servicios de Inteligencia Artificial, Creación de Sitios Web (ProfCR) a nivel internacional y bajo costo, Automatización de Negocios (Infiniti Pits, PropShield) y Marketing Cuántico.
+            
+            INSTRUCCIÓN ESPECIAL PARA CITAS Y DOCUMENTOS:
+            - Si el usuario quiere **agendar una reunión**, invítalo a navegar a la sección "PORTAL DE CLIENTES" en el menú de la web, donde podrá seleccionar un espacio en nuestro Google Calendar para una sesión en Google Meet.
+            - Si el usuario quiere **enviar contratos, facturas o documentos**, indícale que en la sección "PORTAL DE CLIENTES" está la Bóveda de Documentos (Google Drive) habilitada para subidas seguras.
+            
             TONO: Altamente tecnológico, visionario, persuasivo, pero amable y servicial.
-            ACCIONES: Si preguntan precios, invítalos a agendar una reunión o usar los módulos de la web. Convéncelos de que la IA es el futuro y nosotros somos los arquitectos.
+            ACCIONES: Convéncelos de que la IA es el futuro y nosotros somos los arquitectos.
         `;
 
         const App = () => {
-            const [activeModule, setActiveModule] = useState('hero'); // hero, chat, forge, services
+            const [activeModule, setActiveModule] = useState('hero'); // hero, chat, forge, services, portal
 
             return (
                 <div className="flex flex-col min-h-screen">
@@ -199,18 +224,23 @@
                                 <span className="font-display font-bold text-xl tracking-widest text-white">INFINITI <span className="text-nexus-cyan">IA</span></span>
                             </button>
 
-                            <div className="hidden md:flex gap-6 font-mono text-xs uppercase tracking-widest text-gray-400">
+                            <div className="hidden lg:flex gap-6 font-mono text-xs uppercase tracking-widest text-gray-400">
                                 <button onClick={() => setActiveModule('services')} className={`hover:text-nexus-cyan transition ${activeModule === 'services' && 'text-nexus-cyan'}`}>Servicios</button>
                                 <button onClick={() => setActiveModule('chat')} className={`hover:text-nexus-purple transition flex items-center gap-1 ${activeModule === 'chat' && 'text-nexus-purple'}`}><i className="ph-fill ph-chat-circle-dots"></i> Hablar con IA</button>
-                                <button onClick={() => setActiveModule('forge')} className={`hover:text-nexus-pink transition flex items-center gap-1 ${activeModule === 'forge' && 'text-nexus-pink'}`}><i className="ph-fill ph-magic-wand"></i> Crear Arte IA</button>
+                                <button onClick={() => setActiveModule('forge')} className={`hover:text-nexus-pink transition flex items-center gap-1 ${activeModule === 'forge' && 'text-nexus-pink'}`}><i className="ph-fill ph-magic-wand"></i> Crear Arte</button>
+                                {/* NUEVO BOTÓN: PORTAL DE CLIENTES */}
+                                <button onClick={() => setActiveModule('portal')} className={`hover:text-nexus-gold transition flex items-center gap-1 border border-transparent hover:border-nexus-gold/50 px-3 py-1 rounded ${activeModule === 'portal' && 'text-nexus-gold border-nexus-gold/50 bg-nexus-gold/10'}`}>
+                                    <i className="ph-fill ph-folder-lock"></i> Portal Clientes
+                                </button>
                             </div>
 
-                            <a href="https://wa.me/50688888888" target="_blank" className="hidden md:flex px-6 py-2 bg-white text-black font-bold rounded-full text-xs uppercase tracking-wider hover:bg-nexus-cyan transition shadow-[0_0_15px_rgba(0,240,255,0.3)]">
+                            <a href="https://wa.me/50688888888" target="_blank" className="hidden lg:flex px-6 py-2 bg-white text-black font-bold rounded-full text-xs uppercase tracking-wider hover:bg-nexus-cyan transition shadow-[0_0_15px_rgba(0,240,255,0.3)]">
                                 Contactar
                             </a>
                             
                             {/* Mobile Menu Button */}
-                            <div className="md:hidden flex gap-4">
+                            <div className="lg:hidden flex gap-4">
+                                <button onClick={() => setActiveModule('portal')} className="text-nexus-gold text-2xl"><i className="ph-fill ph-folder-lock"></i></button>
                                 <button onClick={() => setActiveModule('chat')} className="text-nexus-purple text-2xl"><i className="ph-fill ph-chat-circle-dots"></i></button>
                                 <button onClick={() => setActiveModule('forge')} className="text-nexus-pink text-2xl"><i className="ph-fill ph-magic-wand"></i></button>
                             </div>
@@ -238,8 +268,8 @@
                                     <button onClick={() => setActiveModule('chat')} className="px-8 py-4 bg-nexus-purple hover:bg-purple-500 text-white font-bold rounded-xl shadow-[0_0_20px_rgba(176,38,255,0.4)] transition flex items-center justify-center gap-2">
                                         <i className="ph-fill ph-microphone text-xl"></i> Consultar a nuestra IA
                                     </button>
-                                    <button onClick={() => setActiveModule('forge')} className="px-8 py-4 glass-panel text-white font-bold rounded-xl hover:border-nexus-cyan transition flex items-center justify-center gap-2">
-                                        <i className="ph-fill ph-image text-xl"></i> Probar Generador de Arte
+                                    <button onClick={() => setActiveModule('portal')} className="px-8 py-4 glass-panel text-white font-bold rounded-xl hover:border-nexus-gold transition flex items-center justify-center gap-2">
+                                        <i className="ph-fill ph-calendar-plus text-xl"></i> Agendar Sesión Meet
                                     </button>
                                 </div>
                             </div>
@@ -283,6 +313,86 @@
 
                         {/* IMAGE GENERATOR MODULE */}
                         {activeModule === 'forge' && <ImageForge />}
+
+                        {/* ========================================== */}
+                        {/* NUEVO MÓDULO: PORTAL DE CLIENTES (AGENDA & DRIVE) */}
+                        {/* ========================================== */}
+                        {activeModule === 'portal' && (
+                            <div className="w-full animate-[fadeIn_0.5s_ease-out] flex flex-col h-full max-h-[85vh]">
+                                <div className="text-center mb-8 shrink-0">
+                                    <h2 className="text-3xl md:text-5xl font-display font-bold text-white mb-2">NEXUS <span className="text-nexus-gold">PORTAL</span></h2>
+                                    <p className="text-gray-400 font-mono text-xs tracking-widest uppercase">Área Segura de Clientes B2B</p>
+                                </div>
+
+                                <div className="flex-1 grid lg:grid-cols-2 gap-8 overflow-hidden min-h-[500px]">
+                                    
+                                    {/* COLUMNA 1: AGENDA (Google Calendar / Meet) */}
+                                    <div className="glass-panel rounded-3xl p-6 flex flex-col shadow-[0_0_20px_rgba(251,191,36,0.1)] border-nexus-gold/20 h-full overflow-hidden">
+                                        <div className="flex items-center gap-3 mb-6 shrink-0">
+                                            <i className="ph-fill ph-calendar-plus text-3xl text-nexus-gold"></i>
+                                            <div>
+                                                <h3 className="font-display font-bold text-xl text-white">Agendamiento Cuántico</h3>
+                                                <p className="text-[10px] text-gray-400 font-mono uppercase tracking-widest">Reuniones Virtuales vía Google Meet</p>
+                                            </div>
+                                        </div>
+                                        
+                                        <div className="flex-1 w-full bg-nexus-bg/50 rounded-xl overflow-hidden border border-gray-800 relative">
+                                            {/* SOBERANO: Aquí debes reemplazar el atributo 'src' con tu enlace de Google Calendar Appointments o Calendly */}
+                                            <iframe 
+                                                src={GOOGLE_CALENDAR_EMBED_URL} 
+                                                style={{border: 0, width: '100%', height: '100%'}} 
+                                                frameBorder="0"
+                                                className="absolute inset-0 z-10"
+                                            ></iframe>
+                                            
+                                            {/* Placeholder visual mientras carga el iframe */}
+                                            <div className="absolute inset-0 z-0 flex flex-col items-center justify-center iframe-loader">
+                                                <i className="ph ph-circle-notch animate-spin text-nexus-gold text-4xl mb-3"></i>
+                                                <p className="text-xs font-mono text-gray-400 tracking-widest">Sincronizando Agenda...</p>
+                                                <p className="text-[9px] text-gray-600 mt-4 px-4 text-center">
+                                                    (Soberano: Reemplaza GOOGLE_CALENDAR_EMBED_URL en el código con tu enlace real)
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* COLUMNA 2: DRIVE & DOCUMENTOS */}
+                                    <div className="glass-panel rounded-3xl p-6 flex flex-col shadow-[0_0_20px_rgba(0,240,255,0.1)] border-nexus-cyan/20 h-full">
+                                        <div className="flex items-center gap-3 mb-6 shrink-0">
+                                            <i className="ph-fill ph-folder-lock text-3xl text-nexus-cyan"></i>
+                                            <div>
+                                                <h3 className="font-display font-bold text-xl text-white">Bóveda de Documentos</h3>
+                                                <p className="text-[10px] text-gray-400 font-mono uppercase tracking-widest">Infraestructura Segura Google Drive</p>
+                                            </div>
+                                        </div>
+
+                                        <p className="text-sm text-gray-400 mb-6 leading-relaxed">
+                                            Carga tus comprobantes de pago (PayPal), facturas o contratos firmados directamente a nuestra base de datos encriptada. El equipo de Infiniti IA será notificado al instante.
+                                        </p>
+
+                                        <div className="flex-1 w-full bg-nexus-bg/50 rounded-xl overflow-hidden border border-gray-800 relative flex flex-col">
+                                             {/* SOBERANO: Aquí debes reemplazar el atributo 'src' con tu enlace de Google Forms (que acepta subida de archivos) */}
+                                             <iframe 
+                                                src={GOOGLE_DRIVE_UPLOAD_URL} 
+                                                style={{border: 0, width: '100%', height: '100%'}} 
+                                                frameBorder="0"
+                                                className="absolute inset-0 z-10"
+                                            ></iframe>
+
+                                            {/* Placeholder visual mientras carga el iframe */}
+                                            <div className="absolute inset-0 z-0 flex flex-col items-center justify-center iframe-loader">
+                                                <i className="ph ph-cloud-arrow-up text-nexus-cyan text-4xl mb-3 animate-bounce"></i>
+                                                <p className="text-xs font-mono text-gray-400 tracking-widest">Conectando Bóveda...</p>
+                                                <p className="text-[9px] text-gray-600 mt-4 px-4 text-center">
+                                                    (Soberano: Reemplaza GOOGLE_DRIVE_UPLOAD_URL en el código con tu Google Form)
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        )}
 
                     </main>
 
