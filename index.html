@@ -116,10 +116,11 @@
         const { useState, useEffect, useRef } = React;
 
         // ==========================================
-        // CONFIGURACIÓN DE APIS (HEROKU BACKEND)
+        // CONFIGURACIÓN DE APIS (HEROKU BACKENDS)
         // ==========================================
-        // Utilizamos el backend que sabemos que tiene OpenAI y los endpoints configurados
-        const API_URL = "https://abunda-bca693eb3dbb.herokuapp.com";
+        // Utilizamos "abunda" para el Chat, y "marketing-ia" para la Forja (DALL-E 3)
+        const API_URL_CHAT = "https://abunda-bca693eb3dbb.herokuapp.com";
+        const API_URL_IMAGE = "https://marketing-ia-dca462ac6c86.herokuapp.com";
 
         const SYSTEM_PROMPT = `
             ERES: Quantum Maximus, la IA central de 'Infiniti IA by W Studio'.
@@ -273,12 +274,13 @@
                 setLoading(true);
 
                 try {
-                    const response = await fetch(`${API_URL}/api/chat`, {
+                    // Usamos API_URL_CHAT (Abunda)
+                    const response = await fetch(`${API_URL_CHAT}/api/chat`, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ 
                             message: `${SYSTEM_PROMPT}\n\nUSER: ${messageToSend}`, 
-                            history: messages.map(m => ({ role: m.role, content: m.content })) // CORRECCIÓN: Enviar "ai" para que el Backend Python lo reconozca
+                            history: messages.map(m => ({ role: m.role, content: m.content })) // Enviar "ai" para Backend
                         })
                     });
 
@@ -337,7 +339,7 @@
                     const utterance = new SpeechSynthesisUtterance(cleanText);
                     utterance.lang = 'es-ES';
                     
-                    // Buscar la mejor voz en español (prefiere una local estable)
+                    // Buscar la mejor voz en español
                     const voices = window.speechSynthesis.getVoices();
                     const esVoice = voices.find(v => v.lang.startsWith('es') && !v.name.includes('Google español de Estados Unidos'));
                     if (esVoice) utterance.voice = esVoice;
@@ -423,7 +425,7 @@
             );
         };
 
-       // --- SUBCOMPONENTE: GENERADOR DE IMÁGENES DALL-E 3 ---
+        // --- SUBCOMPONENTE: GENERADOR DE IMÁGENES DALL-E 3 ---
         const ImageForge = () => {
             const [prompt, setPrompt] = useState("");
             const [imageUrl, setImageUrl] = useState("");
@@ -437,7 +439,8 @@
                 setImageUrl("");
 
                 try {
-                    const response = await fetch(`${API_URL}/api/image`, {
+                    // Usamos API_URL_IMAGE (Marketing-IA) porque ahí programamos el endpoint de /api/image
+                    const response = await fetch(`${API_URL_IMAGE}/api/image`, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ prompt: prompt })
@@ -457,7 +460,7 @@
                     setLoading(false);
                 }
             };
-            
+
             return (
                 <div className="w-full max-w-5xl h-auto min-h-[60vh] glass-panel rounded-3xl p-8 flex flex-col md:flex-row gap-8 animate-[fadeIn_0.5s_ease-out] shadow-2xl shadow-nexus-pink/20 border border-nexus-pink/30">
                     
