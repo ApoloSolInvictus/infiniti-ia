@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Global-ID | Auditoría de Identidad Digital</title>
+    
+    <!-- Librerías -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;600;700&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+
+    <!-- React Core -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+    <!-- Configuración Tailwind -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        display: ['Space Grotesk', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    },
+                    colors: {
+                        scan: {
+                            dark: '#020617',
+                            panel: '#0f172a',
+                            cyan: '#06b6d4',
+                            blue: '#3b82f6',
+                            danger: '#ef4444',
+                            warning: '#f59e0b',
+                            safe: '#10b981'
+                        }
+                    },
+                    animation: {
+                        'radar': 'radar 2s linear infinite',
+                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                    },
+                    keyframes: {
+                        radar: {
+                            '0%': { transform: 'rotate(0deg)' },
+                            '100%': { transform: 'rotate(360deg)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body { background-color: #020617; color: #f8fafc; overflow-x: hidden; }
+        
+        .glass-panel {
+            background: rgba(15, 23, 42, 0.7);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(6, 182, 212, 0.2);
+            box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+        }
+
+        .cyber-grid {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-image: 
+                linear-gradient(rgba(6, 182, 212, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(6, 182, 212, 0.03) 1px, transparent 1px);
+            background-size: 40px 40px;
+            pointer-events: none; z-index: 0;
+        }
+
+        .glow-bg {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            width: 600px; height: 600px;
+            background: radial-gradient(circle, rgba(6,182,212,0.1) 0%, rgba(0,0,0,0) 70%);
+            pointer-events: none; z-index: 0;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #020617; }
+        ::-webkit-scrollbar-thumb { background: #06b6d4; border-radius: 3px; }
+        
+        .fade-in-up { animation: fadeInUp 0.6s ease-out forwards; }
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        
+        /* Tipografía Markdown */
+        .markdown-content p { margin-bottom: 1em; line-height: 1.6; color: #cbd5e1; }
+        .markdown-content strong { color: #f8fafc; }
+        .markdown-content h3 { color: #06b6d4; font-size: 1.25rem; font-weight: bold; margin-top: 1.5em; margin-bottom: 0.5em; }
+    </style>
+</head>
+<body class="antialiased selection:bg-scan-cyan selection:text-scan-dark">
+
+    <div class="cyber-grid"></div>
+    <div id="root" class="relative z-10 w-full min-h-screen flex flex-col"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect, useRef } = React;
+
+        // ==========================================
+        // CONFIGURACIÓN DEL BACKEND
+        // ==========================================
+        // SOBERANO: Usa tu servidor de Heroku que ya tiene OpenAI configurado
+        const API_URL = "https://abunda-bca693eb3dbb.herokuapp.com/api/chat";
+
+        const AUDITOR_PROMPT = `
+            ERES: El "Auditor de Identidad Cuántica" del sistema Global-ID (Creado por Infiniti IA).
+            OBJETIVO: El usuario te dará un nombre propio o el de una empresa. Debes hacer un diagnóstico de su "Huella de Identidad Digital".
+            
+            ESTRUCTURA DE TU RESPUESTA:
+            1. **Análisis de Presencia:** Di brevemente qué crees saber de esa persona/empresa. Si es un nombre común o no famoso, indica: "No se detecta una 'Fuente de Verdad' (Single Source of Truth) consolidada en la red para esta entidad."
+            2. **Diagnóstico de Vulnerabilidad:** Explica que al no tener el protocolo "Global-ID Schema.org", las IAs (como tú) y los buscadores están recopilando datos fragmentados o no verificados. 
+            3. **El Riesgo:** Advierte sobre el riesgo crítico de Deepfakes, suplantación de identidad o alucinaciones de la IA. "Cualquier atacante podría crear un sitio web falso sobre ti y las IAs lo tomarían como cierto".
+            4. **La Solución:** Concluye recomendando urgentemente blindar su identidad con el Escudo de Seguridad Global-ID de Infiniti IA para tomar el control absoluto de su narrativa digital.
+            
+            TONO: Analítico, cibernético, ligeramente alarmante pero muy profesional. Formato Markdown.
+        `;
+
+        const ScannerApp = () => {
+            const [query, setQuery] = useState("");
+            const [status, setStatus] = useState("idle"); // idle, scanning, result
+            const [report, setReport] = useState("");
+            const [riskScore, setRiskScore] = useState(0);
+
+            const handleScan = async (e) => {
+                e.preventDefault();
+                if (!query.trim()) return;
+                
+                setStatus("scanning");
+                setReport("");
+                
+                // Generar un "Risk Score" aleatorio pero alto (para generar urgencia)
+                const randomRisk = Math.floor(Math.random() * (98 - 85 + 1)) + 85; 
+                
+                try {
+                    const response = await fetch(API_URL, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ 
+                            message: `${AUDITOR_PROMPT}\n\nNOMBRE A ANALIZAR: ${query}`,
+                            history: [] 
+                        })
+                    });
+
+                    if (!response.ok) throw new Error("Fallo en la conexión satelital.");
+                    
+                    const data = await response.json();
+                    
+                    // Simular tiempo de escaneo para efecto visual
+                    setTimeout(() => {
+                        setRiskScore(randomRisk);
+                        setReport(data.response);
+                        setStatus("result");
+                    }, 2500);
+
+                } catch (error) {
+                    console.error(error);
+                    setTimeout(() => {
+                        setRiskScore(99);
+                        setReport("⚠️ **ALERTA DE SISTEMA:** No se pudo establecer conexión con los motores de búsqueda. Esto indica una vulnerabilidad extrema en la red. Se recomienda adquirir Global-ID inmediatamente.");
+                        setStatus("result");
+                    }, 2000);
+                }
+            };
+
+            const resetScan = () => {
+                setStatus("idle");
+                setQuery("");
+            };
+
+            return (
+                <div className="flex flex-col min-h-screen">
+                    
+                    {/* NAVBAR */}
+                    <nav className="w-full z-50 bg-scan-dark/80 backdrop-blur-md border-b border-white/5 py-4">
+                        <div className="max-w-7xl mx-auto px-6 flex items-center justify-between">
+                            <div className="flex items-center gap-3">
+                                <div className="w-10 h-10 rounded-full border border-scan-cyan flex items-center justify-center bg-scan-cyan/10">
+                                    <i className="ph-fill ph-radar text-xl text-scan-cyan"></i>
+                                </div>
+                                <div>
+                                    <span className="font-display font-bold text-xl tracking-tight text-white">GLOBAL-ID</span>
+                                    <span className="block text-[9px] text-scan-cyan uppercase tracking-[0.2em] font-mono">Identity Scanner</span>
+                                </div>
+                            </div>
+                            <a href="pitch_global_id.html" className="px-5 py-2 bg-scan-panel border border-scan-border hover:border-scan-cyan text-white text-xs font-bold uppercase tracking-widest rounded-lg transition flex items-center gap-2">
+                                <i className="ph-fill ph-shield-check text-scan-cyan"></i> Adquirir Escudo
+                            </a>
+                        </div>
+                    </nav>
+
+                    {/* MAIN AREA */}
+                    <main className="flex-1 flex items-center justify-center p-6 relative">
+                        <div className="glow-bg"></div>
+
+                        <div className="w-full max-w-3xl z-10">
+                            
+                            {/* ESTADO: IDLE (Buscador) */}
+                            {status === 'idle' && (
+                                <div className="text-center fade-in-up">
+                                    <h1 className="text-4xl md:text-5xl font-display font-bold text-white mb-4">
+                                        ¿Qué dicen las <span className="text-transparent bg-clip-text bg-gradient-to-r from-scan-cyan to-scan-blue">IAs</span> de ti?
+                                    </h1>
+                                    <p className="text-slate-400 mb-10 max-w-xl mx-auto text-sm md:text-base leading-relaxed">
+                                        Ingresa tu nombre o el de tu empresa. Nuestro motor cuántico analizará tu huella digital y te mostrará cuán vulnerable eres a Deepfakes y desinformación.
+                                    </p>
+
+                                    <form onSubmit={handleScan} className="relative max-w-2xl mx-auto group">
+                                        <div className="absolute inset-0 bg-scan-cyan/20 blur-xl rounded-full group-hover:bg-scan-cyan/30 transition duration-500"></div>
+                                        <div className="relative flex items-center bg-scan-panel border border-slate-700 rounded-full p-2 shadow-2xl">
+                                            <i className="ph ph-magnifying-glass text-2xl text-slate-500 ml-4"></i>
+                                            <input 
+                                                type="text" 
+                                                value={query}
+                                                onChange={e => setQuery(e.target.value)}
+                                                placeholder="Ingresa tu nombre o marca..." 
+                                                className="w-full bg-transparent border-none text-white text-lg px-4 py-3 outline-none placeholder:text-slate-600 font-display"
+                                                required
+                                                autoComplete="off"
+                                            />
+                                            <button type="submit" className="px-8 py-3 bg-scan-cyan hover:bg-cyan-400 text-scan-dark font-bold uppercase tracking-widest rounded-full transition shadow-[0_0_15px_rgba(6,182,212,0.4)]">
+                                                Auditar
+                                            </button>
+                                        </div>
+                                    </form>
+                                    
+                                    <div className="mt-12 flex justify-center gap-8 opacity-50 grayscale">
+                                        <div className="flex items-center gap-2 font-mono text-xs"><i className="ph-fill ph-google-logo text-xl"></i> Google Data</div>
+                                        <div className="flex items-center gap-2 font-mono text-xs"><i className="ph-fill ph-robot text-xl"></i> GPT-4o</div>
+                                        <div className="flex items-center gap-2 font-mono text-xs"><i className="ph-fill ph-brain text-xl"></i> Gemini</div>
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* ESTADO: SCANNING */}
+                            {status === 'scanning' && (
+                                <div className="glass-panel p-12 rounded-[2rem] text-center fade-in-up border-scan-cyan/50 shadow-[0_0_50px_rgba(6,182,212,0.1)] relative overflow-hidden">
+                                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[200%] h-0.5 bg-scan-cyan animate-[radar_2s_linear_infinite] origin-left opacity-20 pointer-events-none"></div>
+                                    
+                                    <div className="relative z-10 flex flex-col items-center">
+                                        <div className="w-24 h-24 rounded-full border-4 border-scan-panel border-t-scan-cyan animate-spin mb-6 shadow-[0_0_30px_rgba(6,182,212,0.3)]"></div>
+                                        <h2 className="text-2xl font-display font-bold text-white mb-2 uppercase tracking-widest">Analizando Nodos</h2>
+                                        <p className="text-scan-cyan font-mono text-sm animate-pulse tracking-[0.2em]">Interceptando datos de la red para: <span className="text-white font-bold">"{query}"</span></p>
+                                        
+                                        <div className="mt-8 space-y-2 text-left w-full max-w-xs font-mono text-xs text-slate-500">
+                                            <p className="flex justify-between"><span>Verificando Schema.org...</span> <span className="text-scan-danger">NO ENCONTRADO</span></p>
+                                            <p className="flex justify-between"><span>Buscando firmas criptográficas...</span> <span className="text-scan-danger">NO ENCONTRADO</span></p>
+                                            <p className="flex justify-between"><span>Recopilando datos de IA...</span> <span className="text-scan-warning">COMPILANDO...</span></p>
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* ESTADO: RESULTADOS */}
+                            {status === 'result' && (
+                                <div className="fade-in-up space-y-6">
+                                    
+                                    {/* Cabecera del Reporte */}
+                                    <div className="glass-panel p-6 rounded-2xl flex flex-col md:flex-row items-center justify-between gap-6 border-scan-danger/30 relative overflow-hidden">
+                                        <div className="absolute inset-0 bg-scan-danger/5 pointer-events-none"></div>
+                                        <div className="relative z-10 text-center md:text-left">
+                                            <h2 className="text-xs font-mono text-slate-400 uppercase tracking-widest mb-1">Sujeto Analizado:</h2>
+                                            <p className="text-2xl font-display font-bold text-white">{query}</p>
+                                        </div>
+                                        
+                                        <div className="relative z-10 flex items-center gap-4 bg-scan-dark/80 px-6 py-4 rounded-xl border border-scan-danger/30">
+                                            <div className="text-right">
+                                                <p className="text-[10px] font-mono text-scan-danger uppercase tracking-widest">Nivel de Riesgo / Deepfake</p>
+                                                <p className="text-xs text-slate-400">Identidad No Protegida</p>
+                                            </div>
+                                            <div className="text-4xl font-display font-black text-scan-danger animate-pulse">
+                                                {riskScore}%
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* Reporte de IA */}
+                                    <div className="glass-panel p-6 md:p-10 rounded-[2rem] border-t-2 border-t-scan-cyan relative">
+                                        <div className="flex items-center gap-3 mb-6 border-b border-slate-700/50 pb-4">
+                                            <i className="ph-fill ph-brain text-3xl text-scan-cyan"></i>
+                                            <h3 className="font-display font-bold text-xl text-white">Auditoría Cuántica de IA</h3>
+                                        </div>
+                                        
+                                        <div className="markdown-content text-sm md:text-base font-sans" dangerouslySetInnerHTML={{__html: marked.parse(report)}}></div>
+                                    </div>
+
+                                    {/* Call to Action (Venta) */}
+                                    <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mt-8 pt-8">
+                                        <a href="pitch_global_id.html" className="w-full sm:w-auto px-8 py-4 bg-scan-cyan hover:bg-cyan-400 text-scan-dark font-bold uppercase tracking-widest rounded-xl shadow-[0_0_20px_rgba(6,182,212,0.4)] transition text-center flex items-center justify-center gap-2 hover:scale-105">
+                                            <i className="ph-fill ph-shield-check text-xl"></i> Obtener Mi Global-ID
+                                        </a>
+                                        <button onClick={resetScan} className="w-full sm:w-auto px-8 py-4 bg-transparent border border-slate-600 hover:border-slate-400 text-white font-bold uppercase tracking-widest rounded-xl transition text-center text-xs">
+                                            Nueva Búsqueda
+                                        </button>
+                                    </div>
+                                </div>
+                            )}
+
+                        </div>
+                    </main>
+
+                    {/* FOOTER */}
+                    <footer className="border-t border-white/5 bg-scan-dark py-6 text-center text-xs text-slate-600 font-mono tracking-widest uppercase relative z-20">
+                        <p>POWERED BY INFINITI IA & QUANTUM MAXIMUS</p>
+                    </footer>
+                </div>
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<ScannerApp />);
+    </script>
+</body>
+</html>
