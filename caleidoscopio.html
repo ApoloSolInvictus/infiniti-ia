@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>OPUS KALEIDOSCOPE | Visualizador Cuántico</title>
+    
+    <!-- Librerías de Diseño -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        display: ['Orbitron', 'sans-serif'],
+                        mono: ['Space Mono', 'monospace'],
+                    },
+                    colors: {
+                        kal: {
+                            dark: '#010005',
+                            cyan: '#00f0ff',
+                            magenta: '#ff0055',
+                            purple: '#8a2be2'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body, html { 
+            margin: 0; padding: 0; width: 100%; height: 100%; 
+            background-color: #010005; color: #ffffff; 
+            overflow: hidden; font-family: 'Space Mono', monospace; 
+        }
+
+        /* Lienzo donde ocurre la magia */
+        #kaleidoscope-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 1;
+        }
+
+        /* Capa de Interfaz UI */
+        .ui-layer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            pointer-events: none; /* Deja que los clics pasen al canvas si es necesario */
+        }
+        
+        .interactive { pointer-events: auto; }
+
+        .glass-panel {
+            background: rgba(1, 0, 5, 0.5);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(0, 240, 255, 0.15);
+            box-shadow: 0 0 40px rgba(0, 0, 0, 0.8);
+        }
+
+        /* Botón de carga animado */
+        .upload-btn {
+            background: linear-gradient(45deg, #00f0ff, #8a2be2, #ff0055);
+            background-size: 200% 200%;
+            animation: gradientShift 4s ease infinite;
+            transition: all 0.3s ease;
+        }
+        .upload-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 30px rgba(138, 43, 226, 0.6);
+            letter-spacing: 1px;
+        }
+        @keyframes gradientShift { 
+            0% { background-position: 0% 50%; } 
+            50% { background-position: 100% 50%; } 
+            100% { background-position: 0% 50%; } 
+        }
+
+        input[type="file"] { display: none; }
+
+        /* Transiciones de Estados UI */
+        .fade-transition { transition: opacity 0.8s ease, transform 0.8s ease; }
+        .hidden-ui { opacity: 0; transform: scale(0.9); pointer-events: none; }
+        .active-ui { opacity: 1; transform: scale(1); pointer-events: auto; }
+
+        /* Controles Deslizantes (Sliders) */
+        input[type=range] {
+            -webkit-appearance: none; width: 100px; background: transparent; height: 4px; border-radius: 2px;
+        }
+        input[type=range]:focus { outline: none; }
+        input[type=range]::-webkit-slider-runnable-track {
+            width: 100%; height: 4px; border-radius: 2px; background: rgba(255,255,255,0.2);
+        }
+        input[type=range]::-webkit-slider-thumb {
+            height: 12px; width: 12px; border-radius: 50%; background: #00f0ff;
+            -webkit-appearance: none; margin-top: -4px; cursor: pointer;
+            box-shadow: 0 0 10px #00f0ff;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- EL LIENZO DONDE LA MÚSICA SE VUELVE LUZ -->
+    <canvas id="kaleidoscope-canvas"></canvas>
+
+    <!-- INTERFAZ DE USUARIO -->
+    <div class="ui-layer">
+        
+        <!-- HEADER HUD -->
+        <header class="p-6 flex justify-between items-start opacity-70">
+            <div>
+                <h1 class="font-display font-bold text-2xl tracking-[0.2em] text-kal-cyan drop-shadow-[0_0_10px_#00f0ff]">OPUS KALEIDOSCOPE</h1>
+                <p class="text-[10px] tracking-[0.4em] uppercase mt-1 text-kal-purple">Motor Sinestésico V2.0</p>
+            </div>
+            <div class="text-right">
+                <p class="text-[10px] text-kal-magenta uppercase tracking-widest font-bold animate-pulse" id="status-text">ESPERANDO FRECUENCIA</p>
+            </div>
+        </header>
+
+        <!-- PANTALLA INICIAL: SUBIR AUDIO -->
+        <div id="upload-screen" class="absolute inset-0 flex items-center justify-center interactive fade-transition">
+            <div class="glass-panel p-10 rounded-[2rem] text-center max-w-lg mx-4 border-t-2 border-t-kal-cyan">
+                <div class="w-20 h-20 bg-black/50 rounded-full flex items-center justify-center mx-auto mb-6 border border-kal-cyan/50 shadow-[0_0_30px_rgba(0,240,255,0.3)]">
+                    <i class="ph-fill ph-aperture text-5xl text-kal-cyan animate-[spin_10s_linear_infinite]"></i>
+                </div>
+                <h2 class="font-display text-3xl font-bold mb-4">GEOMETRÍA ACÚSTICA</h2>
+                <p class="text-sm text-gray-400 mb-8 leading-relaxed">
+                    Sube una pista de audio. El motor interceptará las ondas sonoras y creará un mandala fractal en tiempo real basado en los bajos y armónicos.
+                </p>
+                
+                <label class="upload-btn cursor-pointer px-10 py-4 rounded-full font-display font-bold uppercase tracking-widest text-sm inline-flex items-center gap-3 text-white">
+                    <i class="ph-bold ph-upload-simple text-xl"></i>
+                    INYECTAR AUDIO
+                    <input type="file" id="audio-upload" accept="audio/*">
+                </label>
+            </div>
+        </div>
+
+        <!-- REPRODUCTOR Y CONTROLES (HUD INFERIOR) -->
+        <div id="player-hud" class="mt-auto p-6 md:p-8 hidden-ui interactive fade-transition">
+            <div class="glass-panel max-w-6xl mx-auto rounded-3xl p-6 flex flex-col md:flex-row items-center justify-between gap-6">
+                
+                <!-- Info y Play -->
+                <div class="flex items-center gap-4 w-full md:w-auto">
+                    <button id="btn-play" class="w-14 h-14 rounded-full bg-white text-black flex items-center justify-center hover:scale-105 transition shadow-[0_0_20px_rgba(255,255,255,0.3)] shrink-0">
+                        <i id="play-icon" class="ph-fill ph-pause text-2xl"></i>
+                    </button>
+                    <div class="flex flex-col overflow-hidden">
+                        <span class="text-[10px] text-kal-cyan uppercase tracking-widest">Decodificando</span>
+                        <h3 id="track-name" class="font-display font-bold text-lg truncate w-48 md:w-64">Pista de Audio</h3>
+                    </div>
+                </div>
+
+                <!-- Modificadores Cuánticos (Sliders) -->
+                <div class="flex-1 flex flex-wrap items-center justify-center gap-6 px-4">
+                    <div class="flex flex-col items-center gap-2">
+                        <label class="text-[9px] text-gray-400 uppercase tracking-widest"><i class="ph-fill ph-intersect"></i> Segmentos</label>
+                        <input type="range" id="slider-segments" min="4" max="24" step="2" value="12" title="Cantidad de espejos">
+                    </div>
+                    <div class="flex flex-col items-center gap-2">
+                        <label class="text-[9px] text-gray-400 uppercase tracking-widest"><i class="ph-fill ph-arrows-out"></i> Expansión</label>
+                        <input type="range" id="slider-zoom" min="0.5" max="3" step="0.1" value="1.5" title="Tamaño del mandala">
+                    </div>
+                    <div class="flex flex-col items-center gap-2">
+                        <label class="text-[9px] text-gray-400 uppercase tracking-widest"><i class="ph-fill ph-spinner"></i> Rotación</label>
+                        <input type="range" id="slider-rotation" min="0" max="0.01" step="0.001" value="0.002" title="Velocidad de giro base">
+                    </div>
+                </div>
+
+                <!-- Cargar nuevo audio -->
+                <div class="shrink-0">
+                    <label class="w-12 h-12 rounded-full border border-gray-600 flex items-center justify-center hover:bg-gray-800 hover:border-kal-cyan hover:text-kal-cyan transition cursor-pointer" title="Cambiar Frecuencia">
+                        <i class="ph-bold ph-music-notes-plus text-xl"></i>
+                        <input type="file" id="audio-upload-2" accept="audio/*">
+                    </label>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+    <!-- EL CEREBRO DEL CALEIDOSCOPIO (JS) -->
+    <script>
+        // --- 1. VARIABLES DEL ENTORNO AUDIOVISUAL ---
+        let audioContext, analyser, source, audio;
+        let dataArray, bufferLength;
+        let isPlaying = false;
+
+        // Variables del Canvas
+        const canvas = document.getElementById('kaleidoscope-canvas');
+        const ctx = canvas.getContext('2d', { alpha: false }); // Optimización
+        let width, height, centerX, centerY;
+        let globalRotation = 0;
+        let globalHue = 0;
+
+        // Elementos UI
+        const uploadScreen = document.getElementById('upload-screen');
+        const playerHud = document.getElementById('player-hud');
+        const trackNameEl = document.getElementById('track-name');
+        const btnPlay = document.getElementById('btn-play');
+        const playIcon = document.getElementById('play-icon');
+        const statusText = document.getElementById('status-text');
+
+        // Controles Reactivos
+        const sliderSegments = document.getElementById('slider-segments');
+        const sliderZoom = document.getElementById('slider-zoom');
+        const sliderRotation = document.getElementById('slider-rotation');
+
+        // --- 2. CONFIGURACIÓN DEL LIENZO ---
+        function resizeCanvas() {
+            width = window.innerWidth;
+            height = window.innerHeight;
+            canvas.width = width;
+            canvas.height = height;
+            centerX = width / 2;
+            centerY = height / 2;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        // --- 3. SISTEMA DE INYECCIÓN DE AUDIO ---
+        function initAudio(file) {
+            if (!file) return;
+
+            // Resetear audio anterior si existe
+            if (audio) {
+                audio.pause();
+                URL.revokeObjectURL(audio.src);
+            } else {
+                audio = new Audio();
+                setupAudioNodes();
+            }
+
+            // Desbloquear AudioContext si está suspendido
+            if (audioContext && audioContext.state === 'suspended') {
+                audioContext.resume();
+            }
+
+            audio.src = URL.createObjectURL(file);
+            trackNameEl.innerText = file.name.replace(/\.[^/.]+$/, "");
+            
+            audio.load();
+            audio.play().then(() => {
+                isPlaying = true;
+                playIcon.className = "ph-fill ph-pause text-2xl";
+                statusText.innerText = "MATRIZ ACTIVA";
+                statusText.className = "text-[10px] text-kal-cyan uppercase tracking-widest font-bold";
+            }).catch(e => console.error("Autoplay bloqueado:", e));
+
+            audio.addEventListener('ended', () => {
+                isPlaying = false;
+                playIcon.className = "ph-fill ph-play text-2xl";
+                statusText.innerText = "ESPERANDO FRECUENCIA";
+            });
+
+            // Transición de UI
+            uploadScreen.classList.remove('active-ui');
+            uploadScreen.classList.add('hidden-ui');
+            playerHud.classList.remove('hidden-ui');
+            playerHud.classList.add('active-ui');
+
+            // Iniciar bucle de renderizado si no está corriendo
+            requestAnimationFrame(drawKaleidoscope);
+        }
+
+        function setupAudioNodes() {
+            const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+            audioContext = new AudioContextClass();
+            analyser = audioContext.createAnalyser();
+            
+            // Resolución del análisis FFT
+            analyser.fftSize = 512; 
+            bufferLength = analyser.frequencyBinCount;
+            dataArray = new Uint8Array(bufferLength);
+
+            source = audioContext.createMediaElementSource(audio);
+            source.connect(analyser);
+            analyser.connect(audioContext.destination);
+        }
+
+        // Eventos de botones
+        document.getElementById('audio-upload').addEventListener('change', e => initAudio(e.target.files[0]));
+        document.getElementById('audio-upload-2').addEventListener('change', e => initAudio(e.target.files[0]));
+
+        btnPlay.addEventListener('click', () => {
+            if (!audio) return;
+            if (audioContext && audioContext.state === 'suspended') audioContext.resume();
+
+            if (isPlaying) {
+                audio.pause();
+                isPlaying = false;
+                playIcon.className = "ph-fill ph-play text-2xl";
+            } else {
+                audio.play();
+                isPlaying = true;
+                playIcon.className = "ph-fill ph-pause text-2xl";
+            }
+        });
+
+        // --- 4. MOTOR SINESTÉSICO (DIBUJO DEL CALEIDOSCOPIO) ---
+        function drawKaleidoscope() {
+            requestAnimationFrame(drawKaleidoscope);
+
+            // Fondo con efecto de estela (Motion Blur)
+            // Llenamos con negro casi opaco. Si el bajo es fuerte, se aclara para simular un flash.
+            ctx.fillStyle = 'rgba(1, 0, 5, 0.2)'; 
+            ctx.fillRect(0, 0, width, height);
+
+            if (!isPlaying || !analyser) {
+                // Pequeña animación idle si está en pausa
+                globalRotation += 0.001;
+                drawIdlePattern();
+                return;
+            }
+
+            // Extraer datos de la música
+            analyser.getByteFrequencyData(dataArray);
+
+            // Calcular el "Bajo" (promedio de las primeras frecuencias) para darle reactividad global
+            let bassSum = 0;
+            for(let i = 0; i < 10; i++) bassSum += dataArray[i];
+            let bass = bassSum / 10; // Valor entre 0 y 255
+
+            // Controles desde la UI
+            const segments = parseInt(sliderSegments.value);
+            const zoom = parseFloat(sliderZoom.value);
+            const baseRotSpeed = parseFloat(sliderRotation.value);
+
+            // Dinámica del tiempo basada en la música
+            globalRotation += baseRotSpeed + (bass * 0.00005);
+            globalHue += 0.5 + (bass * 0.02);
+            if (globalHue > 360) globalHue = 0;
+
+            const sliceAngle = (Math.PI * 2) / segments;
+
+            // Iniciar dibujo desde el centro
+            ctx.save();
+            ctx.translate(centerX, centerY);
+            ctx.rotate(globalRotation);
+
+            // Dibujar los segmentos del caleidoscopio
+            for (let i = 0; i < segments; i++) {
+                ctx.save();
+                ctx.rotate(i * sliceAngle);
+
+                // MAGIA: Alternar reflejo para que sea un verdadero espejo caleidoscópico
+                if (i % 2 !== 0) {
+                    ctx.scale(1, -1); 
+                }
+
+                // Dibujar el patrón de ondas dentro de este segmento
+                ctx.beginPath();
+                ctx.moveTo(0, 0);
+
+                // Solo usamos la primera mitad de las frecuencias (las más interesantes)
+                const dataLimit = Math.floor(bufferLength / 2); 
+                
+                for (let j = 0; j < dataLimit; j++) {
+                    const value = dataArray[j];
+                    const percent = j / dataLimit;
+                    
+                    // Limitar el ángulo al tamaño del "slice" para que encaje
+                    const angle = percent * sliceAngle; 
+                    
+                    // El radio depende del valor del audio y del Zoom
+                    // Añadimos el 'bass' para que todo palpite
+                    const radius = (value / 255) * (Math.min(centerX, centerY) * zoom) + (bass * zoom * 0.5);
+
+                    const x = Math.cos(angle) * radius;
+                    const y = Math.sin(angle) * radius;
+
+                    // Curvas suaves en lugar de líneas rectas
+                    if (j === 0) {
+                        ctx.lineTo(x, y);
+                    } else {
+                        // Un bezier simple para suavizar los picos de las frecuencias
+                        const prevPercent = (j - 1) / dataLimit;
+                        const prevAngle = prevPercent * sliceAngle;
+                        const prevRadius = (dataArray[j - 1] / 255) * (Math.min(centerX, centerY) * zoom) + (bass * zoom * 0.5);
+                        
+                        const cpX = Math.cos(prevAngle + (angle - prevAngle)/2) * prevRadius;
+                        const cpY = Math.sin(prevAngle + (angle - prevAngle)/2) * prevRadius;
+                        
+                        ctx.quadraticCurveTo(cpX, cpY, x, y);
+                    }
+                }
+
+                // Estilo del trazo reactivo
+                const segmentHue = (globalHue + (i * (360 / segments))) % 360;
+                ctx.lineWidth = 2 + (bass / 100);
+                
+                // Color del borde
+                ctx.strokeStyle = `hsl(${segmentHue}, 100%, 60%)`;
+                
+                // Relleno semi-transparente para un efecto más sólido y luminoso
+                ctx.fillStyle = `hsla(${segmentHue}, 100%, 50%, ${0.05 + (bass/255)*0.1})`;
+                
+                ctx.fill();
+                ctx.stroke();
+
+                // Decoración extra: Puntos brillantes en los picos altos
+                if (bass > 150) {
+                    const peakValue = dataArray[10]; // Tomar un bin específico
+                    const r = (peakValue / 255) * (Math.min(centerX, centerY) * zoom * 1.2);
+                    const ax = Math.cos(sliceAngle / 2) * r;
+                    const ay = Math.sin(sliceAngle / 2) * r;
+                    
+                    ctx.beginPath();
+                    ctx.arc(ax, ay, bass / 50, 0, Math.PI * 2);
+                    ctx.fillStyle = `hsl(${segmentHue + 180}, 100%, 70%)`;
+                    ctx.fill();
+                }
+
+                ctx.restore();
+            }
+            ctx.restore();
+        }
+
+        // Patrón inactivo cuando no hay música
+        function drawIdlePattern() {
+            ctx.save();
+            ctx.translate(centerX, centerY);
+            ctx.rotate(globalRotation);
+            
+            const segments = parseInt(sliderSegments.value);
+            const sliceAngle = (Math.PI * 2) / segments;
+            
+            for(let i=0; i<segments; i++){
+                ctx.save();
+                ctx.rotate(i * sliceAngle);
+                ctx.beginPath();
+                ctx.moveTo(0,0);
+                ctx.lineTo(Math.cos(sliceAngle/2) * 100, Math.sin(sliceAngle/2) * 100);
+                ctx.strokeStyle = `rgba(0, 240, 255, ${0.1 + Math.sin(globalRotation*5)*0.05})`;
+                ctx.lineWidth = 1;
+                ctx.stroke();
+                ctx.restore();
+            }
+            ctx.restore();
+        }
+
+        // Pantalla de inicio con mandala estático sutil
+        ctx.fillStyle = '#010005';
+        ctx.fillRect(0,0, canvas.width, canvas.height);
+        setInterval(() => {
+            if(!isPlaying && !audio) {
+                ctx.fillStyle = 'rgba(1, 0, 5, 0.1)';
+                ctx.fillRect(0,0, canvas.width, canvas.height);
+                globalRotation += 0.002;
+                drawIdlePattern();
+            }
+        }, 1000/60);
+
+    </script>
+</body>
+</html>
