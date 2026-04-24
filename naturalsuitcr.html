@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Natural Suit CR | Cannabis Medicinal y Bienestar</title>
+    <meta name="description" content="Apoyando la legalización del Cannabis Medicinal en Costa Rica. Flores de Cáñamo, Aceites Premium, Bebidas y Cosmética CBD.">
+    
+    <!-- Librerías de Diseño e Iconos -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
+    <!-- React Core -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+    <!-- Fuentes: Roboto para un toque clínico y moderno -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&family=Playfair+Display:ital,wght@0,600;1,400&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Roboto', 'sans-serif'],
+                        serif: ['Playfair Display', 'serif'],
+                    },
+                    colors: {
+                        hemp: {
+                            dark: '#061b10',     // Fondo muy oscuro con tinte verde
+                            forest: '#0f3b25',   // Verde bosque
+                            primary: '#16a34a',  // Verde hoja vibrante
+                            gold: '#fbbf24',     // Dorado para acentos premium
+                            light: '#f0fdf4',    // Blanco con toque verde
+                            text: '#cbd5e1'      // Texto gris claro
+                        }
+                    },
+                    animation: {
+                        'float': 'float 6s ease-in-out infinite',
+                        'pulse-glow': 'pulseGlow 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-10px)' },
+                        },
+                        pulseGlow: {
+                            '0%, 100%': { opacity: 1, boxShadow: '0 0 20px rgba(22, 163, 74, 0.4)' },
+                            '50%': { opacity: .7, boxShadow: '0 0 40px rgba(22, 163, 74, 0.8)' },
+                        }
+                    }
+                }
+            }
+        }
+        marked.setOptions({ breaks: true });
+    </script>
+
+    <style>
+        body { background-color: #061b10; color: #f0fdf4; overflow-x: hidden; }
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #061b10; }
+        ::-webkit-scrollbar-thumb { background: #16a34a; border-radius: 4px; }
+        
+        .glass-nav {
+            background: rgba(6, 27, 16, 0.85);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(22, 163, 74, 0.2);
+        }
+
+        .glass-panel {
+            background: rgba(15, 59, 37, 0.6);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(22, 163, 74, 0.3);
+        }
+
+        .markdown-body p { margin-bottom: 0.75rem; line-height: 1.6; }
+        .markdown-body strong { color: #fbbf24; font-weight: 600; }
+        .markdown-body ul { list-style-type: disc; padding-left: 1.5rem; margin-bottom: 0.75rem; color: #cbd5e1; }
+    </style>
+</head>
+<body class="antialiased selection:bg-hemp-primary selection:text-white">
+
+    <div id="root" class="min-h-screen flex flex-col relative"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect, useRef } = React;
+
+        // ==========================================
+        // COMPONENTES DE LA PÁGINA WEB
+        // ==========================================
+        
+        const Navbar = () => {
+            const [scrolled, setScrolled] = useState(false);
+            useEffect(() => {
+                const handleScroll = () => setScrolled(window.scrollY > 50);
+                window.addEventListener('scroll', handleScroll);
+                return () => window.removeEventListener('scroll', handleScroll);
+            }, []);
+
+            return (
+                <nav className={`fixed w-full z-40 transition-all duration-300 ${scrolled ? 'glass-nav py-3' : 'bg-transparent py-6'}`}>
+                    <div className="max-w-7xl mx-auto px-6 flex justify-between items-center">
+                        <div className="flex items-center gap-3">
+                            <i className="ph-fill ph-leaf text-3xl text-hemp-primary"></i>
+                            <span className="font-sans font-black text-2xl tracking-tighter text-white uppercase">
+                                Natural Suit <span className="text-hemp-primary">CR</span>
+                            </span>
+                        </div>
+                        <div className="hidden md:flex items-center gap-8 font-sans text-sm font-bold uppercase tracking-widest text-hemp-text">
+                            <a href="#movimiento" className="hover:text-hemp-primary transition">El Movimiento</a>
+                            <a href="#productos" className="hover:text-hemp-primary transition">Premium CBD</a>
+                            <a href="#calidad" className="hover:text-hemp-primary transition">Calidad Legal</a>
+                        </div>
+                        <a href="https://www.naturalsuitcr.com/" target="_blank" className="hidden md:flex px-6 py-2.5 bg-hemp-primary hover:bg-green-600 text-white font-bold rounded-full transition shadow-[0_0_15px_rgba(22,163,74,0.4)] text-sm">
+                            Tienda Oficial
+                        </a>
+                    </div>
+                </nav>
+            );
+        };
+
+        const Hero = () => (
+            <section className="relative w-full h-[90vh] flex items-center justify-center overflow-hidden">
+                <div className="absolute inset-0 z-0">
+                    <img 
+                        src="https://images.unsplash.com/photo-1606813959828-b8089cb13f28?q=80&w=2000&auto=format&fit=crop" 
+                        alt="Planta de Cannabis" 
+                        className="w-full h-full object-cover opacity-30 mix-blend-luminosity"
+                        onError={(e) => e.target.src='https://images.unsplash.com/photo-1556928045-16f7f50be0f3?q=80&w=2000&auto=format&fit=crop'}
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-hemp-dark via-hemp-dark/80 to-transparent"></div>
+                </div>
+
+                <div className="relative z-10 text-center px-4 max-w-5xl mx-auto mt-16">
+                    <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-hemp-forest/80 border border-hemp-primary/50 text-hemp-gold text-xs font-bold uppercase tracking-widest mb-6">
+                        <i className="ph-fill ph-warning-circle"></i> Solo para mayores de edad (+18)
+                    </div>
+                    <h1 className="font-sans text-5xl md:text-7xl font-black text-white mb-6 leading-tight uppercase tracking-tighter">
+                        El Derecho a <span className="text-transparent bg-clip-text bg-gradient-to-r from-hemp-primary to-green-300">Sanar</span>
+                    </h1>
+                    <p className="font-serif italic text-xl md:text-2xl text-hemp-text mb-10 max-w-3xl mx-auto">
+                        Uniendo voces por la legalización del Cannabis Medicinal en Costa Rica. Bienestar natural, ciencia y libertad para quienes lo necesitan.
+                    </p>
+                    <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+                        <a href="#movimiento" className="w-full sm:w-auto px-8 py-4 bg-hemp-primary hover:bg-green-600 text-white font-bold rounded-full transition shadow-[0_0_20px_rgba(22,163,74,0.4)] text-sm uppercase tracking-widest text-center">
+                            Únete al Movimiento
+                        </a>
+                        <a href="#productos" className="w-full sm:w-auto px-8 py-4 glass-panel text-white hover:text-hemp-gold font-bold rounded-full transition text-sm uppercase tracking-widest text-center">
+                            Descubre Natural Suit
+                        </a>
+                    </div>
+                </div>
+            </section>
+        );
+
+        const MovementSection = () => (
+            <section id="movimiento" className="py-24 bg-hemp-dark relative border-y border-hemp-forest">
+                <div className="max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-16 items-center">
+                    <div>
+                        <h2 className="font-sans text-xs uppercase tracking-[0.2em] text-hemp-gold font-bold mb-3">Activismo Consciente</h2>
+                        <h3 className="font-sans text-4xl md:text-5xl font-black text-white mb-6 leading-tight">La Marcha Nacional en Costa Rica</h3>
+                        <p className="text-hemp-text leading-relaxed mb-6 text-lg">
+                            Estamos en un momento histórico. La legalización del cannabis medicinal no es solo un tema de economía, es un tema de <strong>salud pública, derechos humanos y compasión</strong>. 
+                        </p>
+                        <p className="text-hemp-text leading-relaxed mb-8 text-lg">
+                            Cientos de pacientes con dolor crónico, epilepsia, ansiedad y trastornos neurológicos encuentran en los cannabinoides (CBD y THC medicinal) la calidad de vida que la medicina tradicional no ha logrado brindarles sin efectos secundarios severos. Es hora de regular, educar y sanar.
+                        </p>
+                        <div className="grid grid-cols-2 gap-6">
+                            <div className="border-l-2 border-hemp-primary pl-4">
+                                <h4 className="text-white font-bold text-xl mb-1">Bienestar</h4>
+                                <p className="text-sm text-hemp-text">Alternativas naturales y seguras para el dolor.</p>
+                            </div>
+                            <div className="border-l-2 border-hemp-primary pl-4">
+                                <h4 className="text-white font-bold text-xl mb-1">Economía</h4>
+                                <p className="text-sm text-hemp-text">Desarrollo agrario e industrial para el país.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div className="relative">
+                        <div className="absolute inset-0 bg-hemp-primary/20 blur-3xl rounded-full"></div>
+                        <img 
+                            src="https://images.unsplash.com/photo-1612542491410-63eb077d33d8?q=80&w=800&auto=format&fit=crop" 
+                            alt="Cannabis Medicinal" 
+                            className="relative z-10 w-full h-[500px] object-cover rounded-2xl border border-hemp-forest shadow-2xl"
+                            onError={(e) => e.target.src='https://images.unsplash.com/photo-1558234850-8b1eaab3795b?q=80&w=800&auto=format&fit=crop'}
+                        />
+                    </div>
+                </div>
+            </section>
+        );
+
+        const ProductsSection = () => {
+            // SOBERANO: Aquí están los 4 productos solicitados con sus enlaces y descripciones optimizadas
+            const products = [
+                { 
+                    title: "Flores de Cáñamo", 
+                    desc: "Cultivo premium de cáñamo con altos niveles de CBD y terpenos naturales. Relajación pura sin efectos psicoactivos, ideal para vaporizar o preparar infusiones reconfortantes.", 
+                    icon: "ph-plant", 
+                    img: "https://images.unsplash.com/photo-1556928045-16f7f50be0f3?q=80&w=600&auto=format&fit=crop", 
+                    link: "https://www.naturalsuitcr.com/shop/category/flores-de-canamo-1" 
+                },
+                { 
+                    title: "Aceites de CBD Premium", 
+                    desc: "Extractos puros sublinguales (Full y Broad Spectrum). Dosificación exacta para aliviar dolores, reducir la ansiedad y mejorar profundamente la calidad de tu descanso.", 
+                    icon: "ph-drop", 
+                    img: "https://images.unsplash.com/photo-1608248543803-ba4f8c70ae0b?q=80&w=600&auto=format&fit=crop", 
+                    link: "https://www.naturalsuitcr.com/shop/category/aceites-de-cbd-premium-4" 
+                },
+                { 
+                    title: "Bebidas CBD", 
+                    desc: "Refrescantes y funcionales. Una forma deliciosa, práctica y discreta de integrar los beneficios medicinales y calmantes del CBD en tu rutina diaria, estés donde estés.", 
+                    icon: "ph-brandy", 
+                    img: "https://images.unsplash.com/photo-1544145945-f90425340c7e?q=80&w=600&auto=format&fit=crop", 
+                    link: "https://www.naturalsuitcr.com/shop/category/bebidas-cbd-10" 
+                },
+                { 
+                    title: "Cosmética: Crema Antiarrugas", 
+                    desc: "Poderosa sinergia de CBD y Ácido Hialurónico. Nutrición celular profunda, propiedades antiinflamatorias y regeneración total para el cuidado premium de tu piel.", 
+                    icon: "ph-sparkle", 
+                    img: "https://images.unsplash.com/photo-1556228578-0d85b1a4d571?q=80&w=600&auto=format&fit=crop", 
+                    link: "https://www.naturalsuitcr.com/shop/cosmeticos-2/crema-antiarrugas-con-cbd-y-acido-hialuronico-6" 
+                }
+            ];
+
+            return (
+                <section id="productos" className="py-24 bg-hemp-forest/20 relative">
+                    <div className="max-w-7xl mx-auto px-6">
+                        <div className="text-center mb-16 max-w-3xl mx-auto">
+                            <h2 className="font-sans text-4xl md:text-5xl font-black text-white mb-6">El Estándar Natural Suit CR</h2>
+                            <p className="text-hemp-text text-lg">Nuestros productos son sometidos a rigurosas pruebas de laboratorio para asegurar niveles legales, libres de pesticidas y con la máxima eficacia terapéutica.</p>
+                        </div>
+                        
+                        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+                            {products.map((prod, i) => (
+                                <a key={i} href={prod.link} target="_blank" className="glass-panel rounded-2xl overflow-hidden group hover:-translate-y-2 transition-all duration-300 block cursor-pointer">
+                                    <div className="h-48 relative overflow-hidden">
+                                        <div className="absolute inset-0 bg-hemp-dark/40 group-hover:bg-transparent transition-colors z-10"></div>
+                                        <img 
+                                            src={prod.img} 
+                                            alt={prod.title} 
+                                            className="w-full h-full object-cover transform group-hover:scale-110 transition duration-700" 
+                                            onError={(e) => e.target.src='https://images.unsplash.com/photo-1612542491410-63eb077d33d8?q=80&w=600&auto=format&fit=crop'}
+                                        />
+                                        <div className="absolute top-4 right-4 z-20 w-10 h-10 bg-hemp-primary rounded-full flex items-center justify-center text-white shadow-lg">
+                                            <i className={`ph-fill ${prod.icon} text-xl`}></i>
+                                        </div>
+                                    </div>
+                                    <div className="p-6 flex flex-col h-[calc(100%-12rem)]">
+                                        <h3 className="text-white font-bold text-xl mb-2 group-hover:text-hemp-gold transition-colors">{prod.title}</h3>
+                                        <p className="text-sm text-hemp-text leading-relaxed flex-1">{prod.desc}</p>
+                                        <div className="mt-4 pt-4 border-t border-hemp-primary/20 text-hemp-primary text-xs font-bold uppercase tracking-widest flex items-center gap-2 group-hover:gap-3 transition-all">
+                                            Comprar en Tienda <i className="ph-bold ph-arrow-right"></i>
+                                        </div>
+                                    </div>
+                                </a>
+                            ))}
+                        </div>
+                        <div className="mt-12 text-center">
+                            <a href="https://www.naturalsuitcr.com/" target="_blank" className="inline-flex items-center gap-2 px-8 py-3 bg-hemp-forest hover:bg-hemp-primary text-white border border-hemp-primary font-bold uppercase tracking-widest text-sm rounded-full transition shadow-lg">
+                                Ver Catálogo Completo
+                            </a>
+                        </div>
+                    </div>
+                </section>
+            );
+        };
+
+        // ==========================================
+        // WIDGET CHATBOT IA MEDICINAL (EL DIFERENCIADOR)
+        // ==========================================
+        const MedicinalChatbot = () => {
+            const [isOpen, setIsOpen] = useState(false);
+            const [messages, setMessages] = useState([
+                { role: 'ai', content: 'Hola. Soy el **Especialista Botánico IA**. Estoy aquí para educar y resolver dudas sobre los beneficios del CBD, el THC medicinal y el marco legal del Cáñamo en Costa Rica. ¿Qué deseas saber?' }
+            ]);
+            const [input, setInput] = useState('');
+            const [isLoading, setIsLoading] = useState(false);
+            const messagesEndRef = useRef(null);
+
+            // SOBERANO: Configura aquí tu URL de Heroku (Infiniti Pits / Abunda AI)
+            const API_URL = "https://abunda-bca693eb3dbb.herokuapp.com/api/chat";
+
+            useEffect(() => { messagesEndRef.current?.scrollIntoView({ behavior: "smooth" }); }, [messages, isOpen]);
+
+            const handleSend = async () => {
+                if (!input.trim()) return;
+                
+                const userText = input;
+                setMessages(prev => [...prev, { role: 'user', content: userText }]);
+                setInput('');
+                setIsLoading(true);
+
+                // 💡 INYECCIÓN DE PROMPT (Seguridad y Foco Medicinal)
+                const strictPrompt = `
+                    [INSTRUCCIÓN DE SISTEMA MUY ESTRICTA]: 
+                    Eres un Médico y Especialista Botánico de la marca "Natural Suit CR" en Costa Rica.
+                    TU ÚNICO PROPÓSITO: Hablar sobre los beneficios científicos y médicos del Cannabis, el Cáñamo (Hemp), el CBD (Cannabidiol) y el THC medicinal para adultos mayores de 18 años.
+                    TAMBIÉN PUEDES: Apoyar la legalización del cannabis medicinal en Costa Rica con argumentos de salud y economía. Hablar sobre Flores CBD, Aceites Premium, Bebidas CBD y Cosméticos (Crema Antiarrugas CBD).
+                    REGLA DE ORO: Si el usuario te pregunta cualquier otra cosa (matemáticas, programación, chistes, otras drogas, noticias generales), DEBES NEGARTE CORTÉSMENTE y decirle que solo estás autorizado para hablar de la medicina cannábica y Natural Suit CR. 
+                    TONO: Educativo, científico, empático, maduro y profesional.
+                    MENSAJE DEL USUARIO: ${userText}
+                `;
+
+                try {
+                    const response = await fetch(API_URL, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ 
+                            message: strictPrompt,
+                            history: [] // Historial simplificado para el widget
+                        })
+                    });
+
+                    if (!response.ok) throw new Error('Network response was not ok');
+                    const data = await response.json();
+                    
+                    setMessages(prev => [...prev, { role: 'ai', content: data.response }]);
+                } catch (error) {
+                    setMessages(prev => [...prev, { role: 'ai', content: "⚠️ *Error de red:* Servidor saturado. Por favor, visita [Natural Suit CR](https://www.naturalsuitcr.com) para más información." }]);
+                } finally {
+                    setIsLoading(false);
+                }
+            };
+
+            return (
+                <div className="fixed bottom-6 right-6 z-50">
+                    
+                    {/* Ventana de Chat */}
+                    {isOpen && (
+                        <div className="w-[340px] md:w-[380px] h-[550px] max-h-[85vh] mb-4 glass-panel rounded-2xl flex flex-col overflow-hidden animate-fade-in-up shadow-[0_10px_40px_rgba(0,0,0,0.8)] border border-hemp-primary/40">
+                            {/* Header Chat */}
+                            <div className="bg-gradient-to-r from-hemp-forest to-hemp-dark p-4 flex justify-between items-center text-white border-b border-hemp-primary/30">
+                                <div className="flex items-center gap-3">
+                                    <div className="relative">
+                                        <div className="w-10 h-10 rounded-full bg-hemp-primary/20 border border-hemp-primary flex items-center justify-center">
+                                            <i className="ph-fill ph-plant text-xl text-hemp-primary"></i>
+                                        </div>
+                                        <span className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-hemp-dark rounded-full"></span>
+                                    </div>
+                                    <div>
+                                        <h3 className="font-bold text-sm font-sans tracking-wide">Dr. Botánico IA</h3>
+                                        <p className="text-[10px] text-hemp-gold font-mono uppercase tracking-widest">Natural Suit Expert</p>
+                                    </div>
+                                </div>
+                                <button onClick={() => setIsOpen(false)} className="text-white/60 hover:text-white bg-black/30 p-1.5 rounded-lg transition"><i className="ph-bold ph-x text-lg"></i></button>
+                            </div>
+
+                            {/* Mensajes */}
+                            <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-hemp-dark/95">
+                                {messages.map((msg, idx) => (
+                                    <div key={idx} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+                                        <div className={`max-w-[85%] p-3 text-sm rounded-2xl shadow-md markdown-body ${
+                                            msg.role === 'user' 
+                                            ? 'bg-hemp-primary text-white rounded-br-none' 
+                                            : 'bg-hemp-forest border border-hemp-primary/20 text-gray-200 rounded-bl-none'
+                                        }`} dangerouslySetInnerHTML={{__html: marked.parse(msg.content)}}>
+                                        </div>
+                                    </div>
+                                ))}
+                                {isLoading && (
+                                    <div className="flex justify-start">
+                                        <div className="bg-hemp-forest border border-hemp-primary/20 p-4 rounded-2xl rounded-bl-none flex items-center gap-2">
+                                            <i className="ph-bold ph-circle-notch animate-spin text-hemp-primary text-lg"></i>
+                                            <span className="text-xs text-hemp-text font-mono">Analizando base médica...</span>
+                                        </div>
+                                    </div>
+                                )}
+                                <div ref={messagesEndRef} />
+                            </div>
+
+                            {/* Input */}
+                            <div className="p-3 bg-hemp-dark border-t border-hemp-forest">
+                                <div className="relative flex items-center">
+                                    <input 
+                                        type="text" 
+                                        value={input}
+                                        onChange={(e) => setInput(e.target.value)}
+                                        onKeyPress={e => e.key === 'Enter' && handleSend()}
+                                        placeholder="Pregunta sobre CBD, dosis o legalización..."
+                                        className="w-full bg-hemp-forest/50 border border-hemp-forest rounded-xl pl-4 pr-12 py-3 text-sm text-white outline-none focus:border-hemp-primary transition font-sans placeholder:text-gray-500"
+                                        disabled={isLoading}
+                                    />
+                                    <button 
+                                        onClick={handleSend}
+                                        disabled={!input.trim() || isLoading}
+                                        className="absolute right-1 w-10 h-10 bg-hemp-primary text-white rounded-xl flex items-center justify-center hover:bg-green-500 transition disabled:opacity-50"
+                                    >
+                                        <i className="ph-bold ph-paper-plane-right"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Botón Flotante */}
+                    {!isOpen && (
+                        <div className="flex flex-col items-end gap-3 group">
+                            <div className="bg-hemp-forest border border-hemp-primary text-white text-xs px-4 py-2 rounded-xl shadow-lg relative opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                                <span className="font-bold text-hemp-gold">Chat Clínico</span> <br/> Resuelve tus dudas sobre CBD.
+                                <div className="absolute -bottom-1.5 right-6 w-3 h-3 bg-hemp-forest border-r border-b border-hemp-primary transform rotate-45"></div>
+                            </div>
+                            <button 
+                                onClick={() => setIsOpen(true)}
+                                className="w-16 h-16 bg-hemp-primary hover:bg-green-500 text-white rounded-full flex items-center justify-center shadow-[0_0_20px_rgba(22,163,74,0.6)] transition transform hover:scale-105 animate-pulse-glow"
+                            >
+                                <i className="ph-fill ph-plant text-3xl"></i>
+                            </button>
+                        </div>
+                    )}
+                </div>
+            );
+        };
+
+        const App = () => {
+            return (
+                <React.Fragment>
+                    <Navbar />
+                    <main className="flex-1">
+                        <Hero />
+                        <MovementSection />
+                        <ProductsSection />
+                    </main>
+                    <footer className="bg-black py-8 border-t border-hemp-forest text-center px-6">
+                        <i className="ph-fill ph-leaf text-2xl text-hemp-primary mb-4"></i>
+                        <p className="text-hemp-text text-sm font-sans">
+                            © 2026 Natural Suit CR. Uso exclusivo para mayores de edad.<br/>
+                            Promoviendo el bienestar y la legalización responsable en Costa Rica.
+                        </p>
+                    </footer>
+                    <MedicinalChatbot />
+                </React.Fragment>
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
