@@ -9,7 +9,7 @@
     <!-- ========================================== -->
     <title>INFINITI IA | Creadores de Sitios Web con Inteligencia Artificial a Bajo Costo</title>
     <meta name="description" content="Infiniti IA by W Studio. Agencia global de Inteligencia Artificial. Desarrollo de sitios web con IA a bajo costo, automatización empresarial, chatbots con voz y marketing cuántico a nivel internacional.">
-    <meta name="keywords" content="crear sitio web con ia, inteligencia artificial, AI website builder, low cost web development, desarrollo web económico, automatización empresarial, agentes de ia, chatbots con voz, DALL-E 3, GPT-4, Infiniti IA, W Studio, marketing cuántico, AI agency, costa rica, internacional, automatización de negocios">
+    <meta name="keywords" content="crear sitio web con ia, inteligencia artificial, AI website builder, low cost web development, desarrollo web económico, automatización empresarial, agentes de ia, chatbots con voz, generación de imágenes IA, modelos OpenAI, Infiniti IA, W Studio, marketing cuántico, AI agency, costa rica, internacional, automatización de negocios">
     <meta name="author" content="Apollo Sol Invictus - W Studio">
     <meta name="robots" content="index, follow">
     <link rel="canonical" href="https://infiniti-ia.com/">
@@ -44,7 +44,7 @@
       "name": "INFINITI IA by W Studio",
       "url": "https://infiniti-ia.com/",
       "logo": "https://infiniti-ia.com/images/A Mark Small.png",
-      "description": "Agencia internacional de Inteligencia Artificial especializada en creación de sitios web a bajo costo, automatización empresarial, herramientas DALL-E 3 y marketing cuántico.",
+      "description": "Agencia internacional de Inteligencia Artificial especializada en creación de sitios web a bajo costo, automatización empresarial, herramientas de generación de imágenes con OpenAI y marketing cuántico.",
       "contactPoint": {
         "@type": "ContactPoint",
         "contactType": "Customer Service",
@@ -176,10 +176,10 @@
         const { useState, useEffect, useRef } = React;
 
         // ==========================================
-        // CONFIGURACIÓN DE APIS (HEROKU BACKENDS)
+        // CONFIGURACIÓN DE APIS (VERCEL FUNCTIONS)
         // ==========================================
-        const API_URL_CHAT = "https://abunda-bca693eb3dbb.herokuapp.com";
-        const API_URL_IMAGE = "https://marketing-ia-dca462ac6c86.herokuapp.com";
+        const API_ENDPOINT_CHAT = "/api/chat";
+        const API_ENDPOINT_IMAGE = "/api/image";
 
         // ==========================================
         // INTEGRACIÓN GOOGLE WORKSPACE
@@ -430,7 +430,7 @@
                 setLoading(true);
 
                 try {
-                    const response = await fetch(`${API_URL_CHAT}/api/chat`, {
+                    const response = await fetch(API_ENDPOINT_CHAT, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ 
@@ -569,7 +569,7 @@
             );
         };
 
-        // --- SUBCOMPONENTE: GENERADOR DE IMÁGENES DALL-E 3 ---
+        // --- SUBCOMPONENTE: GENERADOR DE IMÁGENES OPENAI ---
         const ImageForge = () => {
             const [prompt, setPrompt] = useState("");
             const [imageUrl, setImageUrl] = useState("");
@@ -583,7 +583,7 @@
                 setImageUrl("");
 
                 try {
-                    const response = await fetch(`${API_URL_IMAGE}/api/image`, {
+                    const response = await fetch(API_ENDPOINT_IMAGE, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ prompt: prompt })
@@ -613,7 +613,7 @@
                             <i className="ph-fill ph-magic-wand text-3xl text-nexus-pink"></i>
                             <div>
                                 <h3 className="font-display font-bold text-xl text-white">THE FORGE</h3>
-                                <p className="text-[10px] text-gray-400 font-mono uppercase tracking-widest">Motor DALL-E 3</p>
+                                    <p className="text-[10px] text-gray-400 font-mono uppercase tracking-widest">Motor OpenAI Image</p>
                             </div>
                         </div>
                         

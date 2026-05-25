@@ -279,8 +279,7 @@
             const [isLoading, setIsLoading] = useState(false);
             const messagesEndRef = useRef(null);
 
-            // SOBERANO: Configura aquí tu URL de Heroku (Infiniti Pits / Abunda AI)
-            const API_URL = "https://abunda-bca693eb3dbb.herokuapp.com";
+            const API_URL = "/api/chat";
 
             useEffect(() => { messagesEndRef.current?.scrollIntoView({ behavior: "smooth" }); }, [messages, isOpen]);
 

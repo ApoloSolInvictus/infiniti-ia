@@ -1,0 +1,13 @@
+{
+  "name": "infiniti-ia",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Static Infiniti IA website with Vercel serverless OpenAI API routes.",
+  "scripts": {
+    "dev": "vercel dev",
+    "deploy": "vercel deploy --prod"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

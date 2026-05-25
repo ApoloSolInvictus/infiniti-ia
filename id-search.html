@@ -104,8 +104,7 @@
         // ==========================================
         // CONFIGURACIÓN DEL BACKEND
         // ==========================================
-        // SOBERANO: Usa tu servidor de Heroku que ya tiene OpenAI configurado
-        const API_URL = "https://abunda-bca693eb3dbb.herokuapp.com/api/chat";
+        const API_URL = "/api/chat";
 
         const AUDITOR_PROMPT = `
             ERES: El "Auditor de Identidad Cuántica" del sistema Global-ID (Creado por Infiniti IA).
@@ -230,7 +229,7 @@
                                     
                                     <div className="mt-12 flex justify-center gap-8 opacity-50 grayscale">
                                         <div className="flex items-center gap-2 font-mono text-xs"><i className="ph-fill ph-google-logo text-xl"></i> Google Data</div>
-                                        <div className="flex items-center gap-2 font-mono text-xs"><i className="ph-fill ph-robot text-xl"></i> GPT-4o</div>
+                                    <div className="flex items-center gap-2 font-mono text-xs"><i className="ph-fill ph-robot text-xl"></i> OpenAI</div>
                                         <div className="flex items-center gap-2 font-mono text-xs"><i className="ph-fill ph-brain text-xl"></i> Gemini</div>
                                     </div>
                                 </div>
