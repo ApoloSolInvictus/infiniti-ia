@@ -41,3 +41,8 @@ seguridad sonora. La guia de compilacion y publicacion esta en
 La politica publica de privacidad para App Store Connect esta en
 `https://infiniti-ia.com/privacy` y tambien se puede abrir desde el menu nativo
 de la app.
+
+La app en español para `free.html` esta en
+`ios/FrecuenciasCurativasApp/FrecuenciasCurativasApp.xcodeproj` y abre
+`https://infiniti-ia.com/free`. Su politica publica de privacidad esta en
+`https://infiniti-ia.com/privacidad`.
