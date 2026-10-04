@@ -1,10 +1,10 @@
-# Healing Frequencies App for Android
+# Curati App for Android
 
 This project packages `https://infiniti-ia.com/english` in a native Android WebView for Google Play.
 
 ## Project details
 
-- App name: **Healing Frequencies App**
+- App name: **Curati App**
 - Package: `com.apolosolinvictus.healingfrequencies`
 - Privacy policy: `https://infiniti-ia.com/privacy`
 - Minimum SDK: 26
@@ -35,5 +35,7 @@ The web experience needs internet access. The app does not request microphone, c
 ## Build the release bundle
 
 Use **Build > Generate Signed Bundle / APK > Android App Bundle** in Android Studio, select the `release` variant, and sign it with a private upload keystore. Keep the keystore and passwords outside Git. Increase `versionCode` in `app/build.gradle` for every update.
+
+The signed bundle generated locally is `app/build/outputs/bundle/release/app-release.aab`. Upload that file to the Google Play internal-testing track after creating the app and the one-time product in Play Console. Back up the upload keystore and its password separately; losing them can prevent future updates.
 
 The project is ready to open in Android Studio. Final signing, Play App Signing, product configuration, and publication are completed in your Google Play Console account.

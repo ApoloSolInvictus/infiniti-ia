@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Healing Frequencies App</string>
+    <string name="app_name">Curati App</string>
     <string name="one_time_product_id">healing_frequencies_full_access</string>
     <string name="home_url">https://infiniti-ia.com/english</string>
     <string name="privacy_url">https://infiniti-ia.com/privacy</string>
-    <string name="loading">Loading Healing Frequencies</string>
+    <string name="loading">Loading Curati App</string>
     <string name="unable_to_connect">Unable to connect</string>
     <string name="retry">Try again</string>
     <string name="back">Back</string>
@@ -16,22 +16,22 @@
     <string name="sound_safety_message">This is an experimental sound experience, not a medical treatment or diagnostic tool.\n\nUse a comfortable volume, take breaks, and stop listening if you feel discomfort, dizziness, anxiety, or ringing in your ears.</string>
     <string name="privacy_policy">Privacy policy</string>
     <string name="done">Done</string>
-    <string name="share_chooser">Share Healing Frequencies App</string>
-    <string name="share_text">Healing Frequencies App: %1$s</string>
+    <string name="share_chooser">Share Curati App</string>
+    <string name="share_text">Curati App: %1$s</string>
     <string name="external_link_error">No app is available to open this link.</string>
     <string name="page_load_error">Healing Frequencies could not load. Check your internet connection and try again.</string>
-    <string name="purchase_title">Healing Frequencies App</string>
+    <string name="purchase_title">Curati App</string>
     <string name="purchase_description">One-time purchase for %1$s. Permanent access. No subscription, renewal, or further charges.</string>
     <string name="purchase_default_price">US$7.77 (one-time purchase)</string>
     <string name="purchase_buy">Buy permanent access</string>
     <string name="purchase_restore">Restore purchase</string>
-    <string name="purchase_menu">Healing Frequencies purchase</string>
+    <string name="purchase_menu">Curati App purchase</string>
     <string name="purchase_privacy">Privacy policy</string>
     <string name="purchase_loading">Checking your purchase with Google Play…</string>
     <string name="purchase_unavailable">The purchase is not available yet. Try again in a few moments.</string>
     <string name="purchase_pending">Your payment is pending confirmation from Google Play. Access will activate after confirmation.</string>
-    <string name="purchase_active">Purchase confirmed. Loading Healing Frequencies…</string>
-    <string name="purchase_restored">Purchase restored. Loading Healing Frequencies…</string>
+    <string name="purchase_active">Purchase confirmed. Loading Curati App…</string>
+    <string name="purchase_restored">Purchase restored. Loading Curati App…</string>
     <string name="purchase_canceled">Purchase canceled.</string>
     <string name="purchase_billing_error">Google Play could not complete the operation. Check your connection and try again.</string>
     <string name="purchase_terms">One-time payment. Permanent access activates after Google Play confirms the purchase. No free trial, automatic renewal, or later charges.</string>

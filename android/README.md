@@ -8,13 +8,13 @@ La política pública de privacidad para esta versión está en:
 
 `https://infiniti-ia.com/privacidad1`
 
-## Healing Frequencies App en inglés
+## Curati App en inglés
 
 El proyecto separado para la versión inglesa está en `android/HealingFrequenciesApp`. Presenta:
 
 `https://infiniti-ia.com/english`
 
-Usa el paquete `com.apolosolinvictus.healingfrequencies`, el nombre visible **Healing Frequencies App**, la política `https://infiniti-ia.com/privacy` y el producto no consumible `healing_frequencies_full_access` para una compra única de **US$7.77**, sin prueba gratuita, suscripción ni renovación. Abre esta carpeta como un proyecto independiente en Android Studio; no mezcles sus recursos ni su paquete con el proyecto español.
+Usa el paquete `com.apolosolinvictus.healingfrequencies`, el nombre visible **Curati App**, la política `https://infiniti-ia.com/privacy` y el producto no consumible `healing_frequencies_full_access` para una compra única de **US$7.77**, sin prueba gratuita, suscripción ni renovación. Abre esta carpeta como un proyecto independiente en Android Studio; no mezcles sus recursos ni su paquete con el proyecto español.
 
 ## Configuración
 
