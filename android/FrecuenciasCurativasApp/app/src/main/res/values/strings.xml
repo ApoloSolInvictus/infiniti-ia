@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Frecuencias Curativas App</string>
+    <string name="app_name">Curati App</string>
+    <string name="subscription_product_id">curati_premium</string>
     <string name="home_url">https://infiniti-ia.com/free</string>
     <string name="privacy_url">https://infiniti-ia.com/privacidad1</string>
     <string name="loading">Cargando Frecuencias Curativas</string>
@@ -14,8 +15,25 @@
     <string name="sound_safety">Seguridad sonora</string>
     <string name="privacy_policy">Política de privacidad</string>
     <string name="done">Listo</string>
-    <string name="share_chooser">Compartir Frecuencias Curativas</string>
-    <string name="share_text">Frecuencias Curativas App: %1$s</string>
+    <string name="share_chooser">Compartir Curati App</string>
+    <string name="share_text">Curati App: %1$s</string>
     <string name="external_link_error">No hay una aplicación disponible para abrir este enlace.</string>
     <string name="page_load_error">No se pudo cargar la página de Frecuencias Curativas. Comprueba tu conexión a internet e inténtalo de nuevo.</string>
+    <string name="premium_title">Curati Premium</string>
+    <string name="premium_description">Prueba gratis 3 días. Después %1$s. La suscripción se renueva automáticamente hasta que la canceles en Google Play.</string>
+    <string name="premium_default_price">US$10 al mes</string>
+    <string name="premium_subscribe">Comenzar prueba gratis</string>
+    <string name="premium_restore">Restaurar compra</string>
+    <string name="premium_continue_free">Continuar sin suscripción</string>
+    <string name="premium_manage">Gestionar suscripción</string>
+    <string name="premium_menu">Curati Premium</string>
+    <string name="premium_privacy">Política de privacidad</string>
+    <string name="premium_loading">Comprobando tu suscripción…</string>
+    <string name="premium_unavailable">La suscripción todavía no está disponible. Inténtalo de nuevo en unos momentos.</string>
+    <string name="premium_pending">Tu compra está pendiente de confirmación de Google Play.</string>
+    <string name="premium_active">Suscripción activa. Cargando Curati App…</string>
+    <string name="premium_restored">Suscripción restaurada.</string>
+    <string name="premium_canceled">Compra cancelada.</string>
+    <string name="premium_billing_error">Google Play no pudo completar la operación. Revisa tu conexión e inténtalo de nuevo.</string>
+    <string name="premium_terms">La prueba termina después de 3 días y se cobrará el precio mostrado por Google Play. Puedes cancelar en cualquier momento desde Google Play antes de la renovación.</string>
 </resources>

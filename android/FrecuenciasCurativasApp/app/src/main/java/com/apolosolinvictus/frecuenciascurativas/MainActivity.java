@@ -25,14 +25,19 @@ import android.webkit.WebViewClient;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupMenu;
 import android.widget.ProgressBar;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public final class MainActivity extends Activity {
+public final class MainActivity extends Activity implements BillingManager.Listener {
     private static final String TRUSTED_HOST = "infiniti-ia.com";
+    private static final int BACKGROUND = Color.rgb(3, 1, 8);
+    private static final int PANEL = Color.rgb(13, 5, 20);
+    private static final int ACCENT = Color.rgb(0, 240, 255);
 
     private LinearLayout toolbar;
     private ImageButton backButton;
@@ -42,32 +47,33 @@ public final class MainActivity extends Activity {
     private WebView webView;
     private ProgressBar progressBar;
     private View errorView;
+    private View subscriptionView;
+    private TextView subscriptionDescription;
+    private TextView subscriptionStatus;
+    private Button subscribeButton;
+    private BillingManager billingManager;
+    private boolean webContentUnlocked;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getWindow().setStatusBarColor(Color.rgb(3, 1, 8));
-        getWindow().setNavigationBarColor(Color.rgb(3, 1, 8));
+        getWindow().setStatusBarColor(BACKGROUND);
+        getWindow().setNavigationBarColor(BACKGROUND);
         buildInterface();
         configureWebView();
-
-        if (savedInstanceState == null) {
-            webView.loadUrl(getString(R.string.home_url));
-        } else {
-            webView.restoreState(savedInstanceState);
-            updateNavigationButtons();
-        }
+        billingManager = new BillingManager(this, this);
+        billingManager.start();
     }
 
     private void buildInterface() {
         LinearLayout root = new LinearLayout(this);
         root.setOrientation(LinearLayout.VERTICAL);
-        root.setBackgroundColor(Color.rgb(3, 1, 8));
+        root.setBackgroundColor(BACKGROUND);
 
         toolbar = new LinearLayout(this);
         toolbar.setGravity(Gravity.CENTER_VERTICAL);
         toolbar.setPadding(dp(8), 0, dp(8), 0);
-        toolbar.setBackgroundColor(Color.rgb(13, 5, 20));
+        toolbar.setBackgroundColor(PANEL);
         toolbar.setMinimumHeight(dp(56));
 
         TextView title = new TextView(this);
@@ -105,8 +111,10 @@ public final class MainActivity extends Activity {
 
         errorView = createErrorView();
         errorView.setVisibility(View.GONE);
-        FrameLayout.LayoutParams errorParams = new FrameLayout.LayoutParams(-1, -1);
-        pageFrame.addView(errorView, errorParams);
+        pageFrame.addView(errorView, new FrameLayout.LayoutParams(-1, -1));
+
+        subscriptionView = createSubscriptionView();
+        pageFrame.addView(subscriptionView, new FrameLayout.LayoutParams(-1, -1));
 
         root.addView(toolbar, new LinearLayout.LayoutParams(-1, dp(56)));
         root.addView(pageFrame, new LinearLayout.LayoutParams(-1, 0, 1));
@@ -120,6 +128,117 @@ public final class MainActivity extends Activity {
             });
             root.requestApplyInsets();
         }
+    }
+
+    private View createSubscriptionView() {
+        ScrollView scrollView = new ScrollView(this);
+        scrollView.setFillViewport(true);
+        scrollView.setBackgroundColor(BACKGROUND);
+
+        LinearLayout container = new LinearLayout(this);
+        container.setOrientation(LinearLayout.VERTICAL);
+        container.setGravity(Gravity.CENTER_HORIZONTAL);
+        container.setPadding(dp(28), dp(30), dp(28), dp(30));
+        scrollView.addView(container, new ScrollView.LayoutParams(-1, -2));
+
+        ImageView logo = new ImageView(this);
+        logo.setImageResource(R.drawable.infiniti_logo);
+        logo.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+        container.addView(logo, new LinearLayout.LayoutParams(-1, dp(118)));
+
+        TextView heading = new TextView(this);
+        heading.setText(R.string.premium_title);
+        heading.setTextColor(Color.WHITE);
+        heading.setTextSize(26);
+        heading.setGravity(Gravity.CENTER);
+        heading.setTypeface(null, android.graphics.Typeface.BOLD);
+        LinearLayout.LayoutParams headingParams = new LinearLayout.LayoutParams(-1, -2);
+        headingParams.topMargin = dp(14);
+        container.addView(heading, headingParams);
+
+        subscriptionDescription = new TextView(this);
+        subscriptionDescription.setText(getString(R.string.premium_description,
+                getString(R.string.premium_default_price)));
+        subscriptionDescription.setTextColor(Color.LTGRAY);
+        subscriptionDescription.setTextSize(16);
+        subscriptionDescription.setGravity(Gravity.CENTER);
+        subscriptionDescription.setLineSpacing(0, 1.15f);
+        LinearLayout.LayoutParams descriptionParams = new LinearLayout.LayoutParams(-1, -2);
+        descriptionParams.topMargin = dp(16);
+        container.addView(subscriptionDescription, descriptionParams);
+
+        subscriptionStatus = new TextView(this);
+        subscriptionStatus.setText(R.string.premium_loading);
+        subscriptionStatus.setTextColor(ACCENT);
+        subscriptionStatus.setTextSize(14);
+        subscriptionStatus.setGravity(Gravity.CENTER);
+        subscriptionStatus.setLineSpacing(0, 1.1f);
+        LinearLayout.LayoutParams statusParams = new LinearLayout.LayoutParams(-1, -2);
+        statusParams.topMargin = dp(18);
+        container.addView(subscriptionStatus, statusParams);
+
+        TextView terms = new TextView(this);
+        terms.setText(R.string.premium_terms);
+        terms.setTextColor(Color.rgb(175, 170, 185));
+        terms.setTextSize(13);
+        terms.setGravity(Gravity.CENTER);
+        terms.setLineSpacing(0, 1.15f);
+        LinearLayout.LayoutParams termsParams = new LinearLayout.LayoutParams(-1, -2);
+        termsParams.topMargin = dp(18);
+        container.addView(terms, termsParams);
+
+        subscribeButton = createActionButton(R.string.premium_subscribe);
+        subscribeButton.setEnabled(false);
+        subscribeButton.setOnClickListener(view -> billingManager.launchSubscription(this));
+        LinearLayout.LayoutParams subscribeParams = new LinearLayout.LayoutParams(-1, dp(52));
+        subscribeParams.topMargin = dp(24);
+        container.addView(subscribeButton, subscribeParams);
+
+        Button restoreButton = createSecondaryButton(R.string.premium_restore);
+        restoreButton.setOnClickListener(view -> billingManager.refreshPurchases());
+        LinearLayout.LayoutParams restoreParams = new LinearLayout.LayoutParams(-1, dp(48));
+        restoreParams.topMargin = dp(10);
+        container.addView(restoreButton, restoreParams);
+
+        Button manageButton = createSecondaryButton(R.string.premium_manage);
+        manageButton.setOnClickListener(view -> openSubscriptionManagement());
+        LinearLayout.LayoutParams manageParams = new LinearLayout.LayoutParams(-1, dp(48));
+        manageParams.topMargin = dp(10);
+        container.addView(manageButton, manageParams);
+
+        Button continueButton = createSecondaryButton(R.string.premium_continue_free);
+        continueButton.setOnClickListener(view -> continueToFreeExperience());
+        LinearLayout.LayoutParams continueParams = new LinearLayout.LayoutParams(-1, dp(48));
+        continueParams.topMargin = dp(10);
+        container.addView(continueButton, continueParams);
+
+        Button privacyButton = createSecondaryButton(R.string.premium_privacy);
+        privacyButton.setOnClickListener(view -> openExternal(Uri.parse(getString(R.string.privacy_url))));
+        LinearLayout.LayoutParams privacyParams = new LinearLayout.LayoutParams(-1, dp(48));
+        privacyParams.topMargin = dp(10);
+        container.addView(privacyButton, privacyParams);
+
+        return scrollView;
+    }
+
+    private Button createActionButton(int textResource) {
+        Button button = new Button(this);
+        button.setText(textResource);
+        button.setTextColor(Color.BLACK);
+        button.setTextSize(15);
+        button.setAllCaps(false);
+        button.setBackgroundColor(ACCENT);
+        return button;
+    }
+
+    private Button createSecondaryButton(int textResource) {
+        Button button = new Button(this);
+        button.setText(textResource);
+        button.setTextColor(Color.WHITE);
+        button.setTextSize(14);
+        button.setAllCaps(false);
+        button.setBackgroundColor(Color.rgb(34, 20, 45));
+        return button;
     }
 
     private ImageButton createIconButton(int iconResource, int descriptionResource) {
@@ -151,9 +270,9 @@ public final class MainActivity extends Activity {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             settings.setMixedContentMode(WebSettings.MIXED_CONTENT_NEVER_ALLOW);
         }
-        settings.setUserAgentString(settings.getUserAgentString() + " FrecuenciasCurativasApp/1.0");
+        settings.setUserAgentString(settings.getUserAgentString() + " CuratiApp/1.0");
 
-        webView.setBackgroundColor(Color.rgb(3, 1, 8));
+        webView.setBackgroundColor(BACKGROUND);
         webView.setWebChromeClient(new WebChromeClient());
         webView.setWebViewClient(new WebViewClient() {
             @Override
@@ -193,6 +312,38 @@ public final class MainActivity extends Activity {
         });
     }
 
+    @Override
+    public void onOfferReady(String priceLabel) {
+        runOnUiThread(() -> {
+            subscriptionDescription.setText(getString(R.string.premium_description, priceLabel));
+            subscriptionStatus.setText("");
+            subscribeButton.setEnabled(true);
+        });
+    }
+
+    @Override
+    public void onSubscriptionStateChanged(boolean active, String message) {
+        runOnUiThread(() -> {
+            if (active) {
+                webContentUnlocked = true;
+                subscriptionStatus.setText(message);
+                subscriptionView.setVisibility(View.GONE);
+                loadHome();
+            } else {
+                subscriptionStatus.setText(message == null || message.isEmpty() ? "" : message);
+                subscriptionView.setVisibility(View.VISIBLE);
+            }
+        });
+    }
+
+    @Override
+    public void onBillingMessage(String message) {
+        runOnUiThread(() -> {
+            subscriptionStatus.setText(message);
+            subscribeButton.setEnabled(true);
+        });
+    }
+
     private boolean handleNavigation(Uri uri) {
         if (uri == null) return true;
         String host = uri.getHost();
@@ -200,13 +351,16 @@ public final class MainActivity extends Activity {
                 && host != null
                 && (TRUSTED_HOST.equalsIgnoreCase(host) || ("www." + TRUSTED_HOST).equalsIgnoreCase(host));
         if (trusted) return false;
+        openExternal(uri);
+        return true;
+    }
 
+    private void openExternal(Uri uri) {
         try {
             startActivity(new Intent(Intent.ACTION_VIEW, uri));
         } catch (ActivityNotFoundException exception) {
             Toast.makeText(this, R.string.external_link_error, Toast.LENGTH_SHORT).show();
         }
-        return true;
     }
 
     private View createErrorView() {
@@ -214,7 +368,7 @@ public final class MainActivity extends Activity {
         container.setOrientation(LinearLayout.VERTICAL);
         container.setGravity(Gravity.CENTER);
         container.setPadding(dp(28), dp(28), dp(28), dp(28));
-        container.setBackgroundColor(Color.rgb(3, 1, 8));
+        container.setBackgroundColor(BACKGROUND);
 
         TextView heading = new TextView(this);
         heading.setText(R.string.unable_to_connect);
@@ -233,8 +387,7 @@ public final class MainActivity extends Activity {
         messageParams.topMargin = dp(12);
         container.addView(message, messageParams);
 
-        Button retry = new Button(this);
-        retry.setText(R.string.retry);
+        Button retry = createSecondaryButton(R.string.retry);
         retry.setOnClickListener(view -> reloadPage());
         LinearLayout.LayoutParams retryParams = new LinearLayout.LayoutParams(-2, -2);
         retryParams.topMargin = dp(20);
@@ -248,6 +401,7 @@ public final class MainActivity extends Activity {
         menu.add(Menu.NONE, 1, Menu.NONE, R.string.share_site);
         menu.add(Menu.NONE, 2, Menu.NONE, R.string.sound_safety);
         menu.add(Menu.NONE, 3, Menu.NONE, R.string.privacy_policy);
+        menu.add(Menu.NONE, 4, Menu.NONE, R.string.premium_menu);
         popup.setOnMenuItemClickListener(this::handleMenuItem);
         popup.show();
     }
@@ -261,7 +415,10 @@ public final class MainActivity extends Activity {
                 showSoundSafety();
                 return true;
             case 3:
-                webView.loadUrl(getString(R.string.privacy_url));
+                openExternal(Uri.parse(getString(R.string.privacy_url)));
+                return true;
+            case 4:
+                subscriptionView.setVisibility(View.VISIBLE);
                 return true;
             default:
                 return false;
@@ -283,10 +440,31 @@ public final class MainActivity extends Activity {
                 .show();
     }
 
+    private void continueToFreeExperience() {
+        webContentUnlocked = true;
+        subscriptionView.setVisibility(View.GONE);
+        loadHome();
+    }
+
+    private void openSubscriptionManagement() {
+        Uri uri = Uri.parse("https://play.google.com/store/account/subscriptions?package="
+                + getPackageName() + "&sku=" + getString(R.string.subscription_product_id));
+        openExternal(uri);
+    }
+
+    private void loadHome() {
+        if (!webContentUnlocked) return;
+        if (webView.getUrl() == null || !getString(R.string.home_url).equals(webView.getUrl())) {
+            webView.loadUrl(getString(R.string.home_url));
+        }
+    }
+
     private void reloadPage() {
         errorView.setVisibility(View.GONE);
         progressBar.setVisibility(View.VISIBLE);
-        if (webView.getUrl() == null) {
+        if (!webContentUnlocked) {
+            billingManager.start();
+        } else if (webView.getUrl() == null) {
             webView.loadUrl(getString(R.string.home_url));
         } else {
             webView.reload();
@@ -305,7 +483,7 @@ public final class MainActivity extends Activity {
 
     @Override
     public void onBackPressed() {
-        if (webView != null && webView.canGoBack()) {
+        if (webContentUnlocked && webView != null && webView.canGoBack()) {
             webView.goBack();
         } else {
             super.onBackPressed();
@@ -314,7 +492,7 @@ public final class MainActivity extends Activity {
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
-        if (webView != null) webView.saveState(outState);
+        if (webContentUnlocked && webView != null) webView.saveState(outState);
         super.onSaveInstanceState(outState);
     }
 
@@ -332,6 +510,7 @@ public final class MainActivity extends Activity {
 
     @Override
     protected void onDestroy() {
+        if (billingManager != null) billingManager.close();
         if (webView != null) {
             webView.stopLoading();
             webView.setWebChromeClient(null);
