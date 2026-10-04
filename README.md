@@ -46,3 +46,9 @@ La app en español para `free.html` esta en
 `ios/FrecuenciasCurativasApp/FrecuenciasCurativasApp.xcodeproj` y abre
 `https://infiniti-ia.com/free`. Su politica publica de privacidad esta en
 `https://infiniti-ia.com/privacidad`.
+
+La app Android para Google Play esta en
+`android/FrecuenciasCurativasApp` y tambien abre `https://infiniti-ia.com/free`.
+Su politica publica de privacidad esta en
+`https://infiniti-ia.com/privacidad1`. La guia de compilacion, firma y subida
+esta en `android/README.md`.

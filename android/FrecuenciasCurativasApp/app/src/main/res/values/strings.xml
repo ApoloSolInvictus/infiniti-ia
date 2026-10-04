@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Frecuencias Curativas App</string>
+    <string name="home_url">https://infiniti-ia.com/free</string>
+    <string name="privacy_url">https://infiniti-ia.com/privacidad1</string>
+    <string name="loading">Cargando Frecuencias Curativas</string>
+    <string name="unable_to_connect">No se pudo conectar</string>
+    <string name="retry">Intentar de nuevo</string>
+    <string name="back">Atrás</string>
+    <string name="forward">Adelante</string>
+    <string name="reload">Recargar</string>
+    <string name="more">Más</string>
+    <string name="share_site">Compartir sitio</string>
+    <string name="sound_safety">Seguridad sonora</string>
+    <string name="privacy_policy">Política de privacidad</string>
+    <string name="done">Listo</string>
+    <string name="share_chooser">Compartir Frecuencias Curativas</string>
+    <string name="share_text">Frecuencias Curativas App: %1$s</string>
+    <string name="external_link_error">No hay una aplicación disponible para abrir este enlace.</string>
+    <string name="page_load_error">No se pudo cargar la página de Frecuencias Curativas. Comprueba tu conexión a internet e inténtalo de nuevo.</string>
+</resources>

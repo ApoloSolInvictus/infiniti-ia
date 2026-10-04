@@ -62,6 +62,12 @@
     <priority>0.5</priority>
   </url>
   <url>
+    <loc>https://infiniti-ia.com/privacidad1</loc>
+    <lastmod>2026-10-04</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
     <loc>https://infiniti-ia.com/visual</loc>
     <lastmod>2026-08-19</lastmod>
     <changefreq>monthly</changefreq>

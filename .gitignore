@@ -12,3 +12,13 @@ ios/**/xcuserdata/
 ios/**/DerivedData/
 ios/**/*.xcuserstate
 .DS_Store
+
+# Android local files, build output, and signing material
+android/**/.gradle/
+android/**/build/
+android/**/local.properties
+android/**/captures/
+android/**/*.iml
+android/**/keystore.properties
+android/**/*.jks
+android/**/*.keystore
