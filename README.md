@@ -28,3 +28,12 @@ npm run dev
 
 El frontend usa endpoints relativos (`/api/chat` y `/api/image`), por lo que el
 mismo codigo funciona en local, previews de Vercel y produccion.
+
+## App iOS
+
+El proyecto inicial de **Healing Frequencies App** esta en
+`ios/HealingFrequenciesApp/HealingFrequenciesApp.xcodeproj`. Es una envoltura
+nativa SwiftUI con `WKWebView` que presenta `https://infiniti-ia.com/english`
+con controles de navegacion, recarga, compartir, estados de conexion y notas de
+seguridad sonora. La guia de compilacion y publicacion esta en
+`ios/README.md`.

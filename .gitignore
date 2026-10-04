@@ -6,3 +6,9 @@ node_modules
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+# Xcode local files and build output
+ios/**/xcuserdata/
+ios/**/DerivedData/
+ios/**/*.xcuserstate
+.DS_Store
