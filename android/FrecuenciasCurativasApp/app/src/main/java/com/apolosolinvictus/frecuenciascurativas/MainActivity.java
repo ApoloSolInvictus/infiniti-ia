@@ -423,7 +423,7 @@ public final class MainActivity extends Activity implements BillingManager.Liste
     private void showSoundSafety() {
         new AlertDialog.Builder(this)
                 .setTitle(R.string.sound_safety)
-                .setMessage("Esta es una experiencia sonora experimental, no un tratamiento médico ni una herramienta de diagnóstico.\n\nUsa un volumen cómodo, toma descansos y deja de escuchar si sientes incomodidad, mareo, ansiedad o zumbidos en los oídos.")
+                .setMessage("Esta es una experiencia sonora experimental. No se afirman beneficios médicos ni terapéuticos; no es un tratamiento médico ni una herramienta de diagnóstico.\n\nUsa un volumen cómodo, toma descansos y deja de escuchar si sientes incomodidad, mareo, ansiedad o zumbidos en los oídos.")
                 .setPositiveButton(R.string.done, null)
                 .show();
     }

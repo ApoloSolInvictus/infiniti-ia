@@ -30,7 +30,7 @@ final class WebViewStore: NSObject, ObservableObject, WKNavigationDelegate, WKUI
         view.uiDelegate = self
         view.allowsBackForwardNavigationGestures = true
         view.scrollView.contentInsetAdjustmentBehavior = .never
-        view.customUserAgent = "FrecuenciasCurativasApp/1.0"
+        view.customUserAgent = "CuratiApp/1.0"
 
         webView = view
         load()
@@ -109,7 +109,7 @@ final class WebViewStore: NSObject, ObservableObject, WKNavigationDelegate, WKUI
         guard nsError.code != NSURLErrorCancelled else { return }
 
         isLoading = false
-        loadError = "No se pudo cargar la página de Frecuencias Curativas. Comprueba tu conexión a internet e inténtalo de nuevo."
+        loadError = "No se pudo cargar la experiencia sonora de Curati App. Comprueba tu conexión a internet e inténtalo de nuevo."
         updateNavigationState(for: webView)
     }
 }

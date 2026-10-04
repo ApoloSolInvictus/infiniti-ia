@@ -1,6 +1,6 @@
-# Healing Frequencies App
+# Curative App
 
-This folder contains an iPhone app project named **Healing Frequencies App**. It uses SwiftUI for the native shell and `WKWebView` to present the live English synthesizer at:
+This folder contains an iPhone app project named **Curative App**. It uses SwiftUI for the native shell and `WKWebView` to present the live English synthesizer at:
 
 `https://infiniti-ia.com/english`
 
@@ -26,14 +26,14 @@ Its public privacy URL is `https://infiniti-ia.com/privacidad`, and its bundle i
 
 1. Enroll in the Apple Developer Program and accept the latest agreements.
 2. Create an App ID in Certificates, Identifiers & Profiles using the exact bundle identifier from Xcode.
-3. In App Store Connect, create a new iOS app named **Healing Frequencies App** and use the same bundle ID.
+3. In App Store Connect, create a new iOS app named **Curative App** and use the same bundle ID.
 4. Complete the app metadata: subtitle, description, keywords, category, age rating, support URL, marketing URL if applicable, screenshots, app icon, and a real privacy policy URL.
 5. Complete App Privacy accurately. The native shell does not add analytics or user accounts, but the remote web page loads third-party web resources. Review the live page and disclose any data collection, cookies, diagnostics, or third-party processing that actually occurs.
 6. Test on a physical iPhone and through TestFlight. Test first launch, no-network behavior, audio permissions and volume, back/forward controls, the share action, and the Sound Safety panel.
 7. In Xcode choose **Product > Archive**. In Organizer choose **Distribute App > App Store Connect > Upload**. Wait for Apple to process the build.
 8. Select the processed build in the App Store Connect version record, answer export-compliance questions, complete the review information, and submit it to App Review.
 
-For the Spanish app, create a separate App Store Connect record named **Frecuencias Curativas App** and use the Spanish target's bundle identifier. Use `https://infiniti-ia.com/privacidad` as the privacy policy URL.
+For the Spanish app, create a separate App Store Connect record named **Curati App** and use the Spanish target's bundle identifier. Use `https://infiniti-ia.com/privacidad` as the privacy policy URL.
 
 ## App Review risk
 

@@ -30,7 +30,7 @@ final class WebViewStore: NSObject, ObservableObject, WKNavigationDelegate, WKUI
         view.uiDelegate = self
         view.allowsBackForwardNavigationGestures = true
         view.scrollView.contentInsetAdjustmentBehavior = .never
-        view.customUserAgent = "HealingFrequenciesApp/1.0"
+        view.customUserAgent = "CurativeApp/1.0"
 
         webView = view
         load()
@@ -109,7 +109,7 @@ final class WebViewStore: NSObject, ObservableObject, WKNavigationDelegate, WKUI
         guard nsError.code != NSURLErrorCancelled else { return }
 
         isLoading = false
-        loadError = "The Healing Frequencies page could not be loaded. Check your internet connection and try again."
+        loadError = "The Curative App page could not be loaded. Check your internet connection and try again."
         updateNavigationState(for: webView)
     }
 }

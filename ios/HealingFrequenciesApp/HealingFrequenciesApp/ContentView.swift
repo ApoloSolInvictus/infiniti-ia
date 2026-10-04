@@ -2,10 +2,10 @@ import SwiftUI
 import SafariServices
 
 struct ContentView: View {
-    private static let healingURL = URL(string: "https://infiniti-ia.com/english")!
+    private static let synthesizerURL = URL(string: "https://infiniti-ia.com/english")!
     private static let privacyURL = URL(string: "https://infiniti-ia.com/privacy")!
 
-    @StateObject private var webViewStore = WebViewStore(destinationURL: ContentView.healingURL)
+    @StateObject private var webViewStore = WebViewStore(destinationURL: ContentView.synthesizerURL)
     @State private var showingSoundSafety = false
     @State private var showingPrivacyPolicy = false
 
@@ -16,7 +16,7 @@ struct ContentView: View {
                     .ignoresSafeArea(edges: .bottom)
 
                 if webViewStore.isLoading {
-                    ProgressView("Loading Healing Frequencies")
+                    ProgressView("Loading Curative App")
                         .padding(.horizontal, 18)
                         .padding(.vertical, 12)
                         .background(.ultraThinMaterial, in: Capsule())
@@ -29,7 +29,7 @@ struct ContentView: View {
                 }
             }
             .background(Color(red: 0.01, green: 0.005, blue: 0.02))
-            .navigationTitle("Healing Frequencies")
+            .navigationTitle("Curative App")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItemGroup(placement: .topBarLeading) {
@@ -117,12 +117,12 @@ private struct SoundSafetyView: View {
         NavigationStack {
             List {
                 Section("Listening note") {
-                    Text("This is an experimental sound experience, not medical treatment or a diagnostic tool.")
+                    Text("This is an experimental sound experience. No medical or therapeutic benefits are claimed; it is not medical treatment or a diagnostic tool.")
                     Text("Use a comfortable volume, take breaks, and stop listening if you feel discomfort, dizziness, anxiety, or ringing in your ears.")
                 }
 
                 Section("About this app") {
-                    Text("Healing Frequencies App presents the Infiniti IA Solfeggio synthesizer inside a native iPhone interface.")
+                    Text("Curative App presents the Infiniti IA Solfeggio synthesizer inside a native iPhone interface.")
                 }
             }
             .navigationTitle("Sound Safety")

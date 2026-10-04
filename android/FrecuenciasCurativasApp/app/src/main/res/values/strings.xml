@@ -4,7 +4,7 @@
     <string name="one_time_product_id">curati_full_access</string>
     <string name="home_url">https://infiniti-ia.com/free</string>
     <string name="privacy_url">https://infiniti-ia.com/privacidad1</string>
-    <string name="loading">Cargando Frecuencias Curativas</string>
+    <string name="loading">Cargando experiencia sonora</string>
     <string name="unable_to_connect">No se pudo conectar</string>
     <string name="retry">Intentar de nuevo</string>
     <string name="back">Atrás</string>
@@ -18,7 +18,7 @@
     <string name="share_chooser">Compartir Curati App</string>
     <string name="share_text">Curati App: %1$s</string>
     <string name="external_link_error">No hay una aplicación disponible para abrir este enlace.</string>
-    <string name="page_load_error">No se pudo cargar la página de Frecuencias Curativas. Comprueba tu conexión a internet e inténtalo de nuevo.</string>
+    <string name="page_load_error">No se pudo cargar la experiencia sonora experimental. Comprueba tu conexión a internet e inténtalo de nuevo.</string>
     <string name="purchase_title">Curati App</string>
     <string name="purchase_description">Compra única por %1$s. Acceso permanente. No hay mensualidad, renovación ni cargos posteriores.</string>
     <string name="purchase_default_price">US$7.77 (pago único)</string>

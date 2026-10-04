@@ -1,10 +1,10 @@
-# Curati App for Android
+# Curative App for Android
 
 This project packages `https://infiniti-ia.com/english` in a native Android WebView for Google Play.
 
 ## Project details
 
-- App name: **Curati App**
+- App name: **Curative App**
 - Package: `com.apolosolinvictus.healingfrequencies`
 - Privacy policy: `https://infiniti-ia.com/privacy`
 - Minimum SDK: 26

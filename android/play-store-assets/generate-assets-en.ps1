@@ -78,27 +78,27 @@ $logo = New-Canvas 1024 1024 $black
 Invoke-Canvas $logo {
     param($graphics)
     $graphics.DrawImage($source, [System.Drawing.Rectangle]::new(170, 70, 684, 684))
-    Draw-Text $graphics 'CURATI' 260 810 90 $white ([System.Drawing.FontStyle]::Bold)
+    Draw-Text $graphics 'CURATIVE' 220 810 78 $white ([System.Drawing.FontStyle]::Bold)
 }
-Save-Png $logo (Join-Path $assets 'curati-app-logo-en.png')
+Save-Png $logo (Join-Path $assets 'curative-app-logo-en.png')
 
 $feature = New-Canvas 1024 500 $black
 Invoke-Canvas $feature {
     param($graphics)
     Draw-Line $graphics 32 466 992 466 5 $pink
     $graphics.DrawImage($source, [System.Drawing.Rectangle]::new(55, 62, 330, 330))
-    Draw-Text $graphics 'CURATI APP' 438 92 52 $white ([System.Drawing.FontStyle]::Bold)
+    Draw-Text $graphics 'CURATIVE APP' 438 92 52 $white ([System.Drawing.FontStyle]::Bold)
     Draw-Copy $graphics 'Daily frequencies for your practice' 440 174 25 500 $muted
     Draw-Text $graphics 'ONE-TIME PURCHASE' 440 282 25 $cyan ([System.Drawing.FontStyle]::Bold)
     Draw-Text $graphics 'US$7.77 permanent access' 440 326 22 $white
 }
-Save-Png $feature (Join-Path $assets 'curati-feature-graphic-en.png')
+Save-Png $feature (Join-Path $assets 'curative-feature-graphic-en.png')
 
 function New-PhoneScreen([string] $path, [string] $kicker, [string] $title, [string] $copy, [string[]] $labels, [System.Drawing.Color] $accent) {
     $screen = New-Canvas 1080 1920 $black
     Invoke-Canvas $screen {
         param($graphics)
-        Draw-Text $graphics 'CURATI APP' 72 82 28 $accent ([System.Drawing.FontStyle]::Bold)
+        Draw-Text $graphics 'CURATIVE APP' 72 82 28 $accent ([System.Drawing.FontStyle]::Bold)
         Draw-Line $graphics 72 140 1008 140 2 ([System.Drawing.Color]::FromArgb(255, 58, 42, 73))
         Draw-Text $graphics $kicker 72 212 22 $accent ([System.Drawing.FontStyle]::Bold)
         Draw-Text $graphics $title 72 260 52 $white ([System.Drawing.FontStyle]::Bold)
@@ -119,9 +119,9 @@ function New-PhoneScreen([string] $path, [string] $kicker, [string] $title, [str
     Save-Png $screen $path
 }
 
-New-PhoneScreen (Join-Path $assets 'curati-phone-01-purchase-en.png') 'ONE-TIME PURCHASE' 'Your sound space' 'Buy permanent access for US$7.77 through Google Play. No renewal or further charges.' @('US$7.77 one-time', 'Localized price', 'Permanent access') $cyan
-New-PhoneScreen (Join-Path $assets 'curati-phone-02-frequencies-en.png') 'FREQUENCIES' 'Choose your environment' 'Explore tones and shape your experience for yoga, massage, or meditation.' @('Solfeggio 528 Hz', 'Theta 6 Hz', 'Calm 432 Hz') $pink
-New-PhoneScreen (Join-Path $assets 'curati-phone-03-playlist-en.png') 'AUTOMATION' 'Program your session' 'Combine frequencies, set durations, and let the session run on its own.' @('Start: now', 'Duration: 20 min', 'Next: 528 Hz') $orange
+New-PhoneScreen (Join-Path $assets 'curative-phone-01-purchase-en.png') 'ONE-TIME PURCHASE' 'Your sound space' 'Buy permanent access for US$7.77 through Google Play. No renewal or further charges.' @('US$7.77 one-time', 'Localized price', 'Permanent access') $cyan
+New-PhoneScreen (Join-Path $assets 'curative-phone-02-frequencies-en.png') 'FREQUENCIES' 'Choose your environment' 'Explore tones and shape your experience for yoga, massage, or meditation.' @('Solfeggio 528 Hz', 'Theta 6 Hz', 'Calm 432 Hz') $pink
+New-PhoneScreen (Join-Path $assets 'curative-phone-03-playlist-en.png') 'AUTOMATION' 'Program your session' 'Combine frequencies, set durations, and let the session run on its own.' @('Start: now', 'Duration: 20 min', 'Next: 528 Hz') $orange
 
 $source.Dispose()
 Write-Output "Assets generated in $assets"

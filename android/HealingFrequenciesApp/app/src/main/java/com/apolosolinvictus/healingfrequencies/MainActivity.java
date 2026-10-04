@@ -258,7 +258,7 @@ public final class MainActivity extends Activity implements BillingManager.Liste
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             settings.setMixedContentMode(WebSettings.MIXED_CONTENT_NEVER_ALLOW);
         }
-        settings.setUserAgentString(settings.getUserAgentString() + " HealingFrequenciesApp/1.0");
+        settings.setUserAgentString(settings.getUserAgentString() + " CurativeApp/1.0");
 
         webView.setBackgroundColor(BACKGROUND);
         webView.setWebChromeClient(new WebChromeClient());

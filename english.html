@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Solfeggio Synthesizer | Infiniti IA</title>
-    <meta name="description" content="Free healing frequency synthesizer. Play in real time and explore the power of quantum acoustics.">
+    <meta name="description" content="Experimental Solfeggio frequency synthesizer. Explore sound, focus, and relaxation; it is not a medical treatment and makes no clinical claims.">
     <meta name="author" content="Apollo Sol Invictus - W Studio">
     <meta name="robots" content="index, follow">
     <meta name="googlebot" content="index, follow, max-snippet:-1, max-image-preview:large">
@@ -194,7 +194,7 @@
             const osc = audioCtx.createOscillator();
             const gain = audioCtx.createGain();
 
-            osc.type = 'sine'; // Pure healing wave
+            osc.type = 'sine'; // Experimental sine wave
             osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
 
             // Envelope attack (smooth, safe start)
@@ -238,13 +238,13 @@
         // SOLFEGGIO FREQUENCY DATABASE
         // ==========================================
         const FREQUENCIES = [
-            { freq: 396, note: 'Root', objective: 'Release from Fear and Guilt', key: 'a', color: '#ef4444' },
-            { freq: 417, note: 'Sacral', objective: 'Change and Trauma Resolution', key: 's', color: '#f97316' },
-            { freq: 528, note: 'Solar Plexus', objective: 'Peace, DNA Repair (Miracle Frequency)', key: 'd', color: '#fbbf24' },
-            { freq: 639, note: 'Heart', objective: 'Harmony in Relationships and Connection', key: 'f', color: '#10b981' },
-            { freq: 741, note: 'Throat', objective: 'Expression, Truth, and Cleansing', key: 'g', color: '#0ea5e9' },
-            { freq: 852, note: 'Third Eye', objective: 'Intuitive Awakening and Clarity', key: 'h', color: '#6366f1' },
-            { freq: 963, note: 'Crown', objective: 'Divine Connection (The Invictus Code)', key: 'j', color: '#b026ff' }
+            { freq: 396, note: 'Root', objective: 'Sound exploration and breathing', key: 'a', color: '#ef4444' },
+            { freq: 417, note: 'Sacral', objective: 'Ambient change and texture', key: 's', color: '#f97316' },
+            { freq: 528, note: 'Solar Plexus', objective: 'Experimental 528 Hz tone', key: 'd', color: '#fbbf24' },
+            { freq: 639, note: 'Heart', objective: 'Listening and personal connection', key: 'f', color: '#10b981' },
+            { freq: 741, note: 'Throat', objective: 'Timbre and expression study', key: 'g', color: '#0ea5e9' },
+            { freq: 852, note: 'Third Eye', objective: 'Attention and inner listening', key: 'h', color: '#6366f1' },
+            { freq: 963, note: 'Crown', objective: 'Contemplative sound experience', key: 'j', color: '#b026ff' }
         ];
 
         // ==========================================
@@ -487,9 +487,9 @@
                         <div className="flex-1 flex flex-col items-center justify-center animate-[fadeIn_0.5s_ease-out]">
                             <div className="glass-panel p-10 rounded-3xl text-center max-w-lg border-t-2 border-synth-cyan">
                                 <i className="ph-fill ph-headphones text-6xl text-synth-cyan mb-6 animate-bounce"></i>
-                                <h2 className="font-display text-2xl font-bold text-white mb-4">START HEALING</h2>
+                                <h2 className="font-display text-2xl font-bold text-white mb-4">START SOUND EXPERIENCE</h2>
                                 <p className="text-gray-400 mb-8 font-light leading-relaxed">
-                                    This module generates pure sine acoustic waves in real time. Use headphones for full immersion in the divine frequency.
+                                    This experimental module generates pure sine acoustic waves in real time. It makes no medical or therapeutic claims and is not a medical treatment. Use a comfortable volume and stop listening if you feel discomfort.
                                 </p>
                                 <button 
                                     onClick={startEngine}

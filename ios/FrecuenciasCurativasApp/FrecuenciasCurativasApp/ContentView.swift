@@ -2,10 +2,10 @@ import SwiftUI
 import SafariServices
 
 struct ContentView: View {
-    private static let healingURL = URL(string: "https://infiniti-ia.com/free")!
+    private static let synthesizerURL = URL(string: "https://infiniti-ia.com/free")!
     private static let privacyURL = URL(string: "https://infiniti-ia.com/privacidad")!
 
-    @StateObject private var webViewStore = WebViewStore(destinationURL: ContentView.healingURL)
+    @StateObject private var webViewStore = WebViewStore(destinationURL: ContentView.synthesizerURL)
     @State private var showingSoundSafety = false
     @State private var showingPrivacyPolicy = false
 
@@ -16,7 +16,7 @@ struct ContentView: View {
                     .ignoresSafeArea(edges: .bottom)
 
                 if webViewStore.isLoading {
-                    ProgressView("Cargando Frecuencias Curativas")
+                    ProgressView("Cargando Curati App")
                         .padding(.horizontal, 18)
                         .padding(.vertical, 12)
                         .background(.ultraThinMaterial, in: Capsule())
@@ -29,7 +29,7 @@ struct ContentView: View {
                 }
             }
             .background(Color(red: 0.01, green: 0.005, blue: 0.02))
-            .navigationTitle("Frecuencias Curativas")
+            .navigationTitle("Curati App")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItemGroup(placement: .topBarLeading) {
@@ -117,12 +117,12 @@ private struct SoundSafetyView: View {
         NavigationStack {
             List {
                 Section("Nota de escucha") {
-                    Text("Esta es una experiencia sonora experimental, no un tratamiento médico ni una herramienta de diagnóstico.")
+                    Text("Esta es una experiencia sonora experimental. No se afirman beneficios médicos ni terapéuticos; no es un tratamiento médico ni una herramienta de diagnóstico.")
                     Text("Usa un volumen cómodo, toma descansos y deja de escuchar si sientes incomodidad, mareo, ansiedad o zumbidos en los oídos.")
                 }
 
                 Section("Acerca de esta app") {
-                    Text("Frecuencias Curativas App presenta el sintetizador Solfeggio de Infiniti IA dentro de una interfaz nativa para iPhone.")
+                    Text("Curati App presenta el sintetizador Solfeggio de Infiniti IA dentro de una interfaz nativa para iPhone.")
                 }
             }
             .navigationTitle("Seguridad sonora")

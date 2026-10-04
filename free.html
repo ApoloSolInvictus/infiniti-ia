@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Sintetizador Solfeggio | Infiniti IA</title>
-    <meta name="description" content="Sintetizador gratuito de frecuencias curativas. Toca en vivo y sana con el poder de la acústica cuántica.">
+    <meta name="description" content="Sintetizador experimental de frecuencias Solfeggio. Explora sonido, enfoque y relajación; no es un tratamiento médico ni afirma beneficios clínicos.">
     <meta name="author" content="Apollo Sol Invictus - W Studio">
     <meta name="robots" content="index, follow">
     <meta name="googlebot" content="index, follow, max-snippet:-1, max-image-preview:large">
@@ -194,7 +194,7 @@
             const osc = audioCtx.createOscillator();
             const gain = audioCtx.createGain();
 
-            osc.type = 'sine'; // Onda pura curativa
+            osc.type = 'sine'; // Onda senoidal experimental
             osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
 
             // Ataque de envolvente (inicio suave y seguro)
@@ -238,13 +238,13 @@
         // BASE DE DATOS DE FRECUENCIAS SOLFEGGIO
         // ==========================================
         const FREQUENCIES = [
-            { freq: 396, note: 'Raíz', objective: 'Liberación de Miedo y Culpa', key: 'a', color: '#ef4444' },
-            { freq: 417, note: 'Sacro', objective: 'Cambio y Resolución de Traumas', key: 's', color: '#f97316' },
-            { freq: 528, note: 'Plexo Solar', objective: 'Paz, Reparación ADN (Frecuencia Milagro)', key: 'd', color: '#fbbf24' },
-            { freq: 639, note: 'Corazón', objective: 'Armonía en Relaciones y Conexión', key: 'f', color: '#10b981' },
-            { freq: 741, note: 'Garganta', objective: 'Expresión, Verdad y Limpieza', key: 'g', color: '#0ea5e9' },
-            { freq: 852, note: 'Tercer Ojo', objective: 'Despertar Intuitivo y Claridad', key: 'h', color: '#6366f1' },
-            { freq: 963, note: 'Corona', objective: 'Conexión Divina (El Código Invictus)', key: 'j', color: '#b026ff' }
+            { freq: 396, note: 'Raíz', objective: 'Exploración sonora y respiración', key: 'a', color: '#ef4444' },
+            { freq: 417, note: 'Sacro', objective: 'Cambio de ambiente y textura', key: 's', color: '#f97316' },
+            { freq: 528, note: 'Plexo Solar', objective: 'Tono experimental de 528 Hz', key: 'd', color: '#fbbf24' },
+            { freq: 639, note: 'Corazón', objective: 'Escucha y conexión personal', key: 'f', color: '#10b981' },
+            { freq: 741, note: 'Garganta', objective: 'Exploración de timbre y expresión', key: 'g', color: '#0ea5e9' },
+            { freq: 852, note: 'Tercer Ojo', objective: 'Atención y escucha interior', key: 'h', color: '#6366f1' },
+            { freq: 963, note: 'Corona', objective: 'Experiencia sonora contemplativa', key: 'j', color: '#b026ff' }
         ];
 
         // ==========================================
@@ -487,9 +487,9 @@
                         <div className="flex-1 flex flex-col items-center justify-center animate-[fadeIn_0.5s_ease-out]">
                             <div className="glass-panel p-10 rounded-3xl text-center max-w-lg border-t-2 border-synth-cyan">
                                 <i className="ph-fill ph-headphones text-6xl text-synth-cyan mb-6 animate-bounce"></i>
-                                <h2 className="font-display text-2xl font-bold text-white mb-4">INICIAR SANACIÓN</h2>
+                                <h2 className="font-display text-2xl font-bold text-white mb-4">INICIAR EXPERIENCIA SONORA</h2>
                                 <p className="text-gray-400 mb-8 font-light leading-relaxed">
-                                    Este módulo genera ondas acústicas senoidales puras en tiempo real. Usa audífonos para una inmersión total en la frecuencia divina.
+                                    Este módulo experimental genera ondas acústicas senoidales puras en tiempo real. No afirma beneficios médicos ni terapéuticos y no es un tratamiento médico. Usa un volumen cómodo y deja de escuchar si sientes molestias.
                                 </p>
                                 <button
                                     onClick={startEngine}
