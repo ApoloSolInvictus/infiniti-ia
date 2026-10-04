@@ -89,8 +89,8 @@ Invoke-Canvas $feature {
     $graphics.DrawImage($source, [System.Drawing.Rectangle]::new(55, 62, 330, 330))
     Draw-Text $graphics 'CURATI APP' 438 92 52 $white ([System.Drawing.FontStyle]::Bold)
     Draw-Copy $graphics 'Frecuencias para tu practica diaria' 440 174 25 500 $muted
-    Draw-Text $graphics '3 dias gratis' 440 282 25 $cyan ([System.Drawing.FontStyle]::Bold)
-    Draw-Text $graphics 'US$10 al mes despues de la prueba' 440 326 22 $white
+    Draw-Text $graphics 'PAGO UNICO' 440 282 25 $cyan ([System.Drawing.FontStyle]::Bold)
+    Draw-Text $graphics 'US$7.77 por acceso permanente' 440 326 22 $white
 }
 Save-Png $feature (Join-Path $assets 'curati-feature-graphic.png')
 
@@ -119,7 +119,7 @@ function New-PhoneScreen([string] $path, [string] $kicker, [string] $title, [str
     Save-Png $screen $path
 }
 
-New-PhoneScreen (Join-Path $assets 'curati-phone-01-premium.png') 'CURATI PREMIUM' 'Tu espacio sonoro' 'Prueba el acceso premium durante 3 dias. Despues se renueva por el precio mostrado en Google Play.' @('Prueba gratuita', 'Precio localizado', 'Renovacion automatica') $cyan
+New-PhoneScreen (Join-Path $assets 'curati-phone-01-purchase.png') 'COMPRA UNICA' 'Tu espacio sonoro' 'Compra el acceso permanente por el precio mostrado en Google Play. No hay renovacion ni cargos posteriores.' @('Pago unico', 'Precio localizado', 'Acceso permanente') $cyan
 New-PhoneScreen (Join-Path $assets 'curati-phone-02-frequencies.png') 'FRECUENCIAS' 'Elige tu ambiente' 'Explora tonos y ajusta tu experiencia para yoga, masaje o meditacion.' @('Solfeggio 528 Hz', 'Theta 6 Hz', 'Calma 432 Hz') $pink
 New-PhoneScreen (Join-Path $assets 'curati-phone-03-playlist.png') 'AUTOMATIZACION' 'Programa tu sesion' 'Combina frecuencias, define duraciones y deja que la sesion avance sola.' @('Inicio: ahora', 'Duracion: 20 min', 'Siguiente: 528 Hz') $orange
 

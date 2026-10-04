@@ -14,30 +14,30 @@ La política pública de privacidad para esta versión está en:
 2. En SDK Manager instala Android 16 (API 36) y sus herramientas de compilación.
 3. Abre la carpeta `android/FrecuenciasCurativasApp` como proyecto existente.
 4. Espera a que Gradle sincronice y selecciona el módulo `app`.
-5. Ejecuta en un emulador o dispositivo Android conectado. Confirma que la pantalla Curati Premium carga, que el flujo de prueba de Google Play funciona, que el botón **Encender Osciladores** inicia el audio, que la automatización funciona y que los enlaces externos se abren fuera de la app.
+5. Ejecuta en un emulador o dispositivo Android conectado. Confirma que la pantalla de compra única carga, que el flujo de prueba de Google Play funciona, que el botón **Encender Osciladores** inicia el audio, que la automatización funciona y que los enlaces externos se abren fuera de la app.
 
 El proyecto usa `compileSdk 36`, `targetSdk 36`, `minSdk 26` y el identificador de paquete:
 
 `com.apolosolinvictus.frecuenciascurativas`
 
-La app no solicita micrófono, ubicación, contactos, cámara ni almacenamiento. Solo declara `android.permission.INTERNET` para cargar el sitio remoto. Google Play Billing procesa los pagos; la app solo consulta el estado de la suscripción.
+La app no solicita micrófono, ubicación, contactos, cámara ni almacenamiento. Solo declara `android.permission.INTERNET` para cargar el sitio remoto. Google Play Billing procesa los pagos; la app solo consulta el estado de la compra permanente.
 
-## Suscripción de Curati Premium
+## Compra única de Curati App
 
-La app está preparada para una suscripción mensual de **US$10**, con una oferta de prueba gratuita de **3 días**. El precio que se muestra al usuario siempre se obtiene de Google Play para respetar la moneda y los impuestos locales. El producto usado por el código es:
+La app está preparada para una compra única no consumible de **US$7.77**, sin prueba gratuita, mensualidad ni renovación. El precio que se muestra al usuario siempre se obtiene de Google Play para respetar la moneda y los impuestos locales. El producto usado por el código es:
 
-`curati_premium`
+`curati_full_access`
 
 Antes de probar o publicar:
 
-1. En Play Console crea una suscripción con el ID `curati_premium`.
-2. Crea un plan base mensual, activa la renovación automática y fija el precio de US$10 según la configuración de tu cuenta.
-3. Crea una oferta para nuevos suscriptores con una fase gratuita de 3 días (`P3D`).
+1. En Play Console crea un producto de una sola compra no consumible con el ID `curati_full_access`.
+2. Fija el precio base en US$7.77 según la configuración de tu cuenta y no agregues ofertas ni pruebas gratuitas.
+3. No configures plan base, renovación ni periodo de suscripción para este producto.
 4. Completa el perfil de pagos y vincula la app con el mismo paquete `com.apolosolinvictus.frecuenciascurativas`.
 5. Publica primero una versión con Google Play Billing en una prueba interna. Los productos de facturación deben estar configurados y disponibles en Play Console antes de poder probar el flujo real.
-6. Agrega cuentas de licencia de prueba y verifica compra, compra pendiente, restauración, cancelación y renovación sin usar una compra real.
+6. Agrega cuentas de licencia de prueba y verifica compra, compra pendiente, restauración y reembolso usando las herramientas de prueba de Google Play.
 
-El texto de la app informa la duración de la prueba, el precio mostrado por Google Play, la renovación automática y la cancelación. La política pública es `https://infiniti-ia.com/privacidad1`.
+El texto de la app informa que se trata de un pago único de US$7.77, sin prueba gratuita ni cobros posteriores. La política pública es `https://infiniti-ia.com/privacidad1`.
 
 ## Generar el AAB
 
@@ -71,5 +71,5 @@ La compilación y firma final requieren Android Studio en Windows, macOS o Linux
 - [Requisitos de nivel de API de Google Play](https://developer.android.com/google/play/requirements/target-sdk)
 - [WebView en Android](https://developer.android.com/develop/ui/views/layout/webapps/webview)
 - [Integración oficial de Google Play Billing](https://developer.android.com/google/play/billing/integrate)
-- [Configuración de suscripciones en Google Play](https://support.google.com/googleplay/android-developer/answer/12154973)
+- [Productos de una sola compra en Google Play](https://developer.android.com/google/play/billing/one-time-products)
 - [Data safety de Google Play](https://support.google.com/googleplay/android-developer/answer/10787469)

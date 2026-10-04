@@ -8,8 +8,8 @@ import com.android.billingclient.api.BillingClient;
 import com.android.billingclient.api.BillingClientStateListener;
 import com.android.billingclient.api.BillingFlowParams;
 import com.android.billingclient.api.BillingResult;
-import com.android.billingclient.api.ProductDetails;
 import com.android.billingclient.api.PendingPurchasesParams;
+import com.android.billingclient.api.ProductDetails;
 import com.android.billingclient.api.Purchase;
 import com.android.billingclient.api.PurchasesUpdatedListener;
 import com.android.billingclient.api.QueryProductDetailsParams;
@@ -18,12 +18,12 @@ import com.android.billingclient.api.QueryPurchasesParams;
 import java.util.Collections;
 import java.util.List;
 
-/** Coordinates the Play subscription without exposing billing details to the web page. */
+/** Coordinates the permanent one-time purchase without exposing billing details to the web page. */
 public final class BillingManager implements PurchasesUpdatedListener {
     public interface Listener {
         void onOfferReady(String priceLabel);
 
-        void onSubscriptionStateChanged(boolean active, String message);
+        void onPurchaseStateChanged(boolean active, String message);
 
         void onBillingMessage(String message);
     }
@@ -33,13 +33,12 @@ public final class BillingManager implements PurchasesUpdatedListener {
     private final String productId;
     private final BillingClient billingClient;
     private ProductDetails productDetails;
-    private String offerToken;
     private boolean connected;
 
     public BillingManager(Context context, Listener listener) {
         this.context = context.getApplicationContext();
         this.listener = listener;
-        productId = context.getString(R.string.subscription_product_id);
+        productId = context.getString(R.string.one_time_product_id);
         billingClient = BillingClient.newBuilder(this.context)
                 .setListener(this)
                 .enablePendingPurchases(PendingPurchasesParams.newBuilder()
@@ -64,14 +63,14 @@ public final class BillingManager implements PurchasesUpdatedListener {
                     queryProduct();
                     queryPurchases(false);
                 } else {
-                    listener.onBillingMessage(context.getString(R.string.premium_unavailable));
+                    listener.onBillingMessage(context.getString(R.string.purchase_unavailable));
                 }
             }
 
             @Override
             public void onBillingServiceDisconnected() {
                 connected = false;
-                listener.onBillingMessage(context.getString(R.string.premium_billing_error));
+                listener.onBillingMessage(context.getString(R.string.purchase_billing_error));
             }
         });
     }
@@ -79,7 +78,7 @@ public final class BillingManager implements PurchasesUpdatedListener {
     private void queryProduct() {
         QueryProductDetailsParams.Product product = QueryProductDetailsParams.Product.newBuilder()
                 .setProductId(productId)
-                .setProductType(BillingClient.ProductType.SUBS)
+                .setProductType(BillingClient.ProductType.INAPP)
                 .build();
         QueryProductDetailsParams params = QueryProductDetailsParams.newBuilder()
                 .setProductList(Collections.singletonList(product))
@@ -90,10 +89,11 @@ public final class BillingManager implements PurchasesUpdatedListener {
                     || result == null
                     || result.getProductDetailsList() == null
                     || result.getProductDetailsList().isEmpty()) {
-                listener.onBillingMessage(context.getString(R.string.premium_unavailable));
+                listener.onBillingMessage(context.getString(R.string.purchase_unavailable));
                 return;
             }
 
+            productDetails = null;
             for (ProductDetails candidate : result.getProductDetailsList()) {
                 if (productId.equals(candidate.getProductId())) {
                     productDetails = candidate;
@@ -101,54 +101,22 @@ public final class BillingManager implements PurchasesUpdatedListener {
                 }
             }
 
-            if (productDetails == null || productDetails.getSubscriptionOfferDetails() == null
-                    || productDetails.getSubscriptionOfferDetails().isEmpty()) {
-                listener.onBillingMessage(context.getString(R.string.premium_unavailable));
+            if (productDetails == null
+                    || productDetails.getOneTimePurchaseOfferDetailsList() == null
+                    || productDetails.getOneTimePurchaseOfferDetailsList().isEmpty()) {
+                listener.onBillingMessage(context.getString(R.string.purchase_unavailable));
                 return;
             }
 
-            ProductDetails.SubscriptionOfferDetails selectedOffer = selectTrialOffer(
-                    productDetails.getSubscriptionOfferDetails());
-            offerToken = selectedOffer.getOfferToken();
-            listener.onOfferReady(findPaidPrice(selectedOffer));
+            ProductDetails.OneTimePurchaseOfferDetails offer =
+                    productDetails.getOneTimePurchaseOfferDetailsList().get(0);
+            listener.onOfferReady(offer.getFormattedPrice());
         });
     }
 
-    private ProductDetails.SubscriptionOfferDetails selectTrialOffer(
-            List<ProductDetails.SubscriptionOfferDetails> offers) {
-        for (ProductDetails.SubscriptionOfferDetails offer : offers) {
-            if (hasThreeDayTrial(offer)) return offer;
-        }
-        return offers.get(0);
-    }
-
-    private boolean hasThreeDayTrial(ProductDetails.SubscriptionOfferDetails offer) {
-        if (offer.getPricingPhases() == null || offer.getPricingPhases().getPricingPhaseList() == null) {
-            return false;
-        }
-        for (ProductDetails.PricingPhase phase : offer.getPricingPhases().getPricingPhaseList()) {
-            if (phase.getPriceAmountMicros() == 0 && "P3D".equals(phase.getBillingPeriod())) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private String findPaidPrice(ProductDetails.SubscriptionOfferDetails offer) {
-        if (offer.getPricingPhases() != null && offer.getPricingPhases().getPricingPhaseList() != null) {
-            for (ProductDetails.PricingPhase phase : offer.getPricingPhases().getPricingPhaseList()) {
-                if (phase.getPriceAmountMicros() > 0) {
-                    String period = "P1M".equals(phase.getBillingPeriod()) ? " al mes" : "";
-                    return phase.getFormattedPrice() + period;
-                }
-            }
-        }
-        return context.getString(R.string.premium_default_price);
-    }
-
-    public void launchSubscription(Activity activity) {
-        if (!connected || productDetails == null || offerToken == null) {
-            listener.onBillingMessage(context.getString(R.string.premium_unavailable));
+    public void launchPurchase(Activity activity) {
+        if (!connected || productDetails == null) {
+            listener.onBillingMessage(context.getString(R.string.purchase_unavailable));
             start();
             return;
         }
@@ -156,14 +124,13 @@ public final class BillingManager implements PurchasesUpdatedListener {
         BillingFlowParams.ProductDetailsParams productParams = BillingFlowParams.ProductDetailsParams
                 .newBuilder()
                 .setProductDetails(productDetails)
-                .setOfferToken(offerToken)
                 .build();
         BillingFlowParams flowParams = BillingFlowParams.newBuilder()
                 .setProductDetailsParamsList(Collections.singletonList(productParams))
                 .build();
         BillingResult billingResult = billingClient.launchBillingFlow(activity, flowParams);
         if (billingResult.getResponseCode() != BillingClient.BillingResponseCode.OK) {
-            listener.onBillingMessage(context.getString(R.string.premium_billing_error));
+            listener.onBillingMessage(context.getString(R.string.purchase_billing_error));
         }
     }
 
@@ -177,11 +144,11 @@ public final class BillingManager implements PurchasesUpdatedListener {
 
     private void queryPurchases(boolean restoring) {
         QueryPurchasesParams params = QueryPurchasesParams.newBuilder()
-                .setProductType(BillingClient.ProductType.SUBS)
+                .setProductType(BillingClient.ProductType.INAPP)
                 .build();
         billingClient.queryPurchasesAsync(params, (billingResult, purchases) -> {
             if (billingResult.getResponseCode() != BillingClient.BillingResponseCode.OK) {
-                listener.onBillingMessage(context.getString(R.string.premium_billing_error));
+                listener.onBillingMessage(context.getString(R.string.purchase_billing_error));
                 return;
             }
             processPurchases(purchases, restoring);
@@ -193,9 +160,9 @@ public final class BillingManager implements PurchasesUpdatedListener {
         if (billingResult.getResponseCode() == BillingClient.BillingResponseCode.OK && purchases != null) {
             processPurchases(purchases, false);
         } else if (billingResult.getResponseCode() == BillingClient.BillingResponseCode.USER_CANCELED) {
-            listener.onBillingMessage(context.getString(R.string.premium_canceled));
+            listener.onBillingMessage(context.getString(R.string.purchase_canceled));
         } else {
-            listener.onBillingMessage(context.getString(R.string.premium_billing_error));
+            listener.onBillingMessage(context.getString(R.string.purchase_billing_error));
         }
     }
 
@@ -215,14 +182,14 @@ public final class BillingManager implements PurchasesUpdatedListener {
         }
 
         if (pending && !active) {
-            listener.onSubscriptionStateChanged(false, context.getString(R.string.premium_pending));
+            listener.onPurchaseStateChanged(false, context.getString(R.string.purchase_pending));
         } else if (active) {
             String message = restoring
-                    ? context.getString(R.string.premium_restored)
-                    : context.getString(R.string.premium_active);
-            listener.onSubscriptionStateChanged(true, message);
+                    ? context.getString(R.string.purchase_restored)
+                    : context.getString(R.string.purchase_active);
+            listener.onPurchaseStateChanged(true, message);
         } else {
-            listener.onSubscriptionStateChanged(false, "");
+            listener.onPurchaseStateChanged(false, "");
         }
     }
 
@@ -233,7 +200,7 @@ public final class BillingManager implements PurchasesUpdatedListener {
                 .build();
         billingClient.acknowledgePurchase(params, billingResult -> {
             if (billingResult.getResponseCode() != BillingClient.BillingResponseCode.OK) {
-                listener.onBillingMessage(context.getString(R.string.premium_billing_error));
+                listener.onBillingMessage(context.getString(R.string.purchase_billing_error));
             }
         });
     }

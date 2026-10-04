@@ -4,7 +4,7 @@ Este directorio contiene materiales visuales de ejemplo para preparar la ficha d
 
 - `curati-app-logo.png`: logo cuadrado para la identidad visual de Curati App.
 - `curati-feature-graphic.png`: gráfico destacado de la ficha.
-- `curati-phone-01-premium.png`: ejemplo de la pantalla de suscripción.
+- `curati-phone-01-purchase.png`: ejemplo de la pantalla de compra única.
 - `curati-phone-02-frequencies.png`: ejemplo de la experiencia de frecuencias.
 - `curati-phone-03-playlist.png`: ejemplo de la automatización y lista de reproducción.
 

@@ -47,10 +47,10 @@ public final class MainActivity extends Activity implements BillingManager.Liste
     private WebView webView;
     private ProgressBar progressBar;
     private View errorView;
-    private View subscriptionView;
-    private TextView subscriptionDescription;
-    private TextView subscriptionStatus;
-    private Button subscribeButton;
+    private View purchaseView;
+    private TextView purchaseDescription;
+    private TextView purchaseStatus;
+    private Button purchaseButton;
     private BillingManager billingManager;
     private boolean webContentUnlocked;
 
@@ -113,8 +113,8 @@ public final class MainActivity extends Activity implements BillingManager.Liste
         errorView.setVisibility(View.GONE);
         pageFrame.addView(errorView, new FrameLayout.LayoutParams(-1, -1));
 
-        subscriptionView = createSubscriptionView();
-        pageFrame.addView(subscriptionView, new FrameLayout.LayoutParams(-1, -1));
+        purchaseView = createPurchaseView();
+        pageFrame.addView(purchaseView, new FrameLayout.LayoutParams(-1, -1));
 
         root.addView(toolbar, new LinearLayout.LayoutParams(-1, dp(56)));
         root.addView(pageFrame, new LinearLayout.LayoutParams(-1, 0, 1));
@@ -130,7 +130,7 @@ public final class MainActivity extends Activity implements BillingManager.Liste
         }
     }
 
-    private View createSubscriptionView() {
+    private View createPurchaseView() {
         ScrollView scrollView = new ScrollView(this);
         scrollView.setFillViewport(true);
         scrollView.setBackgroundColor(BACKGROUND);
@@ -147,7 +147,7 @@ public final class MainActivity extends Activity implements BillingManager.Liste
         container.addView(logo, new LinearLayout.LayoutParams(-1, dp(118)));
 
         TextView heading = new TextView(this);
-        heading.setText(R.string.premium_title);
+        heading.setText(R.string.purchase_title);
         heading.setTextColor(Color.WHITE);
         heading.setTextSize(26);
         heading.setGravity(Gravity.CENTER);
@@ -156,29 +156,29 @@ public final class MainActivity extends Activity implements BillingManager.Liste
         headingParams.topMargin = dp(14);
         container.addView(heading, headingParams);
 
-        subscriptionDescription = new TextView(this);
-        subscriptionDescription.setText(getString(R.string.premium_description,
-                getString(R.string.premium_default_price)));
-        subscriptionDescription.setTextColor(Color.LTGRAY);
-        subscriptionDescription.setTextSize(16);
-        subscriptionDescription.setGravity(Gravity.CENTER);
-        subscriptionDescription.setLineSpacing(0, 1.15f);
+        purchaseDescription = new TextView(this);
+        purchaseDescription.setText(getString(R.string.purchase_description,
+                getString(R.string.purchase_default_price)));
+        purchaseDescription.setTextColor(Color.LTGRAY);
+        purchaseDescription.setTextSize(16);
+        purchaseDescription.setGravity(Gravity.CENTER);
+        purchaseDescription.setLineSpacing(0, 1.15f);
         LinearLayout.LayoutParams descriptionParams = new LinearLayout.LayoutParams(-1, -2);
         descriptionParams.topMargin = dp(16);
-        container.addView(subscriptionDescription, descriptionParams);
+        container.addView(purchaseDescription, descriptionParams);
 
-        subscriptionStatus = new TextView(this);
-        subscriptionStatus.setText(R.string.premium_loading);
-        subscriptionStatus.setTextColor(ACCENT);
-        subscriptionStatus.setTextSize(14);
-        subscriptionStatus.setGravity(Gravity.CENTER);
-        subscriptionStatus.setLineSpacing(0, 1.1f);
+        purchaseStatus = new TextView(this);
+        purchaseStatus.setText(R.string.purchase_loading);
+        purchaseStatus.setTextColor(ACCENT);
+        purchaseStatus.setTextSize(14);
+        purchaseStatus.setGravity(Gravity.CENTER);
+        purchaseStatus.setLineSpacing(0, 1.1f);
         LinearLayout.LayoutParams statusParams = new LinearLayout.LayoutParams(-1, -2);
         statusParams.topMargin = dp(18);
-        container.addView(subscriptionStatus, statusParams);
+        container.addView(purchaseStatus, statusParams);
 
         TextView terms = new TextView(this);
-        terms.setText(R.string.premium_terms);
+        terms.setText(R.string.purchase_terms);
         terms.setTextColor(Color.rgb(175, 170, 185));
         terms.setTextSize(13);
         terms.setGravity(Gravity.CENTER);
@@ -187,32 +187,20 @@ public final class MainActivity extends Activity implements BillingManager.Liste
         termsParams.topMargin = dp(18);
         container.addView(terms, termsParams);
 
-        subscribeButton = createActionButton(R.string.premium_subscribe);
-        subscribeButton.setEnabled(false);
-        subscribeButton.setOnClickListener(view -> billingManager.launchSubscription(this));
+        purchaseButton = createActionButton(R.string.purchase_buy);
+        purchaseButton.setEnabled(false);
+        purchaseButton.setOnClickListener(view -> billingManager.launchPurchase(this));
         LinearLayout.LayoutParams subscribeParams = new LinearLayout.LayoutParams(-1, dp(52));
         subscribeParams.topMargin = dp(24);
-        container.addView(subscribeButton, subscribeParams);
+        container.addView(purchaseButton, subscribeParams);
 
-        Button restoreButton = createSecondaryButton(R.string.premium_restore);
+        Button restoreButton = createSecondaryButton(R.string.purchase_restore);
         restoreButton.setOnClickListener(view -> billingManager.refreshPurchases());
         LinearLayout.LayoutParams restoreParams = new LinearLayout.LayoutParams(-1, dp(48));
         restoreParams.topMargin = dp(10);
         container.addView(restoreButton, restoreParams);
 
-        Button manageButton = createSecondaryButton(R.string.premium_manage);
-        manageButton.setOnClickListener(view -> openSubscriptionManagement());
-        LinearLayout.LayoutParams manageParams = new LinearLayout.LayoutParams(-1, dp(48));
-        manageParams.topMargin = dp(10);
-        container.addView(manageButton, manageParams);
-
-        Button continueButton = createSecondaryButton(R.string.premium_continue_free);
-        continueButton.setOnClickListener(view -> continueToFreeExperience());
-        LinearLayout.LayoutParams continueParams = new LinearLayout.LayoutParams(-1, dp(48));
-        continueParams.topMargin = dp(10);
-        container.addView(continueButton, continueParams);
-
-        Button privacyButton = createSecondaryButton(R.string.premium_privacy);
+        Button privacyButton = createSecondaryButton(R.string.purchase_privacy);
         privacyButton.setOnClickListener(view -> openExternal(Uri.parse(getString(R.string.privacy_url))));
         LinearLayout.LayoutParams privacyParams = new LinearLayout.LayoutParams(-1, dp(48));
         privacyParams.topMargin = dp(10);
@@ -315,23 +303,23 @@ public final class MainActivity extends Activity implements BillingManager.Liste
     @Override
     public void onOfferReady(String priceLabel) {
         runOnUiThread(() -> {
-            subscriptionDescription.setText(getString(R.string.premium_description, priceLabel));
-            subscriptionStatus.setText("");
-            subscribeButton.setEnabled(true);
+            purchaseDescription.setText(getString(R.string.purchase_description, priceLabel));
+            purchaseStatus.setText("");
+            purchaseButton.setEnabled(true);
         });
     }
 
     @Override
-    public void onSubscriptionStateChanged(boolean active, String message) {
+    public void onPurchaseStateChanged(boolean active, String message) {
         runOnUiThread(() -> {
             if (active) {
                 webContentUnlocked = true;
-                subscriptionStatus.setText(message);
-                subscriptionView.setVisibility(View.GONE);
+                purchaseStatus.setText(message);
+                purchaseView.setVisibility(View.GONE);
                 loadHome();
             } else {
-                subscriptionStatus.setText(message == null || message.isEmpty() ? "" : message);
-                subscriptionView.setVisibility(View.VISIBLE);
+                purchaseStatus.setText(message == null || message.isEmpty() ? "" : message);
+                purchaseView.setVisibility(View.VISIBLE);
             }
         });
     }
@@ -339,8 +327,8 @@ public final class MainActivity extends Activity implements BillingManager.Liste
     @Override
     public void onBillingMessage(String message) {
         runOnUiThread(() -> {
-            subscriptionStatus.setText(message);
-            subscribeButton.setEnabled(true);
+            purchaseStatus.setText(message);
+            purchaseButton.setEnabled(true);
         });
     }
 
@@ -401,7 +389,7 @@ public final class MainActivity extends Activity implements BillingManager.Liste
         menu.add(Menu.NONE, 1, Menu.NONE, R.string.share_site);
         menu.add(Menu.NONE, 2, Menu.NONE, R.string.sound_safety);
         menu.add(Menu.NONE, 3, Menu.NONE, R.string.privacy_policy);
-        menu.add(Menu.NONE, 4, Menu.NONE, R.string.premium_menu);
+        menu.add(Menu.NONE, 4, Menu.NONE, R.string.purchase_menu);
         popup.setOnMenuItemClickListener(this::handleMenuItem);
         popup.show();
     }
@@ -418,7 +406,7 @@ public final class MainActivity extends Activity implements BillingManager.Liste
                 openExternal(Uri.parse(getString(R.string.privacy_url)));
                 return true;
             case 4:
-                subscriptionView.setVisibility(View.VISIBLE);
+                purchaseView.setVisibility(View.VISIBLE);
                 return true;
             default:
                 return false;
@@ -438,18 +426,6 @@ public final class MainActivity extends Activity implements BillingManager.Liste
                 .setMessage("Esta es una experiencia sonora experimental, no un tratamiento médico ni una herramienta de diagnóstico.\n\nUsa un volumen cómodo, toma descansos y deja de escuchar si sientes incomodidad, mareo, ansiedad o zumbidos en los oídos.")
                 .setPositiveButton(R.string.done, null)
                 .show();
-    }
-
-    private void continueToFreeExperience() {
-        webContentUnlocked = true;
-        subscriptionView.setVisibility(View.GONE);
-        loadHome();
-    }
-
-    private void openSubscriptionManagement() {
-        Uri uri = Uri.parse("https://play.google.com/store/account/subscriptions?package="
-                + getPackageName() + "&sku=" + getString(R.string.subscription_product_id));
-        openExternal(uri);
     }
 
     private void loadHome() {
