@@ -1,10 +1,13 @@
 import SwiftUI
+import SafariServices
 
 struct ContentView: View {
     private static let healingURL = URL(string: "https://infiniti-ia.com/english")!
+    private static let privacyURL = URL(string: "https://infiniti-ia.com/privacy")!
 
     @StateObject private var webViewStore = WebViewStore(destinationURL: ContentView.healingURL)
     @State private var showingSoundSafety = false
+    @State private var showingPrivacyPolicy = false
 
     var body: some View {
         NavigationStack {
@@ -56,6 +59,12 @@ struct ContentView: View {
                         } label: {
                             Label("Sound Safety", systemImage: "ear")
                         }
+
+                        Button {
+                            showingPrivacyPolicy = true
+                        } label: {
+                            Label("Privacy Policy", systemImage: "hand.raised")
+                        }
                     } label: {
                         Label("More", systemImage: "ellipsis.circle")
                     }
@@ -66,6 +75,9 @@ struct ContentView: View {
         .preferredColorScheme(.dark)
         .sheet(isPresented: $showingSoundSafety) {
             SoundSafetyView()
+        }
+        .sheet(isPresented: $showingPrivacyPolicy) {
+            PrivacyPolicyView(url: Self.privacyURL)
         }
     }
 }
@@ -125,4 +137,14 @@ private struct SoundSafetyView: View {
         }
         .presentationDetents([.medium, .large])
     }
+}
+
+private struct PrivacyPolicyView: UIViewControllerRepresentable {
+    let url: URL
+
+    func makeUIViewController(context: Context) -> SFSafariViewController {
+        SFSafariViewController(url: url)
+    }
+
+    func updateUIViewController(_ viewController: SFSafariViewController, context: Context) {}
 }

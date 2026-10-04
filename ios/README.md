@@ -4,7 +4,7 @@ This folder contains an iPhone app project named **Healing Frequencies App**. It
 
 `https://infiniti-ia.com/english`
 
-The web experience remains the source of truth for the synthesizer UI and audio controls. The native shell adds navigation, loading and offline-error states, sharing, and a sound-safety panel.
+The web experience remains the source of truth for the synthesizer UI and audio controls. The native shell adds navigation, loading and offline-error states, sharing, an in-app privacy-policy view, and a sound-safety panel. The public privacy URL is `https://infiniti-ia.com/privacy`.
 
 ## Open the project
 

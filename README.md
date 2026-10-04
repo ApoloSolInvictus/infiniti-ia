@@ -37,3 +37,7 @@ nativa SwiftUI con `WKWebView` que presenta `https://infiniti-ia.com/english`
 con controles de navegacion, recarga, compartir, estados de conexion y notas de
 seguridad sonora. La guia de compilacion y publicacion esta en
 `ios/README.md`.
+
+La politica publica de privacidad para App Store Connect esta en
+`https://infiniti-ia.com/privacy` y tambien se puede abrir desde el menu nativo
+de la app.
