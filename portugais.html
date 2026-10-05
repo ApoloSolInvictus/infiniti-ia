@@ -1,0 +1,815 @@
+<!DOCTYPE html>
+<html lang="pt" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Sintetizador Solfeggio | Infiniti IA</title>
+    <meta name="description" content="Sintetizador experimental de frequências Solfeggio. Explore o som, o foco e o relaxamento; não é um tratamento médico e não faz alegações clínicas.">
+    <meta name="author" content="Apollo Sol Invictus - W Studio">
+    <meta name="robots" content="index, follow">
+    <meta name="googlebot" content="index, follow, max-snippet:-1, max-image-preview:large">
+    <meta name="theme-color" content="#020617">
+    <link rel="canonical" href="https://infiniti-ia.com/portugais">
+    <meta property="og:locale" content="pt_BR">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://infiniti-ia.com/portugais">
+    <meta property="og:title" content="Sintetizador Solfeggio | Infiniti IA">
+    <meta property="og:description" content="Sintetizador gratuito de frequências Solfeggio para explorar som, foco e bem-estar com a Infiniti IA.">
+    <meta property="og:image" content="https://infiniti-ia.com/images/infiniti-ia-social-preview.jpg">
+    <meta property="og:image:secure_url" content="https://infiniti-ia.com/images/infiniti-ia-social-preview.jpg">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:type" content="image/jpeg">
+    <meta property="og:image:alt" content="Logotipo da Infiniti IA by W Studio sobre fundo preto.">
+    <meta property="og:site_name" content="INFINITI IA by W Studio">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Sintetizador Solfeggio | Infiniti IA">
+    <meta name="twitter:description" content="Explore as frequências Solfeggio e a acústica interativa com uma ferramenta gratuita da Infiniti IA.">
+    <meta name="twitter:image" content="https://infiniti-ia.com/images/infiniti-ia-social-preview.jpg">
+    <meta name="twitter:image:alt" content="Logotipo da Infiniti IA by W Studio sobre fundo preto.">
+    
+    <!-- Libraries -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Inter:wght@300;400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+
+    <!-- React Core -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        display: ['Orbitron', 'sans-serif'],
+                        mono: ['Space Mono', 'monospace'],
+                    },
+                    colors: {
+                        synth: {
+                            dark: '#030108',
+                            panel: '#0d0514',
+                            cyan: '#00f0ff',
+                            purple: '#b026ff',
+                            gold: '#fbbf24',
+                            active: '#ff2a85'
+                        }
+                    },
+                    animation: {
+                        'pulse-glow': 'pulseGlow 4s ease-in-out infinite alternate',
+                    },
+                    keyframes: {
+                        pulseGlow: {
+                            '0%': { opacity: 0.3, transform: 'scale(1)' },
+                            '100%': { opacity: 0.6, transform: 'scale(1.05)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body { background-color: #030108; color: #e2e8f0; overflow-x: hidden; user-select: none; }
+        
+        .glass-panel {
+            background: rgba(13, 5, 20, 0.6);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(176, 38, 255, 0.2);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+        }
+
+        .pad-key {
+            transition: all 0.1s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5), inset 0 2px 4px rgba(255,255,255,0.1);
+        }
+        
+        .pad-key.active {
+            transform: scale(0.95) translateY(4px);
+            box-shadow: 0 0 30px currentColor, inset 0 0 15px currentColor;
+            border-color: currentColor;
+            background-color: rgba(255,255,255,0.1);
+        }
+
+        .mystic-bg {
+            position: fixed; inset: 0; z-index: 0; pointer-events: none;
+            background: radial-gradient(circle at 50% 50%, rgba(176, 38, 255, 0.1) 0%, transparent 60%),
+                        url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23b026ff' fill-opacity='0.05' fill-rule='evenodd'%3E%3Cpath d='M0 40L40 0H20L0 20M40 40V20L20 40'/%3E%3C/g%3E%3C/svg%3E");
+        }
+
+        /* Visualizer CSS */
+        .wave-container { display: flex; align-items: center; justify-content: center; gap: 4px; height: 100px; }
+        .wave-bar { width: 8px; background-color: #b026ff; border-radius: 4px; height: 10px; transition: height 0.1s ease, box-shadow 0.1s ease; }
+        .wave-bar.playing { animation: soundWave 0.5s ease infinite alternate; box-shadow: 0 0 15px #b026ff; }
+        .wave-bar.playing:nth-child(2n) { animation-delay: 0.1s; background-color: #00f0ff; box-shadow: 0 0 15px #00f0ff; }
+        .wave-bar.playing:nth-child(3n) { animation-delay: 0.2s; background-color: #fbbf24; box-shadow: 0 0 15px #fbbf24; }
+
+        @keyframes soundWave { 0% { height: 10px; } 100% { height: 80px; } }
+    </style>
+</head>
+<body class="antialiased">
+
+    <div class="mystic-bg animate-pulse-glow"></div>
+    <div id="root" class="relative z-10 w-full min-h-screen flex flex-col"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect, useRef, useCallback } = React;
+
+        // ==========================================
+        // MOTOR DE AUDIO (WEB AUDIO API)
+        // ==========================================
+        let audioCtx = null;
+        let masterGain = null;
+        let delayNode = null;
+        let feedbackGain = null;
+        const activeOscillators = {};
+        const MAX_TIMER_DELAY = 2147480000;
+        const TIME_MULTIPLIERS = { seconds: 1, minutes: 60, hours: 3600 };
+
+        const toSegundos = (value, unit) => {
+            const numericValue = Number(value);
+            if (!Number.isFinite(numericValue) || numericValue < 0) return 0;
+            return numericValue * TIME_MULTIPLIERS[unit];
+        };
+
+        const formatDuração = (seconds) => {
+            if (!Number.isFinite(seconds) || seconds <= 0) return '0 s';
+            if (seconds >= 3600) return `${(seconds / 3600).toFixed(2)} h`;
+            if (seconds >= 60) return `${(seconds / 60).toFixed(2)} min`;
+            return `${seconds.toFixed(seconds % 1 ? 1 : 0)} s`;
+        };
+
+        // Handles long sessions without the browser's single-timer limit.
+        const scheduleLongTimer = (delayMs, callback) => {
+            let cancelled = false;
+            let timerId = null;
+
+            const scheduleChunk = (remainingMs) => {
+                if (cancelled) return;
+                const chunk = Math.min(Math.max(remainingMs, 0), MAX_TIMER_DELAY);
+                timerId = window.setTimeout(() => {
+                    if (cancelled) return;
+                    if (remainingMs > chunk) scheduleChunk(remainingMs - chunk);
+                    else callback();
+                }, chunk);
+            };
+
+            scheduleChunk(Math.max(delayMs, 0));
+            return () => {
+                cancelled = true;
+                if (timerId !== null) window.clearTimeout(timerId);
+            };
+        };
+
+        const initAudioEngine = () => {
+            if (audioCtx) return;
+            
+            const AudioContext = window.AudioContext || window.webkitAudioContext;
+            audioCtx = new AudioContext();
+            
+            masterGain = audioCtx.createGain();
+            masterGain.gain.value = 0.5; // Master volume
+            
+            // Ether effect (long delay to simulate a church/cathedral ambience)
+            delayNode = audioCtx.createDelay(2.0);
+            delayNode.delayTime.value = 0.6; // Echo time in seconds
+            
+            feedbackGain = audioCtx.createGain();
+            feedbackGain.gain.value = 0.4; // Echo amount
+            
+            delayNode.connect(feedbackGain);
+            feedbackGain.connect(delayNode);
+            
+            delayNode.connect(masterGain);
+            masterGain.connect(audioCtx.destination);
+        };
+
+        const playFrequência = (freq) => {
+            if (!audioCtx) initAudioEngine();
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+
+            osc.type = 'sine'; // Experimental sine wave
+            osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+
+            // Envelope attack (smooth, safe start)
+            gain.gain.setValueAtTime(0.001, audioCtx.currentTime);
+            gain.gain.linearRampToValueAtTime(0.4, audioCtx.currentTime + 0.3);
+
+            osc.connect(gain);
+            gain.connect(masterGain);
+            gain.connect(delayNode); // Send to effect
+            
+            osc.start();
+            const voice = { osc, gain };
+            if (!activeOscillators[freq]) activeOscillators[freq] = [];
+            activeOscillators[freq].push(voice);
+            return voice;
+        };
+
+        const stopVoice = (freq, voice) => {
+            const voices = activeOscillators[freq];
+            if (!voices || !voice) return;
+            const voiceIndex = voices.indexOf(voice);
+            if (voiceIndex === -1) return;
+            const { osc, gain } = voice;
+            
+            // Envelope release (long fade-out)
+            const releaseAt = audioCtx.currentTime + 3.0;
+            gain.gain.cancelScheduledValues(audioCtx.currentTime);
+            gain.gain.setValueAtTime(Math.max(gain.gain.value, 0.001), audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, releaseAt);
+            
+            osc.stop(releaseAt);
+            voices.splice(voiceIndex, 1);
+            if (voices.length === 0) delete activeOscillators[freq];
+        };
+
+        const stopFrequência = (freq) => {
+            [...(activeOscillators[freq] || [])].forEach((voice) => stopVoice(freq, voice));
+        };
+
+        // ==========================================
+        // SOLFEGGIO FREQUENCY DATABASE
+        // ==========================================
+        const FREQUENCIES = [
+            { freq: 396, note: 'Raiz', objective: 'Exploração sonora e respiração', key: 'a', color: '#ef4444' },
+            { freq: 417, note: 'Sacral', objective: 'Mudança de ambiente e textura', key: 's', color: '#f97316' },
+            { freq: 528, note: 'Plexo solar', objective: 'Tom experimental de 528 Hz', key: 'd', color: '#fbbf24' },
+            { freq: 639, note: 'Coração', objective: 'Escuta e conexão pessoal', key: 'f', color: '#10b981' },
+            { freq: 741, note: 'Garganta', objective: 'Estudo de timbre e expressão', key: 'g', color: '#0ea5e9' },
+            { freq: 852, note: 'Terceiro olho', objective: 'Atenção e escuta interior', key: 'h', color: '#6366f1' },
+            { freq: 963, note: 'Coroa', objective: 'Experiência sonora contemplativa', key: 'j', color: '#b026ff' }
+        ];
+
+        // ==========================================
+        // MAIN COMPONENT
+        // ==========================================
+        const SynthApp = () => {
+            const [engineStarted, setEngineStarted] = useState(false);
+            const [activeKeys, setActiveKeys] = useState({}); // { freq: boolean }
+            const [playlist, setPlaylist] = useState([]);
+            const [selectedFrequência, setSelectedFrequência] = useState(FREQUENCIES[0].freq);
+            const [startValue, setStartValue] = useState('0');
+            const [startUnit, setStartUnit] = useState('seconds');
+            const [durationValue, setDuraçãoValue] = useState('5');
+            const [durationUnit, setDuraçãoUnit] = useState('minutes');
+            const [automationRunning, setAutomationRunning] = useState(false);
+            const [automationActive, setAutomationActive] = useState([]);
+            const [automationElapsed, setAutomationElapsed] = useState(0);
+            const [automationNotice, setAutomationNotice] = useState('');
+            const manualVoicesRef = useRef({});
+            const automationTimersRef = useRef(new Map());
+            const automationVoicesRef = useRef(new Map());
+            const automationRunRef = useRef(false);
+            const automationPendingRef = useRef(0);
+            const automationElapsedTimerRef = useRef(null);
+            const automationStartedAtRef = useRef(0);
+
+            const getPad = (freq) => FREQUENCIES.find((pad) => pad.freq === Number(freq));
+
+            const startManualFrequência = (freq) => {
+                if (!engineStarted || manualVoicesRef.current[freq]) return;
+                manualVoicesRef.current[freq] = playFrequência(freq);
+                setActiveKeys(prev => ({ ...prev, [freq]: true }));
+            };
+
+            const releaseManualFrequência = (freq) => {
+                stopVoice(freq, manualVoicesRef.current[freq]);
+                delete manualVoicesRef.current[freq];
+                setActiveKeys(prev => ({ ...prev, [freq]: false }));
+            };
+            
+            // Keyboard shortcuts
+            useEffect(() => {
+                if (!engineStarted) return;
+
+                const handleKeyDown = (e) => {
+                    if (e.repeat) return;
+                    const key = e.key.toLowerCase();
+                    const pad = FREQUENCIES.find(f => f.key === key);
+                    if (pad) {
+                        startManualFrequência(pad.freq);
+                    }
+                };
+
+                const handleKeyUp = (e) => {
+                    const key = e.key.toLowerCase();
+                    const pad = FREQUENCIES.find(f => f.key === key);
+                    if (pad) {
+                        releaseManualFrequência(pad.freq);
+                    }
+                };
+
+                window.addEventListener('keydown', handleKeyDown);
+                window.addEventListener('keyup', handleKeyUp);
+
+                return () => {
+                    window.removeEventListener('keydown', handleKeyDown);
+                    window.removeEventListener('keyup', handleKeyUp);
+                };
+            }, [engineStarted]);
+
+            // Mouse / touch handlers
+            const handlePadDown = (freq) => {
+                startManualFrequência(freq);
+            };
+
+            const handlePadUp = (freq) => {
+                releaseManualFrequência(freq);
+            };
+
+            const startEngine = () => {
+                initAudioEngine();
+                if (audioCtx.state === 'suspended') audioCtx.resume();
+                setEngineStarted(true);
+            };
+
+            const trackStartSegundos = (track) => toSegundos(track.startValue, track.startUnit);
+            const trackDuraçãoSegundos = (track) => toSegundos(track.durationValue, track.durationUnit);
+            const planejadoDuraçãoSegundos = playlist.length
+                ? Math.max(...playlist.map(track => trackStartSegundos(track) + trackDuraçãoSegundos(track)))
+                : 0;
+
+            const updateTrack = (id, field, value) => {
+                setPlaylist(prev => prev.map(track => track.id === id ? { ...track, [field]: value } : track));
+            };
+
+            const removeTrack = (id) => {
+                if (automationRunning) return;
+                setPlaylist(prev => prev.filter(track => track.id !== id));
+            };
+
+            const clearPlaylist = () => {
+                if (automationRunning) return;
+                setPlaylist([]);
+                setAutomationNotice('Linha do tempo limpa.');
+            };
+
+            const addTrack = (appendToTimeline = false) => {
+                const selectedPad = getPad(selectedFrequência);
+                if (!selectedPad) return;
+
+                const durationSegundos = toSegundos(durationValue, durationUnit);
+                if (durationSegundos <= 0) {
+                    setAutomationNotice('Escolha uma duração maior que zero.');
+                    return;
+                }
+
+                const sequentialStartSegundos = appendToTimeline && playlist.length
+                    ? Math.max(...playlist.map(track => trackStartSegundos(track) + trackDuraçãoSegundos(track)))
+                    : 0;
+                const track = {
+                    id: `track-${Date.now()}-${Math.random().toString(36).slice(2)}`,
+                    freq: selectedPad.freq,
+                    startValue: appendToTimeline ? String(sequentialStartSegundos) : startValue,
+                    startUnit: appendToTimeline ? 'seconds' : startUnit,
+                    durationValue,
+                    durationUnit
+                };
+
+                setPlaylist(prev => [...prev, track]);
+                setAutomationNotice(`${selectedPad.note} adicionado à linha do tempo.`);
+            };
+
+            const finishAutomation = () => {
+                if (!automationRunRef.current) return;
+                automationRunRef.current = false;
+                setAutomationRunning(false);
+                setAutomationActive([]);
+                setAutomationNotice('Automação concluída.');
+                if (automationElapsedTimerRef.current) {
+                    window.clearInterval(automationElapsedTimerRef.current);
+                    automationElapsedTimerRef.current = null;
+                }
+                automationTimersRef.current.clear();
+            };
+
+            const stopAutomation = () => {
+                automationRunRef.current = false;
+                automationTimersRef.current.forEach(cancel => cancel());
+                automationTimersRef.current.clear();
+                automationVoicesRef.current.forEach(({ freq, voice }) => stopVoice(freq, voice));
+                automationVoicesRef.current.clear();
+                setAutomationRunning(false);
+                setAutomationActive([]);
+                setAutomationElapsed(0);
+                setAutomationNotice('Automação parada.');
+                if (automationElapsedTimerRef.current) {
+                    window.clearInterval(automationElapsedTimerRef.current);
+                    automationElapsedTimerRef.current = null;
+                }
+            };
+
+            const startAutomation = () => {
+                if (!engineStarted || automationRunning || playlist.length === 0) return;
+
+                const invalidTrack = playlist.find(track => trackDuraçãoSegundos(track) <= 0);
+                if (invalidTrack) {
+                    setAutomationNotice('Toda faixa precisa de uma duração maior que zero.');
+                    return;
+                }
+
+                initAudioEngine();
+                if (audioCtx.state === 'suspended') audioCtx.resume();
+                automationRunRef.current = true;
+                automationPendingRef.current = playlist.length;
+                automationStartedAtRef.current = performance.now();
+                setAutomationRunning(true);
+                setAutomationElapsed(0);
+                setAutomationActive([]);
+                setAutomationNotice('Automação em execução. As faixas sobrepostas estão ativas juntas.');
+
+                automationElapsedTimerRef.current = window.setInterval(() => {
+                    if (automationRunRef.current) {
+                        setAutomationElapsed((performance.now() - automationStartedAtRef.current) / 1000);
+                    }
+                }, 1000);
+
+                playlist.forEach(track => {
+                    const startDelayMs = trackStartSegundos(track) * 1000;
+                    const durationMs = trackDuraçãoSegundos(track) * 1000;
+                    const cancelStart = scheduleLongTimer(startDelayMs, () => {
+                        if (!automationRunRef.current) return;
+
+                        const voice = playFrequência(track.freq);
+                        automationVoicesRef.current.set(track.id, { freq: track.freq, voice });
+                        setAutomationActive(prev => [...prev, track.id]);
+
+                        const cancelParar = scheduleLongTimer(durationMs, () => {
+                            stopVoice(track.freq, voice);
+                            automationVoicesRef.current.delete(track.id);
+                            setAutomationActive(prev => prev.filter(id => id !== track.id));
+                            automationPendingRef.current -= 1;
+                            if (automationPendingRef.current <= 0) finishAutomation();
+                        });
+                        automationTimersRef.current.set(`${track.id}-stop`, cancelParar);
+                    });
+                    automationTimersRef.current.set(`${track.id}-start`, cancelStart);
+                });
+            };
+
+            useEffect(() => () => {
+                automationRunRef.current = false;
+                automationTimersRef.current.forEach(cancel => cancel());
+                automationTimersRef.current.clear();
+                automationVoicesRef.current.forEach(({ freq, voice }) => stopVoice(freq, voice));
+                automationVoicesRef.current.clear();
+                if (automationElapsedTimerRef.current) window.clearInterval(automationElapsedTimerRef.current);
+                Object.keys(manualVoicesRef.current).forEach(freq => stopVoice(freq, manualVoicesRef.current[freq]));
+                manualVoicesRef.current = {};
+            }, []);
+
+            const isAnyPlaying = Object.values(activeKeys).some(val => val) || automationActive.length > 0;
+
+            return (
+                <div className="flex flex-col min-h-screen py-10 px-4 md:px-8 max-w-6xl mx-auto w-full">
+                    
+                    {/* HEADER */}
+                    <header className="text-center mb-10">
+                        <div className="inline-flex items-center justify-center w-16 h-16 rounded-full border border-synth-cyan/50 bg-synth-cyan/10 mb-4 shadow-[0_0_20px_rgba(0,240,255,0.3)]">
+                            <i className="ph-thin ph-wave-sine text-4xl text-synth-cyan"></i>
+                        </div>
+                        <h1 className="font-display text-4xl md:text-5xl font-black mb-2 tracking-widest text-transparent bg-clip-text bg-gradient-to-r from-synth-cyan via-synth-purple to-synth-gold">
+                            OPUS AETERNA
+                        </h1>
+                        <p className="font-mono text-xs md:text-sm text-gray-400 uppercase tracking-[0.3em]">
+                            Sintetizador Quântico Solfeggio
+                        </p>
+                    </header>
+
+                    {!engineStarted ? (
+                        <div className="flex-1 flex flex-col items-center justify-center animate-[fadeIn_0.5s_ease-out]">
+                            <div className="glass-panel p-10 rounded-3xl text-center max-w-lg border-t-2 border-synth-cyan">
+                                <i className="ph-fill ph-headphones text-6xl text-synth-cyan mb-6 animate-bounce"></i>
+                                <h2 className="font-display text-2xl font-bold text-white mb-4">INICIAR EXPERIÊNCIA SONORA</h2>
+                                <p className="text-gray-400 mb-8 font-light leading-relaxed">
+                                    Este módulo experimental gera ondas acústicas senoidais puras em tempo real. Ele não faz alegações médicas ou terapêuticas e não é um tratamento médico. Use um volume confortável e pare de ouvir se sentir desconforto.
+                                </p>
+                                <button 
+                                    onClick={startEngine}
+                                    className="px-10 py-4 bg-gradient-to-r from-synth-cyan to-synth-purple text-white font-bold rounded-full uppercase tracking-widest shadow-[0_0_30px_rgba(176,38,255,0.5)] hover:scale-105 transition duration-300"
+                                >
+                                    ATIVAR OSCILADORES
+                                </button>
+                            </div>
+                        </div>
+                    ) : (
+                        <div className="flex-1 flex flex-col animate-[fadeIn_0.8s_ease-out]">
+                            
+                            {/* VISUALIZER */}
+                            <div className="glass-panel p-6 rounded-3xl mb-8 flex flex-col items-center justify-center min-h-[150px] border-t border-synth-purple/40">
+                                <div className="text-[10px] font-mono text-gray-500 uppercase tracking-[0.2em] mb-4">ESPECTRO DE FREQUÊNCIAS ATIVAS</div>
+                                <div className="wave-container">
+                                    {Array.from({length: 15}).map((_, i) => (
+                                        <div key={i} className={`wave-bar ${isAnyPlaying ? 'playing' : ''}`}></div>
+                                    ))}
+                                </div>
+                            </div>
+
+                            {/* INSTRUCTIONS */}
+                            <div className="text-center mb-8 font-mono text-xs text-gray-400">
+                                <span className="hidden md:inline">Pressione as teclas (A, S, D, F, G, H, J) do teclado para tocar. <br/></span>
+                                Você pode reproduzir várias frequências ao mesmo tempo (polifonia).
+                            </div>
+
+                            {/* KEYBOARD / PADS */}
+                            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-4 md:gap-6">
+                                {FREQUENCIES.map((pad) => (
+                                    <div 
+                                        key={pad.freq}
+                                        onMouseDown={() => handlePadDown(pad.freq)}
+                                        onMouseUp={() => handlePadUp(pad.freq)}
+                                        onMouseLeave={() => handlePadUp(pad.freq)}
+                                        onTouchStart={(e) => { e.preventDefault(); handlePadDown(pad.freq); }}
+                                        onTouchEnd={(e) => { e.preventDefault(); handlePadUp(pad.freq); }}
+                                        className={`pad-key flex flex-col items-center justify-between p-4 md:p-6 rounded-2xl border cursor-pointer select-none h-40 md:h-56 ${activeKeys[pad.freq] ? 'active' : 'bg-synth-panel/80 border-gray-700/50 hover:bg-gray-800'}`}
+                                        style={{ color: pad.color }}
+                                    >
+                                        <div className="text-center">
+                                            <div className="font-display font-bold text-2xl md:text-3xl mb-1">{pad.freq}</div>
+                                            <div className="font-mono text-[9px] uppercase tracking-widest text-white/50">Hz</div>
+                                        </div>
+                                        
+                                        <div className="text-center flex-1 flex flex-col justify-center my-2">
+                                            <div className="text-white font-bold text-sm mb-1">{pad.note}</div>
+                                            <div className="text-[9px] md:text-[10px] text-gray-400 leading-tight">{pad.objective}</div>
+                                        </div>
+
+                                        <div className="hidden md:flex w-8 h-8 rounded border border-current items-center justify-center font-mono font-bold text-white/70">
+                                            {pad.key.toUpperCase()}
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+
+                            {/* AUTOMATION LAB */}
+                            <section className="glass-panel mt-10 p-6 md:p-8 rounded-3xl border-t-2 border-synth-purple/50">
+                                <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4 mb-8">
+                                    <div>
+                                        <div className="text-[10px] font-mono text-synth-cyan uppercase tracking-[0.25em] mb-3">LABORATÓRIO DE AUTOMAÇÃO</div>
+                                        <h2 className="font-display text-xl md:text-2xl font-bold text-white mb-3">Crie uma sessão sem usar as mãos</h2>
+                                        <p className="text-sm text-gray-400 leading-relaxed max-w-2xl">
+                                            Programe qualquer frequência em segundos, minutos ou horas. Faixas com o mesmo horário de início tocam juntas, enquanto faixas sobrepostas mantêm sua própria duração.
+                                        </p>
+                                    </div>
+                                    <div className="shrink-0 px-3 py-2 rounded-full border border-synth-purple/40 text-[10px] font-mono text-gray-400 uppercase tracking-widest">
+                                        {playlist.length} {playlist.length === 1 ? 'Faixa' : 'Faixas'}
+                                    </div>
+                                </div>
+
+                                <div className="grid lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)] gap-8">
+                                    <div className="space-y-5">
+                                        <div className="text-[10px] font-mono text-gray-500 uppercase tracking-[0.2em]">Adicionar uma frequência</div>
+
+                                        <label className="block text-xs font-mono text-gray-400 uppercase tracking-widest">
+                                            Frequência
+                                            <select
+                                                value={selectedFrequência}
+                                                onChange={(e) => setSelectedFrequência(Number(e.target.value))}
+                                                className="mt-2 w-full rounded-lg border border-gray-700 bg-black/30 px-3 py-3 text-sm text-white outline-none focus:border-synth-cyan"
+                                            >
+                                                {FREQUENCIES.map((pad) => (
+                                                    <option key={pad.freq} value={pad.freq}>{pad.freq} Hz - {pad.note}</option>
+                                                ))}
+                                            </select>
+                                        </label>
+
+                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                            <label className="block text-xs font-mono text-gray-400 uppercase tracking-widest">
+                                                Começar após
+                                                <div className="mt-2 flex gap-2">
+                                                    <input
+                                                        type="number"
+                                                        min="0"
+                                                        step="any"
+                                                        inputMode="decimal"
+                                                        value={startValue}
+                                                        onChange={(e) => setStartValue(e.target.value)}
+                                                        className="min-w-0 w-full rounded-lg border border-gray-700 bg-black/30 px-3 py-3 text-sm text-white outline-none focus:border-synth-cyan"
+                                                    />
+                                                    <select
+                                                        value={startUnit}
+                                                        onChange={(e) => setStartUnit(e.target.value)}
+                                                        className="w-28 rounded-lg border border-gray-700 bg-black/30 px-2 py-3 text-xs text-white outline-none focus:border-synth-cyan"
+                                                    >
+                                                        <option value="seconds">Segundos</option>
+                                                        <option value="minutes">Minutos</option>
+                                                        <option value="hours">Horas</option>
+                                                    </select>
+                                                </div>
+                                            </label>
+
+                                            <label className="block text-xs font-mono text-gray-400 uppercase tracking-widest">
+                                                Duração
+                                                <div className="mt-2 flex gap-2">
+                                                    <input
+                                                        type="number"
+                                                        min="0.1"
+                                                        step="any"
+                                                        inputMode="decimal"
+                                                        value={durationValue}
+                                                        onChange={(e) => setDuraçãoValue(e.target.value)}
+                                                        className="min-w-0 w-full rounded-lg border border-gray-700 bg-black/30 px-3 py-3 text-sm text-white outline-none focus:border-synth-cyan"
+                                                    />
+                                                    <select
+                                                        value={durationUnit}
+                                                        onChange={(e) => setDuraçãoUnit(e.target.value)}
+                                                        className="w-28 rounded-lg border border-gray-700 bg-black/30 px-2 py-3 text-xs text-white outline-none focus:border-synth-cyan"
+                                                    >
+                                                        <option value="seconds">Segundos</option>
+                                                        <option value="minutes">Minutos</option>
+                                                        <option value="hours">Horas</option>
+                                                    </select>
+                                                </div>
+                                            </label>
+                                        </div>
+
+                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                            <button
+                                                onClick={() => addTrack(false)}
+                                                className="flex items-center justify-center gap-2 rounded-lg bg-gradient-to-r from-synth-cyan to-synth-purple px-4 py-3 text-xs font-bold uppercase tracking-widest text-white shadow-[0_0_22px_rgba(176,38,255,0.25)] transition hover:scale-[1.02]"
+                                            >
+                                                <i className="ph-bold ph-plus"></i>
+                                                Adicionar à linha do tempo
+                                            </button>
+                                            <button
+                                                onClick={() => addTrack(true)}
+                                                className="flex items-center justify-center gap-2 rounded-lg border border-synth-purple/50 px-4 py-3 text-xs font-bold uppercase tracking-widest text-white transition hover:bg-synth-purple/10"
+                                            >
+                                                <i className="ph-bold ph-arrow-line-down"></i>
+                                                Adicionar em seguida
+                                            </button>
+                                        </div>
+
+                                        <p className="text-[11px] leading-relaxed text-gray-500">
+                                            Use o mesmo horário de início para criar uma camada semelhante a um acorde. Use <span className="text-gray-300">Adicionar em seguida</span> para colocar uma faixa depois da linha do tempo atual.
+                                        </p>
+                                    </div>
+
+                                    <div className="space-y-4">
+                                        <div className="flex items-center justify-between gap-4">
+                                            <div className="text-[10px] font-mono text-gray-500 uppercase tracking-[0.2em]">Linha do tempo da sessão</div>
+                                            <div className="text-[10px] font-mono text-synth-gold uppercase tracking-widest">{formatDuração(planejadoDuraçãoSegundos)} planejado</div>
+                                        </div>
+
+                                        {playlist.length === 0 ? (
+                                            <div className="rounded-xl border border-dashed border-gray-700/70 px-5 py-8 text-center text-sm text-gray-500">
+                                                Sua linha do tempo está vazia. Adicione uma ou mais frequências para começar.
+                                            </div>
+                                        ) : (
+                                            <div className="space-y-3 max-h-[520px] overflow-y-auto pr-1">
+                                                {playlist.map((track, index) => {
+                                                    const pad = getPad(track.freq);
+                                                    const isAo vivo = automationActive.includes(track.id);
+                                                    return (
+                                                        <div key={track.id} className="rounded-xl border bg-black/20 p-4" style={{ borderColor: `${pad.color}55` }}>
+                                                            <div className="flex items-start justify-between gap-3">
+                                                                <div className="flex min-w-0 items-center gap-3">
+                                                                    <span className="h-3 w-3 shrink-0 rounded-full" style={{ backgroundColor: pad.color, boxShadow: `0 0 12px ${pad.color}` }}></span>
+                                                                    <div className="min-w-0">
+                                                                        <div className="truncate text-sm font-bold text-white">{index + 1}. {pad.freq} Hz · {pad.note}</div>
+                                                                        <div className="mt-1 text-[10px] font-mono uppercase tracking-wider text-gray-500">
+                                                                            Começa {formatDuração(trackStartSegundos(track))} · Dura {formatDuração(trackDuraçãoSegundos(track))}
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div className="flex shrink-0 items-center gap-2">
+                                                                    {isAo vivo && <span className="rounded-full border border-synth-cyan/50 px-2 py-1 text-[9px] font-mono uppercase tracking-widest text-synth-cyan">Ao vivo</span>}
+                                                                    <button
+                                                                        onClick={() => removeTrack(track.id)}
+                                                                        disabled={automationRunning}
+                                                                        aria-label={`Remove ${pad.note}`}
+                                                                        title="Remover faixa"
+                                                                        className="flex h-8 w-8 items-center justify-center rounded-lg border border-gray-700 text-gray-400 transition hover:border-red-400 hover:text-red-300 disabled:cursor-not-allowed disabled:opacity-30"
+                                                                    >
+                                                                        <i className="ph-bold ph-trash"></i>
+                                                                    </button>
+                                                                </div>
+                                                            </div>
+
+                                                            <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                                                <label className="block text-[10px] font-mono uppercase tracking-widest text-gray-500">
+                                                                    Começar após
+                                                                    <div className="mt-2 flex gap-2">
+                                                                        <input
+                                                                            type="number"
+                                                                            min="0"
+                                                                            step="any"
+                                                                            value={track.startValue}
+                                                                            onChange={(e) => updateTrack(track.id, 'startValue', e.target.value)}
+                                                                            disabled={automationRunning}
+                                                                            className="min-w-0 w-full rounded-lg border border-gray-700 bg-black/30 px-2 py-2 text-xs text-white outline-none focus:border-synth-cyan disabled:opacity-50"
+                                                                        />
+                                                                        <select
+                                                                            value={track.startUnit}
+                                                                            onChange={(e) => updateTrack(track.id, 'startUnit', e.target.value)}
+                                                                            disabled={automationRunning}
+                                                                            className="w-24 rounded-lg border border-gray-700 bg-black/30 px-1 py-2 text-[10px] text-white outline-none focus:border-synth-cyan disabled:opacity-50"
+                                                                        >
+                                                                            <option value="seconds">Segundos</option>
+                                                                            <option value="minutes">Minutos</option>
+                                                                            <option value="hours">Horas</option>
+                                                                        </select>
+                                                                    </div>
+                                                                </label>
+                                                                <label className="block text-[10px] font-mono uppercase tracking-widest text-gray-500">
+                                                                    Duração
+                                                                    <div className="mt-2 flex gap-2">
+                                                                        <input
+                                                                            type="number"
+                                                                            min="0.1"
+                                                                            step="any"
+                                                                            value={track.durationValue}
+                                                                            onChange={(e) => updateTrack(track.id, 'durationValue', e.target.value)}
+                                                                            disabled={automationRunning}
+                                                                            className="min-w-0 w-full rounded-lg border border-gray-700 bg-black/30 px-2 py-2 text-xs text-white outline-none focus:border-synth-cyan disabled:opacity-50"
+                                                                        />
+                                                                        <select
+                                                                            value={track.durationUnit}
+                                                                            onChange={(e) => updateTrack(track.id, 'durationUnit', e.target.value)}
+                                                                            disabled={automationRunning}
+                                                                            className="w-24 rounded-lg border border-gray-700 bg-black/30 px-1 py-2 text-[10px] text-white outline-none focus:border-synth-cyan disabled:opacity-50"
+                                                                        >
+                                                                            <option value="seconds">Segundos</option>
+                                                                            <option value="minutes">Minutos</option>
+                                                                            <option value="hours">Horas</option>
+                                                                        </select>
+                                                                    </div>
+                                                                </label>
+                                                            </div>
+                                                        </div>
+                                                    );
+                                                })}
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+
+                                <div className="mt-8 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 border-t border-white/5 pt-6">
+                                    <div>
+                                        <div className="text-[10px] font-mono uppercase tracking-[0.2em] text-gray-500">Status da sessão</div>
+                                        <div className="mt-1 text-sm text-gray-300">
+                                            {automationRunning ? `Executando por ${formatDuração(automationElapsed)}` : 'Pronto quando você estiver.'}
+                                        </div>
+                                    </div>
+                                    <div className="flex flex-wrap gap-3">
+                                        <button
+                                            onClick={startAutomation}
+                                            disabled={automationRunning || playlist.length === 0}
+                                            className="flex items-center justify-center gap-2 rounded-lg bg-synth-cyan px-4 py-3 text-xs font-bold uppercase tracking-widest text-synth-dark transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-30"
+                                        >
+                                            <i className="ph-bold ph-play"></i>
+                                            Iniciar automação
+                                        </button>
+                                        <button
+                                            onClick={stopAutomation}
+                                            disabled={!automationRunning}
+                                            className="flex items-center justify-center gap-2 rounded-lg border border-synth-active/60 px-4 py-3 text-xs font-bold uppercase tracking-widest text-synth-active transition hover:bg-synth-active/10 disabled:cursor-not-allowed disabled:opacity-30"
+                                        >
+                                            <i className="ph-bold ph-stop"></i>
+                                            Parar
+                                        </button>
+                                        <button
+                                            onClick={clearPlaylist}
+                                            disabled={automationRunning || playlist.length === 0}
+                                            aria-label="Limpar linha do tempo"
+                                            title="Limpar linha do tempo"
+                                            className="flex h-11 w-11 items-center justify-center rounded-lg border border-gray-700 text-gray-400 transition hover:border-gray-400 hover:text-white disabled:cursor-not-allowed disabled:opacity-30"
+                                        >
+                                            <i className="ph-bold ph-broom"></i>
+                                        </button>
+                                    </div>
+                                </div>
+
+                                {automationNotice && (
+                                    <div className="mt-4 rounded-lg border border-synth-purple/30 bg-synth-purple/5 px-4 py-3 text-center text-xs text-gray-300">
+                                        {automationNotice}
+                                    </div>
+                                )}
+                            </section>
+
+                        </div>
+                    )}
+
+                    {/* FOOTER */}
+                    <footer className="mt-12 pt-6 text-center text-[10px] font-mono text-gray-600 tracking-[0.2em] uppercase border-t border-white/5">
+                        Arquitetura sonora livre <br/>
+                        Desenvolvido pela Infiniti IA & Invictus Maximus
+                    </footer>
+
+                </div>
+            );
+        };
+
+        const root = ReactDOM.createRaiz(document.getElementById('root'));
+        root.render(<SynthApp />);
+    </script>
+</body>
+</html>
+
