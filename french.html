@@ -666,7 +666,7 @@
                                             <div className="space-y-3 max-h-[520px] overflow-y-auto pr-1">
                                                 {playlist.map((track, index) => {
                                                     const pad = getPad(track.freq);
-                                                    const isEn direct = automationActive.includes(track.id);
+                                                    const isLive = automationActive.includes(track.id);
                                                     return (
                                                         <div key={track.id} className="rounded-xl border bg-black/20 p-4" style={{ borderColor: `${pad.color}55` }}>
                                                             <div className="flex items-start justify-between gap-3">
@@ -680,7 +680,7 @@
                                                                     </div>
                                                                 </div>
                                                                 <div className="flex shrink-0 items-center gap-2">
-                                                                    {isEn direct && <span className="rounded-full border border-synth-cyan/50 px-2 py-1 text-[9px] font-mono uppercase tracking-widest text-synth-cyan">En direct</span>}
+                                                                    {isLive && <span className="rounded-full border border-synth-cyan/50 px-2 py-1 text-[9px] font-mono uppercase tracking-widest text-synth-cyan">En direct</span>}
                                                                     <button
                                                                         onClick={() => removeTrack(track.id)}
                                                                         disabled={automationRunning}
@@ -807,7 +807,7 @@
             );
         };
 
-        const root = ReactDOM.createRacine(document.getElementById('root'));
+        const root = ReactDOM.createRoot(document.getElementById('root'));
         root.render(<SynthApp />);
     </script>
 </body>
