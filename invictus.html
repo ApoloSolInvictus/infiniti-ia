@@ -67,6 +67,8 @@
             position: absolute; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 1;
         }
 
+        #audio-element { display: none; }
+
         canvas { display: block; }
 
         .ui-layer {
@@ -148,6 +150,7 @@
 
     <!-- 3D WEBGL CANVAS -->
     <div id="canvas-container"></div>
+    <audio id="audio-element" preload="metadata" aria-hidden="true"></audio>
 
     <!-- UI LAYER -->
     <div class="ui-layer">
@@ -253,6 +256,7 @@
         // --- UI ELEMENTS ---
         const introScreen = document.getElementById('intro-screen');
         const playerHud = document.getElementById('player-hud');
+        const audioElement = document.getElementById('audio-element');
         const trackNameEl = document.getElementById('track-name');
         const btnEnterPlayer = document.getElementById('btn-enter-player');
         const btnPrev = document.getElementById('btn-prev');
@@ -450,11 +454,9 @@
         // 2. SAFE AUDIO SYSTEM
         // ==========================================
         function ensureAudio() {
-            if (audio) return;
-            audio = new Audio();
-            audio.crossOrigin = "anonymous";
+            if (audio) return audio;
+            audio = audioElement || new Audio();
             audio.preload = "metadata";
-            setupAudioNodes();
             audio.addEventListener('timeupdate', updateProgress);
             audio.addEventListener('loadedmetadata', () => {
                 if (timeTotalEl) timeTotalEl.innerText = formatTime(audio.duration);
@@ -467,6 +469,16 @@
                     updatePlayIcons(false);
                 }
             });
+            audio.addEventListener('error', () => {
+                const mediaError = audio.error;
+                console.error('Unable to load the selected Invictus track.', mediaError ? {
+                    code: mediaError.code,
+                    message: mediaError.message || 'Unknown media error'
+                } : null);
+                isPlaying = false;
+                updatePlayIcons(false);
+            });
+            return audio;
         }
 
         function updatePlayIcons(playing) {
@@ -501,51 +513,81 @@
             updateTrackSelection();
 
             if (autoplay) {
-                if (audioContext && audioContext.state === 'suspended') audioContext.resume();
-                audio.play().then(() => {
-                    isPlaying = true;
-                    updatePlayIcons(true);
-                    revealPlayer();
-                }).catch(() => {
-                    isPlaying = false;
-                    updatePlayIcons(false);
-                });
+                startPlayback();
             } else {
                 isPlaying = false;
                 updatePlayIcons(false);
             }
         }
 
+        function startPlayback() {
+            ensureAudio();
+            setupAudioNodes();
+
+            const resumePromise = audioContext && audioContext.state === 'suspended'
+                ? audioContext.resume()
+                : Promise.resolve();
+
+            resumePromise
+                .then(() => audio.play())
+                .then(() => {
+                    isPlaying = true;
+                    updatePlayIcons(true);
+                    revealPlayer();
+                })
+                .catch((error) => {
+                    isPlaying = false;
+                    updatePlayIcons(false);
+                    console.error('Invictus audio playback failed.', error);
+                });
+        }
+
         function playSelectedTrack() {
+            ensureAudio();
             if (isPlaying) {
                 audio.pause();
                 isPlaying = false;
                 updatePlayIcons(false);
                 return;
             }
-            if (!audio || audio.src !== new URL(TRACKS[currentTrackIndex].src, window.location.href).href) {
+            if (!audio.src) {
                 loadTrack(currentTrackIndex, true);
                 return;
             }
-            audio.play().then(() => {
-                isPlaying = true;
-                updatePlayIcons(true);
-                revealPlayer();
-            });
+            startPlayback();
         }
 
         function setupAudioNodes() {
+            if (audioContext || !audio) return;
             const AudioContext = window.AudioContext || window.webkitAudioContext;
-            audioContext = new AudioContext();
-            analyser = audioContext.createAnalyser();
-            
-            analyser.fftSize = 2048; // High resolution
-            bufferLength = analyser.frequencyBinCount;
-            dataArray = new Uint8Array(bufferLength);
+            if (!AudioContext) return;
 
-            source = audioContext.createMediaElementSource(audio);
-            source.connect(analyser);
-            analyser.connect(audioContext.destination);
+            let nextContext;
+            try {
+                nextContext = new AudioContext();
+                const nextAnalyser = nextContext.createAnalyser();
+                nextAnalyser.fftSize = 2048; // High resolution
+                const nextBufferLength = nextAnalyser.frequencyBinCount;
+                const nextDataArray = new Uint8Array(nextBufferLength);
+                const nextSource = nextContext.createMediaElementSource(audio);
+
+                nextSource.connect(nextAnalyser);
+                nextAnalyser.connect(nextContext.destination);
+
+                audioContext = nextContext;
+                analyser = nextAnalyser;
+                source = nextSource;
+                bufferLength = nextBufferLength;
+                dataArray = nextDataArray;
+            } catch (error) {
+                console.warn('Audio visualization is unavailable; using direct audio playback.', error);
+                if (nextContext) nextContext.close().catch(() => {});
+                audioContext = null;
+                analyser = null;
+                source = null;
+                bufferLength = 0;
+                dataArray = null;
+            }
         }
 
         // --- CONTROLS AND UTILITIES ---
