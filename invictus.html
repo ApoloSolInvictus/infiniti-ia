@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OPUS INVICTUS | 432 Hz Relaxing Music Player</title>
+    <meta name="description" content="OPUS Invictus by Infiniti IA is an immersive 432 Hz relaxing music player with responsive quantum visuals for calm, focus, and deep listening.">
+    <meta name="author" content="Apollo Sol Invictus - W Studio">
+    <meta name="robots" content="index, follow">
+    <meta name="googlebot" content="index, follow, max-snippet:-1, max-image-preview:large">
+    <meta name="theme-color" content="#020617">
+    <link rel="canonical" href="https://infiniti-ia.com/invictus">
+    <meta property="og:locale" content="en_US">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://infiniti-ia.com/invictus">
+    <meta property="og:title" content="OPUS INVICTUS | 432 Hz Relaxing Music Player">
+    <meta property="og:description" content="Listen to relaxing 432 Hz music with an immersive visual experience created by Infiniti IA.">
+    <meta property="og:image" content="https://infiniti-ia.com/images/infiniti-ia-social-preview.jpg">
+    <meta property="og:image:secure_url" content="https://infiniti-ia.com/images/infiniti-ia-social-preview.jpg">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:type" content="image/jpeg">
+    <meta property="og:image:alt" content="Infiniti IA by W Studio logo on a black background.">
+    <meta property="og:site_name" content="INFINITI IA by W Studio">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="OPUS INVICTUS | 432 Hz Relaxing Music Player">
+    <meta name="twitter:description" content="A relaxing 432 Hz music player by Infiniti IA for calm, focus, and immersive listening.">
+    <meta name="twitter:image" content="https://infiniti-ia.com/images/infiniti-ia-social-preview.jpg">
+    <meta name="twitter:image:alt" content="Infiniti IA by W Studio logo on a black background.">
+    
+    <!-- Libraries -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <!-- Three.js for 3D visuals -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        display: ['Orbitron', 'sans-serif'],
+                        mono: ['Space Mono', 'monospace'],
+                    },
+                    colors: {
+                        astral: {
+                            dark: '#030108',
+                            cyan: '#00f0ff',
+                            purple: '#b026ff',
+                            gold: '#fbbf24'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body { 
+            margin: 0; padding: 0; background-color: #030108; color: #fff; 
+            overflow: hidden; font-family: 'Space Mono', monospace; 
+        }
+
+        #canvas-container {
+            position: absolute; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 1;
+        }
+
+        canvas { display: block; }
+
+        .ui-layer {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 10; pointer-events: none;
+            display: flex; flex-direction: column;
+        }
+        
+        .interactive { pointer-events: auto; }
+
+        .glass-panel {
+            background: rgba(3, 1, 8, 0.6);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid rgba(0, 240, 255, 0.2);
+            box-shadow: 0 0 30px rgba(0, 240, 255, 0.1);
+        }
+
+        /* Mystic Button */
+        .upload-btn {
+            background: linear-gradient(45deg, #00f0ff, #b026ff);
+            background-size: 200% 200%;
+            animation: gradientShift 3s ease infinite;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+        .upload-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 40px rgba(176, 38, 255, 0.6);
+            letter-spacing: 2px;
+        }
+        @keyframes gradientShift { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+
+        input[type="file"] { display: none; }
+
+        .track-option {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 0.75rem;
+            color: rgba(255, 255, 255, 0.72);
+            background: rgba(3, 1, 8, 0.35);
+            font-family: 'Space Mono', monospace;
+            font-size: 0.75rem;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            transition: all 0.2s ease;
+        }
+        .track-option:hover, .track-option.active {
+            border-color: rgba(0, 240, 255, 0.65);
+            color: #fff;
+            background: rgba(0, 240, 255, 0.12);
+            box-shadow: 0 0 18px rgba(0, 240, 255, 0.14);
+        }
+        .transport-btn {
+            width: 3rem;
+            height: 3rem;
+            border-radius: 9999px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.06);
+            color: #fff;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+            flex-shrink: 0;
+        }
+        .transport-btn:hover {
+            transform: scale(1.08);
+            border-color: #00f0ff;
+            color: #00f0ff;
+            background: rgba(0, 240, 255, 0.12);
+        }
+        .transport-btn-main {
+            width: 4rem;
+            height: 4rem;
+            border: 0;
+            background: #fff;
+            color: #000;
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.4);
+        }
+        .transport-btn-main:hover {
+            color: #000;
+            border-color: transparent;
+            background: #fff;
+        }
+
+        /* HUD Transitions */
+        .hud-hidden { opacity: 0; transform: translateY(20px); pointer-events: none; transition: all 0.8s ease; }
+        .hud-active { opacity: 1; transform: translateY(0); pointer-events: auto; transition: all 0.8s ease; }
+        
+        #intro-screen { transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1); }
+        #intro-screen.hidden-intro { opacity: 0; transform: scale(1.1); pointer-events: none; }
+    </style>
+</head>
+<body>
+
+    <!-- 3D WEBGL CANVAS -->
+    <div id="canvas-container"></div>
+
+    <!-- UI LAYER -->
+    <div class="ui-layer">
+        
+        <!-- TOP HUD -->
+        <header class="p-6 flex justify-between items-start opacity-70">
+            <div>
+                <h1 class="font-display font-bold text-2xl tracking-[0.2em] text-astral-cyan drop-shadow-[0_0_10px_#00f0ff]">OPUS INVICTUS</h1>
+                <p class="text-[10px] tracking-[0.4em] uppercase mt-1 text-astral-purple">432 Hz Relaxing Player</p>
+            </div>
+            <div class="text-right">
+                <p class="text-[10px] text-astral-gold uppercase tracking-widest flex items-center justify-end gap-2">
+                    <span class="w-2 h-2 rounded-full bg-astral-gold animate-pulse"></span>
+                    432 HZ RESONANCE
+                </p>
+                <p id="fps-counter" class="text-xs text-gray-500 mt-1">SYSTEM READY</p>
+            </div>
+        </header>
+
+        <!-- INTRO PLAYLIST SCREEN -->
+        <div id="intro-screen" class="absolute inset-0 flex items-center justify-center interactive z-50 bg-astral-dark/80 backdrop-blur-sm">
+            <div class="glass-panel p-8 md:p-10 rounded-[2rem] text-center max-w-2xl mx-4 border-t-2 border-t-astral-cyan shadow-2xl shadow-cyan-500/20">
+                <i class="ph-fill ph-infinity text-6xl text-astral-cyan mb-6 animate-pulse"></i>
+                <h2 class="font-display text-3xl font-bold mb-4 text-white">INVICTUS AUDIO</h2>
+                <p class="text-sm text-gray-400 mb-7 leading-relaxed font-mono">
+                    Listen to a curated sequence of relaxing music at 432 Hz. Choose a track and let the quantum visual field respond to every frequency.
+                </p>
+
+                <div id="track-list" class="grid gap-2 text-left mb-7" aria-label="Invictus playlist">
+                    <button type="button" class="track-option active" data-track-index="0"><span>Invictus I</span><i class="ph-bold ph-waveform"></i></button>
+                    <button type="button" class="track-option" data-track-index="1"><span>Invictus II</span><i class="ph-bold ph-waveform"></i></button>
+                    <button type="button" class="track-option" data-track-index="2"><span>Invictus III</span><i class="ph-bold ph-waveform"></i></button>
+                    <button type="button" class="track-option" data-track-index="3"><span>Invictus IV</span><i class="ph-bold ph-waveform"></i></button>
+                    <button type="button" class="track-option" data-track-index="4"><span>Invictus V</span><i class="ph-bold ph-waveform"></i></button>
+                    <button type="button" class="track-option" data-track-index="5"><span>Invictus VI</span><i class="ph-bold ph-waveform"></i></button>
+                    <button type="button" class="track-option" data-track-index="6"><span>Invictus VII</span><i class="ph-bold ph-waveform"></i></button>
+                    <button type="button" class="track-option" data-track-index="7"><span>Invictus VIII</span><i class="ph-bold ph-waveform"></i></button>
+                </div>
+
+                <button id="btn-intro-play" type="button" class="w-16 h-16 mx-auto rounded-full bg-white text-black flex items-center justify-center hover:scale-105 transition shadow-[0_0_20px_rgba(255,255,255,0.4)]" aria-label="Play selected track" title="Play selected track">
+                    <i id="intro-play-icon" class="ph-fill ph-play text-2xl"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- PLAYER HUD (BOTTOM) -->
+        <div id="player-hud" class="mt-auto p-6 md:p-10 hud-hidden interactive">
+            <div class="glass-panel max-w-5xl mx-auto rounded-3xl p-6 flex flex-col md:flex-row items-center justify-between gap-6">
+
+                <div class="flex items-center gap-3 w-full md:w-auto">
+                    <button id="btn-prev" type="button" class="transport-btn" aria-label="Previous track" title="Previous track">
+                        <i class="ph-bold ph-skip-back text-xl"></i>
+                    </button>
+                    <button id="btn-play" type="button" class="transport-btn transport-btn-main" aria-label="Play" title="Play">
+                        <i id="play-icon" class="ph-fill ph-pause text-2xl"></i>
+                    </button>
+                    <button id="btn-next" type="button" class="transport-btn" aria-label="Next track" title="Next track">
+                        <i class="ph-bold ph-skip-forward text-xl"></i>
+                    </button>
+                    <div class="flex flex-col min-w-0 ml-3">
+                        <span class="text-[10px] text-astral-cyan uppercase tracking-widest">Now Playing</span>
+                        <h3 id="track-name" class="font-display font-bold text-xl text-white truncate max-w-[220px] md:max-w-[360px]">Invictus I</h3>
+                    </div>
+                </div>
+
+                <div class="flex-1 w-full max-w-md flex flex-col gap-2">
+                    <div class="flex justify-between text-[10px] text-gray-400 font-mono">
+                        <span id="time-current">0:00</span>
+                        <span id="time-total">0:00</span>
+                    </div>
+                    <div class="w-full h-1.5 bg-gray-800 rounded-full overflow-hidden">
+                        <div id="progress-bar" class="h-full bg-gradient-to-r from-astral-cyan to-astral-purple w-0 shadow-[0_0_10px_#b026ff]"></div>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-4 shrink-0">
+                    <div class="text-right hidden md:block">
+                        <div class="text-[9px] text-gray-500 tracking-widest uppercase">BASS RESPONSE</div>
+                        <div class="w-24 h-1 bg-gray-800 rounded-full mt-1">
+                            <div id="bass-meter" class="h-full bg-astral-gold w-0 transition-all duration-75"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- MAGIC LOGIC (THREE.JS + WEB AUDIO API) -->
+    <script>
+        // --- AUDIO VARIABLES ---
+        const TRACKS = [
+            { name: 'Invictus I', src: 'audio/Invictus%20I.mp3' },
+            { name: 'Invictus II', src: 'audio/Invictus%20II.mp3' },
+            { name: 'Invictus III', src: 'audio/Invictus%20III.mp3' },
+            { name: 'Invictus IV', src: 'audio/Invictus%20IV.mp3' },
+            { name: 'Invictus V', src: 'audio/Invictus%20V.mp3' },
+            { name: 'Invictus VI', src: 'audio/Invictus%20VI.mp3' },
+            { name: 'Invictus VII', src: 'audio/Invictus%20VII.mp3' },
+            { name: 'Invictus VIII', src: 'audio/Invictus%20VIII.mp3' }
+        ];
+        let audioContext, analyser, source, audio;
+        let dataArray, bufferLength;
+        let isPlaying = false;
+        let currentTrackIndex = 0;
+
+        // --- THREE.JS VARIABLES ---
+        let scene, camera, renderer;
+        let sphereMesh, starGeo, stars;
+        let originalVertices = [];
+        let timeHue = 0;
+        let warpSpeed = 1;
+
+        // --- UI ELEMENTS ---
+        const introScreen = document.getElementById('intro-screen');
+        const playerHud = document.getElementById('player-hud');
+        const trackNameEl = document.getElementById('track-name');
+        const btnIntroPlay = document.getElementById('btn-intro-play');
+        const introPlayIcon = document.getElementById('intro-play-icon');
+        const btnPrev = document.getElementById('btn-prev');
+        const btnPlay = document.getElementById('btn-play');
+        const btnNext = document.getElementById('btn-next');
+        const playIcon = document.getElementById('play-icon');
+        const trackOptions = [...document.querySelectorAll('.track-option')];
+        const timeCurrentEl = document.getElementById('time-current');
+        const timeTotalEl = document.getElementById('time-total');
+        const progressBar = document.getElementById('progress-bar');
+        const bassMeter = document.getElementById('bass-meter');
+
+        // ==========================================
+        // 1. 3D INITIALIZATION (THREE.JS)
+        // ==========================================
+        function init3D() {
+            try {
+                const container = document.getElementById('canvas-container');
+                const width = window.innerWidth || document.documentElement.clientWidth || 800;
+                const height = window.innerHeight || document.documentElement.clientHeight || 600;
+                
+                // Scene and Camera
+                scene = new THREE.Scene();
+                camera = new THREE.PerspectiveCamera(60, width / height, 0.1, 2000);
+                camera.position.z = 60;
+
+                renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+                renderer.setSize(width, height);
+                renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2)); // Mobile optimization
+                container.appendChild(renderer.domElement);
+
+                // A. THE INVICTUS SPHERE (Deformable Mesh)
+                // QUANTUM FIX: Detail level 3 (1,280 faces) instead of 6 (80,000 faces).
+                // This prevents mobile devices from overheating or crashing.
+                const geometry = new THREE.IcosahedronGeometry(20, 3); 
+                
+                // Store original vertices for deformation calculations
+                const positionAttribute = geometry.attributes.position;
+                for (let i = 0; i < positionAttribute.count; i++) {
+                    originalVertices.push(new THREE.Vector3(
+                        positionAttribute.getX(i),
+                        positionAttribute.getY(i),
+                        positionAttribute.getZ(i)
+                    ));
+                }
+
+                const material = new THREE.MeshPhongMaterial({
+                    color: 0x00f0ff,
+                    emissive: 0x0a0022,
+                    specular: 0xffffff,
+                    shininess: 100,
+                    wireframe: true,
+                    transparent: true,
+                    opacity: 0.8
+                });
+
+                sphereMesh = new THREE.Mesh(geometry, material);
+                scene.add(sphereMesh);
+
+                // B. INNER GLOW CORE
+                const coreGeometry = new THREE.IcosahedronGeometry(18, 1);
+                const coreMaterial = new THREE.MeshPhongMaterial({
+                    color: 0x000000,
+                    emissive: 0x050110,
+                    transparent: true,
+                    opacity: 0.9,
+                    shininess: 50
+                });
+                const coreMesh = new THREE.Mesh(coreGeometry, coreMaterial);
+                scene.add(coreMesh);
+
+                // C. STAR FIELD (For the warp-speed effect)
+                starGeo = new THREE.BufferGeometry();
+                const starCount = 2000; // Slightly reduced for smoother performance
+                const posArray = new Float32Array(starCount * 3);
+                for(let i=0; i < starCount * 3; i++) {
+                    posArray[i] = (Math.random() - 0.5) * 400; // Spread through 3D space
+                }
+                starGeo.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+                
+                const starMaterial = new THREE.PointsMaterial({
+                    color: 0xffffff,
+                    size: 0.8,
+                    transparent: true,
+                    opacity: 0.8
+                });
+                stars = new THREE.Points(starGeo, starMaterial);
+                scene.add(stars);
+
+                // D. LIGHTING (Adjusted to illuminate the front of the sphere)
+                const ambientLight = new THREE.AmbientLight(0x222222);
+                scene.add(ambientLight);
+
+                const pointLight = new THREE.PointLight(0xb026ff, 2, 300);
+                pointLight.position.set(0, 0, 80); // Light placed in front (behind the camera)
+                scene.add(pointLight);
+
+                const pointLight2 = new THREE.PointLight(0x00f0ff, 1.5, 300);
+                pointLight2.position.set(0, 50, -50); // Accent light
+                scene.add(pointLight2);
+
+                // Responsive
+                window.addEventListener('resize', () => {
+                    const newW = window.innerWidth;
+                    const newH = window.innerHeight;
+                    camera.aspect = newW / newH;
+                    camera.updateProjectionMatrix();
+                    renderer.setSize(newW, newH);
+                });
+
+                // Start Base Animation
+                animate3D();
+            } catch (error) {
+                console.error("Error iniciando 3D:", error);
+            }
+        }
+
+        // --- 3D ANIMATION LOOP ---
+        function animate3D() {
+            requestAnimationFrame(animate3D);
+
+            // Smooth constant rotation
+            sphereMesh.rotation.y += 0.002;
+            sphereMesh.rotation.x += 0.001;
+
+            let currentBass = 0;
+
+            try {
+                if (isPlaying && analyser && dataArray) {
+                    analyser.getByteFrequencyData(dataArray);
+
+                    // Calculate bass (low bins)
+                    let bassSum = 0;
+                    for(let i=0; i<15; i++) bassSum += dataArray[i];
+                    currentBass = bassSum / 15; // 0 - 255
+                    
+                    if (bassMeter) bassMeter.style.width = `${(currentBass / 255) * 100}%`;
+
+                    // Calculate mids (color)
+                    let midSum = 0;
+                    for(let i=20; i<80; i++) midSum += dataArray[i];
+                    let mid = midSum / 60;
+
+                    // Music-driven color mutation
+                    timeHue += 0.1 + (mid * 0.02);
+                    if(timeHue > 360) timeHue = 0;
+                    sphereMesh.material.color.setHSL(timeHue / 360, 1, 0.6);
+
+                    // --- QUANTUM SPHERE DEFORMATION ---
+                    const positions = sphereMesh.geometry.attributes.position;
+                    
+                    for (let i = 0; i < positions.count; i++) {
+                        const orig = originalVertices[i];
+                        const audioIndex = i % (bufferLength / 2); 
+                        const freqValue = dataArray[audioIndex] || 0;
+                        
+                        // Calculate the expansion factor
+                        const scaleFactor = 1 + (freqValue / 255) * 0.5 * (currentBass/255); 
+
+                        // Update vertex
+                        positions.setXYZ(i, orig.x * scaleFactor, orig.y * scaleFactor, orig.z * scaleFactor);
+                    }
+                positions.needsUpdate = true; // Essential in Three.js
+
+                    // --- WARP-SPEED STAR EFFECT ---
+                    if (currentBass > 210) {
+                        warpSpeed = 10; // Speed of light
+                    } else {
+                        warpSpeed += (0.5 - warpSpeed) * 0.1; // Smoothly return to normal speed
+                    }
+                } else {
+                    warpSpeed = 0.5;
+                }
+            } catch (audioError) {
+                // Ignore audio errors so graphic rendering continues
+            }
+
+            // Animate the star field toward the camera
+            // FIX: Use i=2 to modify exactly the Z axis (X=0, Y=1, Z=2)
+            const starPositions = starGeo.attributes.position.array;
+            for(let i=2; i < starPositions.length; i+=3) { 
+                starPositions[i] += warpSpeed;
+                // If a star passes the camera (Z > 100), reset it to the background (Z = -300)
+                if (starPositions[i] > 100) {
+                    starPositions[i] = -300;
+                }
+            }
+            starGeo.attributes.position.needsUpdate = true;
+
+            // Render the scene
+            renderer.render(scene, camera);
+        }
+
+
+        // ==========================================
+        // 2. SAFE AUDIO SYSTEM
+        // ==========================================
+        function ensureAudio() {
+            if (audio) return;
+            audio = new Audio();
+            audio.crossOrigin = "anonymous";
+            audio.preload = "metadata";
+            setupAudioNodes();
+            audio.addEventListener('timeupdate', updateProgress);
+            audio.addEventListener('loadedmetadata', () => {
+                if (timeTotalEl) timeTotalEl.innerText = formatTime(audio.duration);
+            });
+            audio.addEventListener('ended', () => {
+                if (currentTrackIndex < TRACKS.length - 1) {
+                    loadTrack(currentTrackIndex + 1, true);
+                } else {
+                    isPlaying = false;
+                    updatePlayIcons(false);
+                }
+            });
+        }
+
+        function updatePlayIcons(playing) {
+            if (playIcon) playIcon.className = playing ? "ph-fill ph-pause text-2xl" : "ph-fill ph-play text-2xl";
+            if (introPlayIcon) introPlayIcon.className = playing ? "ph-fill ph-pause text-2xl" : "ph-fill ph-play text-2xl";
+            if (btnPlay) {
+                btnPlay.setAttribute('aria-label', playing ? 'Pause' : 'Play');
+                btnPlay.setAttribute('title', playing ? 'Pause' : 'Play');
+            }
+        }
+
+        function updateTrackSelection() {
+            trackOptions.forEach((option, index) => {
+                option.classList.toggle('active', index === currentTrackIndex);
+                option.setAttribute('aria-current', index === currentTrackIndex ? 'true' : 'false');
+            });
+            if (trackNameEl) trackNameEl.innerText = TRACKS[currentTrackIndex].name;
+        }
+
+        function revealPlayer() {
+            if (introScreen) introScreen.classList.add('hidden-intro');
+            if (playerHud) {
+                playerHud.classList.remove('hud-hidden');
+                playerHud.classList.add('hud-active');
+            }
+        }
+
+        function loadTrack(index, autoplay = false) {
+            currentTrackIndex = (index + TRACKS.length) % TRACKS.length;
+            ensureAudio();
+            audio.pause();
+            audio.src = TRACKS[currentTrackIndex].src;
+            audio.load();
+            if (timeCurrentEl) timeCurrentEl.innerText = '0:00';
+            if (timeTotalEl) timeTotalEl.innerText = '0:00';
+            if (progressBar) progressBar.style.width = '0%';
+            updateTrackSelection();
+
+            if (autoplay) {
+                if (audioContext && audioContext.state === 'suspended') audioContext.resume();
+                audio.play().then(() => {
+                    isPlaying = true;
+                    updatePlayIcons(true);
+                    revealPlayer();
+                }).catch(() => {
+                    isPlaying = false;
+                    updatePlayIcons(false);
+                });
+            } else {
+                isPlaying = false;
+                updatePlayIcons(false);
+            }
+        }
+
+        function playSelectedTrack() {
+            if (isPlaying) {
+                audio.pause();
+                isPlaying = false;
+                updatePlayIcons(false);
+                return;
+            }
+            if (!audio || audio.src !== new URL(TRACKS[currentTrackIndex].src, window.location.href).href) {
+                loadTrack(currentTrackIndex, true);
+                return;
+            }
+            audio.play().then(() => {
+                isPlaying = true;
+                updatePlayIcons(true);
+                revealPlayer();
+            });
+        }
+
+        function setupAudioNodes() {
+            const AudioContext = window.AudioContext || window.webkitAudioContext;
+            audioContext = new AudioContext();
+            analyser = audioContext.createAnalyser();
+            
+            analyser.fftSize = 2048; // High resolution
+            bufferLength = analyser.frequencyBinCount;
+            dataArray = new Uint8Array(bufferLength);
+
+            source = audioContext.createMediaElementSource(audio);
+            source.connect(analyser);
+            analyser.connect(audioContext.destination);
+        }
+
+        // --- CONTROLS AND UTILITIES ---
+        trackOptions.forEach((option) => {
+            option.addEventListener('click', () => {
+                currentTrackIndex = Number(option.dataset.trackIndex);
+                loadTrack(currentTrackIndex, false);
+            });
+        });
+
+        if (btnIntroPlay) btnIntroPlay.addEventListener('click', playSelectedTrack);
+        if (btnPlay) btnPlay.addEventListener('click', playSelectedTrack);
+        if (btnPrev) btnPrev.addEventListener('click', () => loadTrack(currentTrackIndex - 1, true));
+        if (btnNext) btnNext.addEventListener('click', () => loadTrack(currentTrackIndex + 1, true));
+
+        function formatTime(seconds) {
+            if (isNaN(seconds)) return "0:00";
+            const min = Math.floor(seconds / 60);
+            const sec = Math.floor(seconds % 60);
+            return `${min}:${sec < 10 ? '0' : ''}${sec}`;
+        }
+
+        function updateProgress() {
+            if (!audio) return;
+            if(timeCurrentEl) timeCurrentEl.innerText = formatTime(audio.currentTime);
+            if(progressBar) {
+                const percent = (audio.currentTime / audio.duration) * 100;
+                progressBar.style.width = `${percent}%`;
+            }
+        }
+
+        // Start the 3D environment as soon as the page loads
+        window.onload = () => {
+            init3D();
+        };
+
+    </script>
+</body>
+</html>
