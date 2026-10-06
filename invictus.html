@@ -103,29 +103,6 @@
 
         input[type="file"] { display: none; }
 
-        .track-option {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 1rem;
-            width: 100%;
-            padding: 0.75rem 1rem;
-            border: 1px solid rgba(255, 255, 255, 0.12);
-            border-radius: 0.75rem;
-            color: rgba(255, 255, 255, 0.72);
-            background: rgba(3, 1, 8, 0.35);
-            font-family: 'Space Mono', monospace;
-            font-size: 0.75rem;
-            letter-spacing: 0.12em;
-            text-transform: uppercase;
-            transition: all 0.2s ease;
-        }
-        .track-option:hover, .track-option.active {
-            border-color: rgba(0, 240, 255, 0.65);
-            color: #fff;
-            background: rgba(0, 240, 255, 0.12);
-            box-shadow: 0 0 18px rgba(0, 240, 255, 0.14);
-        }
         .transport-btn {
             width: 3rem;
             height: 3rem;
@@ -190,28 +167,17 @@
             </div>
         </header>
 
-        <!-- INTRO PLAYLIST SCREEN -->
+        <!-- INTRO PLAYER SCREEN -->
         <div id="intro-screen" class="absolute inset-0 flex items-center justify-center interactive z-50 bg-astral-dark/80 backdrop-blur-sm">
-            <div class="glass-panel p-8 md:p-10 rounded-[2rem] text-center max-w-2xl mx-4 border-t-2 border-t-astral-cyan shadow-2xl shadow-cyan-500/20">
+            <div class="glass-panel p-10 rounded-[2rem] text-center max-w-lg mx-4 border-t-2 border-t-astral-cyan shadow-2xl shadow-cyan-500/20">
                 <i class="ph-fill ph-infinity text-6xl text-astral-cyan mb-6 animate-pulse"></i>
                 <h2 class="font-display text-3xl font-bold mb-4 text-white">INVICTUS AUDIO</h2>
-                <p class="text-sm text-gray-400 mb-7 leading-relaxed font-mono">
-                    Listen to a curated sequence of relaxing music at 432 Hz. Choose a track and let the quantum visual field respond to every frequency.
+                <p class="text-sm text-gray-400 mb-8 leading-relaxed font-mono">
+                    Enter the 432 Hz relaxing music player and begin with Invictus I. Use the transport controls to play, pause, or move forward through the eight compositions while the quantum visual field responds to every frequency.
                 </p>
-
-                <div id="track-list" class="grid gap-2 text-left mb-7" aria-label="Invictus playlist">
-                    <button type="button" class="track-option active" data-track-index="0"><span>Invictus I</span><i class="ph-bold ph-waveform"></i></button>
-                    <button type="button" class="track-option" data-track-index="1"><span>Invictus II</span><i class="ph-bold ph-waveform"></i></button>
-                    <button type="button" class="track-option" data-track-index="2"><span>Invictus III</span><i class="ph-bold ph-waveform"></i></button>
-                    <button type="button" class="track-option" data-track-index="3"><span>Invictus IV</span><i class="ph-bold ph-waveform"></i></button>
-                    <button type="button" class="track-option" data-track-index="4"><span>Invictus V</span><i class="ph-bold ph-waveform"></i></button>
-                    <button type="button" class="track-option" data-track-index="5"><span>Invictus VI</span><i class="ph-bold ph-waveform"></i></button>
-                    <button type="button" class="track-option" data-track-index="6"><span>Invictus VII</span><i class="ph-bold ph-waveform"></i></button>
-                    <button type="button" class="track-option" data-track-index="7"><span>Invictus VIII</span><i class="ph-bold ph-waveform"></i></button>
-                </div>
-
-                <button id="btn-intro-play" type="button" class="w-16 h-16 mx-auto rounded-full bg-white text-black flex items-center justify-center hover:scale-105 transition shadow-[0_0_20px_rgba(255,255,255,0.4)]" aria-label="Play selected track" title="Play selected track">
-                    <i id="intro-play-icon" class="ph-fill ph-play text-2xl"></i>
+                <button id="btn-enter-player" type="button" class="upload-btn cursor-pointer px-10 py-5 rounded-full font-display font-bold uppercase tracking-widest text-sm inline-flex items-center gap-3 text-white shadow-lg" aria-label="Enter player" title="Enter player">
+                    <i class="ph-bold ph-play-circle text-xl"></i>
+                    ENTER PLAYER
                 </button>
             </div>
         </div>
@@ -225,7 +191,7 @@
                         <i class="ph-bold ph-skip-back text-xl"></i>
                     </button>
                     <button id="btn-play" type="button" class="transport-btn transport-btn-main" aria-label="Play" title="Play">
-                        <i id="play-icon" class="ph-fill ph-pause text-2xl"></i>
+                        <i id="play-icon" class="ph-fill ph-play text-2xl"></i>
                     </button>
                     <button id="btn-next" type="button" class="transport-btn" aria-label="Next track" title="Next track">
                         <i class="ph-bold ph-skip-forward text-xl"></i>
@@ -288,13 +254,11 @@
         const introScreen = document.getElementById('intro-screen');
         const playerHud = document.getElementById('player-hud');
         const trackNameEl = document.getElementById('track-name');
-        const btnIntroPlay = document.getElementById('btn-intro-play');
-        const introPlayIcon = document.getElementById('intro-play-icon');
+        const btnEnterPlayer = document.getElementById('btn-enter-player');
         const btnPrev = document.getElementById('btn-prev');
         const btnPlay = document.getElementById('btn-play');
         const btnNext = document.getElementById('btn-next');
         const playIcon = document.getElementById('play-icon');
-        const trackOptions = [...document.querySelectorAll('.track-option')];
         const timeCurrentEl = document.getElementById('time-current');
         const timeTotalEl = document.getElementById('time-total');
         const progressBar = document.getElementById('progress-bar');
@@ -401,7 +365,7 @@
                 // Start Base Animation
                 animate3D();
             } catch (error) {
-                console.error("Error iniciando 3D:", error);
+                console.error("Error starting 3D:", error);
             }
         }
 
@@ -507,7 +471,6 @@
 
         function updatePlayIcons(playing) {
             if (playIcon) playIcon.className = playing ? "ph-fill ph-pause text-2xl" : "ph-fill ph-play text-2xl";
-            if (introPlayIcon) introPlayIcon.className = playing ? "ph-fill ph-pause text-2xl" : "ph-fill ph-play text-2xl";
             if (btnPlay) {
                 btnPlay.setAttribute('aria-label', playing ? 'Pause' : 'Play');
                 btnPlay.setAttribute('title', playing ? 'Pause' : 'Play');
@@ -515,10 +478,6 @@
         }
 
         function updateTrackSelection() {
-            trackOptions.forEach((option, index) => {
-                option.classList.toggle('active', index === currentTrackIndex);
-                option.setAttribute('aria-current', index === currentTrackIndex ? 'true' : 'false');
-            });
             if (trackNameEl) trackNameEl.innerText = TRACKS[currentTrackIndex].name;
         }
 
@@ -590,14 +549,12 @@
         }
 
         // --- CONTROLS AND UTILITIES ---
-        trackOptions.forEach((option) => {
-            option.addEventListener('click', () => {
-                currentTrackIndex = Number(option.dataset.trackIndex);
-                loadTrack(currentTrackIndex, false);
-            });
+        if (btnEnterPlayer) btnEnterPlayer.addEventListener('click', () => {
+            currentTrackIndex = 0;
+            updateTrackSelection();
+            updatePlayIcons(false);
+            revealPlayer();
         });
-
-        if (btnIntroPlay) btnIntroPlay.addEventListener('click', playSelectedTrack);
         if (btnPlay) btnPlay.addEventListener('click', playSelectedTrack);
         if (btnPrev) btnPrev.addEventListener('click', () => loadTrack(currentTrackIndex - 1, true));
         if (btnNext) btnNext.addEventListener('click', () => loadTrack(currentTrackIndex + 1, true));
