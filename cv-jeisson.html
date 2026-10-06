@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CV - Jeisson Alexander López Ospina</title>
+    <!-- Cargamos Tailwind CSS para los estilos -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Importamos una fuente limpia (Inter) */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6; /* bg-gray-100 */
+        }
+        /* Configuración para que al imprimir o guardar como PDF se mantengan los colores y formatos */
+        @media print {
+            body {
+                background-color: white !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+            .no-print {
+                display: none !important;
+            }
+            .shadow-2xl {
+                box-shadow: none !important;
+            }
+            .p-8 {
+                padding: 0 !important;
+            }
+            .max-w-4xl {
+                max-width: 100% !important;
+            }
+        }
+    </style>
+</head>
+<body class="p-8 text-gray-800">
+
+    <!-- Contenedor Principal del CV -->
+    <div class="max-w-4xl mx-auto bg-white p-12 shadow-2xl rounded-sm">
+        
+        <!-- Encabezado -->
+        <header class="border-b-2 border-gray-900 pb-6 mb-8 flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
+            <div>
+                <h1 class="text-4xl font-bold uppercase tracking-tight text-gray-900">Jeisson Alexander <br> López Ospina</h1>
+                <p class="text-xl text-gray-500 mt-2 font-medium tracking-wide">Técnico en Logística Empresarial</p>
+            </div>
+            <div class="text-right text-sm text-gray-600 space-y-1">
+                <p><span class="font-semibold text-gray-900">Identificación:</span> BH246743</p>
+                <p><span class="font-semibold text-gray-900">Nacionalidad:</span> Colombiano</p>
+                <p><span class="font-semibold text-gray-900">Nacimiento:</span> 22/05/2000 (26 años)</p>
+                <p><span class="font-semibold text-gray-900">Contacto:</span> [Tu Teléfono] | [Tu Correo]</p>
+            </div>
+        </header>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-12">
+            
+            <!-- Columna Izquierda (Principal) -->
+            <div class="md:col-span-2 space-y-8">
+                
+                <!-- Perfil Profesional -->
+                <section>
+                    <h2 class="text-lg font-bold uppercase tracking-wider text-gray-900 border-b border-gray-200 pb-2 mb-4">Perfil Profesional</h2>
+                    <p class="text-gray-700 leading-relaxed text-sm">
+                        Profesional técnico en logística empresarial con sólida experiencia en operaciones de bodega y centros de distribución para empresas multinacionales y nacionales. Altamente capacitado en la gestión integral del almacén, asegurando la eficiencia en el flujo de mercancías, el control de inventarios y el cumplimiento de los estándares de calidad. Destaco por mi capacidad de organización, trabajo en equipo y agilidad en procesos de distribución.
+                    </p>
+                </section>
+
+                <!-- Experiencia Laboral -->
+                <section>
+                    <h2 class="text-lg font-bold uppercase tracking-wider text-gray-900 border-b border-gray-200 pb-2 mb-4">Experiencia Laboral</h2>
+                    
+                    <div class="mb-6">
+                        <h3 class="text-md font-bold text-gray-800">Operario de Bodega y Logística</h3>
+                        <p class="text-sm font-semibold text-gray-500 mb-2">Empresas: Tiendas D1, Importadoras Asociadas, Comercializadoras Nacionales</p>
+                        <ul class="list-disc list-inside text-sm text-gray-700 space-y-1.5 ml-1 mt-3">
+                            <li>Manejo y control riguroso de stock e inventarios.</li>
+                            <li>Ejecución de procesos de <strong>picking</strong> y <strong>packing</strong> para el alistamiento de pedidos.</li>
+                            <li>Paletización y organización estratégica de cargas.</li>
+                            <li>Rotulación correcta y rotación eficiente de mercancía (sistema FIFO/FEFO).</li>
+                            <li>Apoyo directo en la logística de distribución y despacho de productos a nivel nacional y regional.</li>
+                        </ul>
+                    </div>
+                </section>
+
+                <!-- Educación -->
+                <section>
+                    <h2 class="text-lg font-bold uppercase tracking-wider text-gray-900 border-b border-gray-200 pb-2 mb-4">Formación Académica</h2>
+                    
+                    <div class="mb-4">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <h3 class="text-md font-bold text-gray-800">Técnico en Logística Empresarial</h3>
+                                <p class="text-sm text-gray-600">ANDAP - SENA</p>
+                            </div>
+                            <span class="text-sm font-semibold text-gray-500">Graduado en 2021</span>
+                        </div>
+                        <p class="text-xs text-gray-500 mt-1">Duración: 2 años cursados.</p>
+                    </div>
+
+                    <div>
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <h3 class="text-md font-bold text-gray-800">Bachillerato Académico</h3>
+                                <p class="text-sm text-gray-600">Colegio Juan XXIII, Colombia</p>
+                            </div>
+                            <span class="text-sm font-semibold text-gray-500">Graduado en 2018</span>
+                        </div>
+                        <p class="text-xs text-gray-500 mt-1">Duración: 11 años cursados.</p>
+                    </div>
+                </section>
+
+            </div>
+
+            <!-- Columna Derecha (Lateral) -->
+            <div class="space-y-8">
+                
+                <!-- Competencias / Áreas de Experiencia -->
+                <section>
+                    <h2 class="text-lg font-bold uppercase tracking-wider text-gray-900 border-b border-gray-200 pb-2 mb-4">Competencias</h2>
+                    <div class="flex flex-wrap gap-2">
+                        <span class="bg-gray-100 text-gray-700 px-3 py-1 text-xs font-semibold rounded-sm">Gestión de Stock</span>
+                        <span class="bg-gray-100 text-gray-700 px-3 py-1 text-xs font-semibold rounded-sm">Packing & Picking</span>
+                        <span class="bg-gray-100 text-gray-700 px-3 py-1 text-xs font-semibold rounded-sm">Paletización</span>
+                        <span class="bg-gray-100 text-gray-700 px-3 py-1 text-xs font-semibold rounded-sm">Inventarios</span>
+                        <span class="bg-gray-100 text-gray-700 px-3 py-1 text-xs font-semibold rounded-sm">Rotulación</span>
+                        <span class="bg-gray-100 text-gray-700 px-3 py-1 text-xs font-semibold rounded-sm">Rotación de Mercancía</span>
+                        <span class="bg-gray-100 text-gray-700 px-3 py-1 text-xs font-semibold rounded-sm">Distribución</span>
+                    </div>
+                </section>
+
+                <!-- Referencias -->
+                <section>
+                    <h2 class="text-lg font-bold uppercase tracking-wider text-gray-900 border-b border-gray-200 pb-2 mb-4">Referencias</h2>
+                    
+                    <!-- Referencia Laboral -->
+                    <div class="mb-5">
+                        <h3 class="text-xs font-bold uppercase text-gray-500 tracking-wide mb-1">Referencia Laboral</h3>
+                        <p class="text-sm font-semibold text-gray-800">Helmer Bedoya Gómez</p>
+                        <p class="text-xs text-gray-600 mb-1">Gerente Administrativo en Tiendas D1</p>
+                        <p class="text-sm text-gray-700 flex items-center gap-1">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path></svg>
+                            +57 3135163578
+                        </p>
+                    </div>
+
+                    <!-- Referencia Personal -->
+                    <div class="mb-5">
+                        <h3 class="text-xs font-bold uppercase text-gray-500 tracking-wide mb-1">Referencia Personal</h3>
+                        <p class="text-sm font-semibold text-gray-800">Jhon Jairo Mancipe Arias</p>
+                        <p class="text-sm text-gray-700 mt-1">Contacto/Doc: 71322287</p>
+                    </div>
+
+                    <!-- Referencia Familiar -->
+                    <div>
+                        <h3 class="text-xs font-bold uppercase text-gray-500 tracking-wide mb-1">Referencia Familiar</h3>
+                        <p class="text-sm font-semibold text-gray-800">Beatriz Elena Ospina Calderón</p>
+                        <p class="text-sm text-gray-700 mt-1">Contacto/Doc: 60162283</p>
+                    </div>
+
+                </section>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Botón para imprimir (No saldrá en el PDF final) -->
+    <div class="text-center mt-8 no-print">
+        <button onclick="window.print()" class="bg-gray-900 hover:bg-gray-800 text-white font-bold py-2 px-6 rounded shadow-lg transition-colors">
+            Guardar como PDF / Imprimir
+        </button>
+        <p class="text-xs text-gray-500 mt-3">Para mejores resultados en PDF, asegúrate de activar "Gráficos de fondo" en las opciones de impresión.</p>
+    </div>
+
+</body>
+</html>
