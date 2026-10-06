@@ -231,15 +231,16 @@
     <!-- MAGIC LOGIC (THREE.JS + WEB AUDIO API) -->
     <script>
         // --- AUDIO VARIABLES ---
+        const AUDIO_BASE_URL = 'https://media.githubusercontent.com/media/ApoloSolInvictus/infiniti-ia/main/audio/';
         const TRACKS = [
-            { name: 'Invictus I', src: 'audio/Invictus%20I.mp3' },
-            { name: 'Invictus II', src: 'audio/Invictus%20II.mp3' },
-            { name: 'Invictus III', src: 'audio/Invictus%20III.mp3' },
-            { name: 'Invictus IV', src: 'audio/Invictus%20IV.mp3' },
-            { name: 'Invictus V', src: 'audio/Invictus%20V.mp3' },
-            { name: 'Invictus VI', src: 'audio/Invictus%20VI.mp3' },
-            { name: 'Invictus VII', src: 'audio/Invictus%20VII.mp3' },
-            { name: 'Invictus VIII', src: 'audio/Invictus%20VIII.mp3' }
+            { name: 'Invictus I', src: `${AUDIO_BASE_URL}Invictus%20I.mp3` },
+            { name: 'Invictus II', src: `${AUDIO_BASE_URL}Invictus%20II.mp3` },
+            { name: 'Invictus III', src: `${AUDIO_BASE_URL}Invictus%20III.mp3` },
+            { name: 'Invictus IV', src: `${AUDIO_BASE_URL}Invictus%20IV.mp3` },
+            { name: 'Invictus V', src: `${AUDIO_BASE_URL}Invictus%20V.mp3` },
+            { name: 'Invictus VI', src: `${AUDIO_BASE_URL}Invictus%20VI.mp3` },
+            { name: 'Invictus VII', src: `${AUDIO_BASE_URL}Invictus%20VII.mp3` },
+            { name: 'Invictus VIII', src: `${AUDIO_BASE_URL}Invictus%20VIII.mp3` }
         ];
         let audioContext, analyser, source, audio;
         let dataArray, bufferLength;
@@ -456,6 +457,7 @@
         function ensureAudio() {
             if (audio) return audio;
             audio = audioElement || new Audio();
+            audio.crossOrigin = 'anonymous';
             audio.preload = "metadata";
             audio.addEventListener('timeupdate', updateProgress);
             audio.addEventListener('loadedmetadata', () => {
