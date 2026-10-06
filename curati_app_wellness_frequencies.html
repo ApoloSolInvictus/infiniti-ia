@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Curati App | Premium Wellness Frequencies</title>
+    <!-- Tailwind CSS for styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts: Inter for clean typography and Playfair Display for elegant headings -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <!-- Custom configuration for Tailwind colors to match a spa/wellness aesthetic -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            light: '#f3f4f6', // Light gray background
+                            dark: '#1f2937',  // Dark slate for text
+                            accent: '#0d9488', // Teal/Aqua for relaxing vibes
+                            gold: '#d97706',   // Gold for premium feel
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        serif: ['Playfair Display', 'serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Custom styles for animations and specific tweaks */
+        body {
+            font-family: 'Inter', sans-serif;
+            color: #1f2937;
+            background-color: #f8fafc;
+        }
+        h1, h2, h3, .serif-font {
+            font-family: 'Playfair Display', serif;
+        }
+        .hero-bg {
+            /* Fallback dark background if image fails */
+            background-color: #1a202c; 
+            /* Subtle gradient overlay */
+            background-image: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.4)), url('https://images.unsplash.com/photo-1544161515-4ab6ce6db874?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed; /* Parallax effect */
+        }
+        .fade-in-up {
+            animation: fadeInUp 1s ease-out forwards;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .delay-100 { animation-delay: 0.1s; }
+        .delay-200 { animation-delay: 0.2s; }
+        .delay-300 { animation-delay: 0.3s; }
+
+        /* Glassmorphism effect for cards */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1);
+        }
+    </style>
+</head>
+<body class="antialiased flex flex-col min-h-screen">
+
+    <!-- Navigation -->
+    <nav class="fixed w-full z-50 transition-all duration-300" id="navbar">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <!-- Logo -->
+                <div class="flex-shrink-0 flex items-center">
+                    <a href="#" class="text-white font-serif text-3xl font-bold tracking-wider flex items-center gap-2">
+                        <i class="fa-solid fa-spa text-brand-gold"></i>
+                        CURATI
+                    </a>
+                </div>
+                
+                <!-- Desktop Menu -->
+                <div class="hidden md:flex space-x-8 items-center">
+                    <a href="#features" class="text-gray-100 hover:text-brand-gold transition px-3 py-2 text-sm uppercase tracking-wide">Experience</a>
+                    <a href="#frequencies" class="text-gray-100 hover:text-brand-gold transition px-3 py-2 text-sm uppercase tracking-wide">Frequencies</a>
+                    <a href="#business" class="text-gray-100 hover:text-brand-gold transition px-3 py-2 text-sm uppercase tracking-wide">For Business</a>
+                    <a href="#contact" class="bg-brand-gold text-white px-6 py-2 rounded-full text-sm font-semibold hover:bg-yellow-600 transition shadow-lg">Get the App</a>
+                </div>
+
+                <!-- Mobile menu button -->
+                <div class="md:hidden flex items-center">
+                    <button id="mobile-menu-btn" class="text-white hover:text-brand-gold focus:outline-none">
+                        <i class="fa-solid fa-bars text-2xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Menu Panel -->
+        <div id="mobile-menu" class="hidden md:hidden bg-white shadow-xl absolute w-full transition-all">
+            <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3 text-center">
+                <a href="#features" class="block px-3 py-4 text-brand-dark hover:text-brand-accent hover:bg-gray-50 text-base font-medium">Experience</a>
+                <a href="#frequencies" class="block px-3 py-4 text-brand-dark hover:text-brand-accent hover:bg-gray-50 text-base font-medium">Frequencies</a>
+                <a href="#business" class="block px-3 py-4 text-brand-dark hover:text-brand-accent hover:bg-gray-50 text-base font-medium">For Business</a>
+                <a href="#contact" class="block px-3 py-4 text-brand-gold font-bold hover:bg-gray-50">Get the App</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <header class="hero-bg h-screen flex items-center justify-center text-center relative pt-20">
+        <div class="absolute inset-0 bg-gradient-to-b from-transparent to-brand-dark opacity-60"></div>
+        <div class="relative z-10 max-w-4xl px-4 sm:px-6 lg:px-8">
+            <span class="text-brand-gold tracking-[0.2em] uppercase text-sm font-semibold mb-4 block fade-in-up">Welcome to your sanctuary</span>
+            <h1 class="text-5xl md:text-7xl text-white mb-6 leading-tight fade-in-up delay-100">
+                Elevate Every Moment with <span class="text-brand-gold italic">Curati App</span>
+            </h1>
+            <p class="text-lg md:text-2xl text-gray-200 mb-10 font-light max-w-2xl mx-auto fade-in-up delay-200">
+                Discover the power of 432 Hz music and tailored relaxing frequencies. Designed for deep meditation, therapeutic massages, and creating perfect atmospheres in boutique hotels.
+            </p>
+            <div class="flex flex-col sm:flex-row gap-4 justify-center fade-in-up delay-300">
+                <a href="#features" class="bg-brand-accent text-white px-8 py-4 rounded-full font-semibold hover:bg-teal-700 transition shadow-lg flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-play"></i> Start Relaxing Now
+                </a>
+                <a href="#business" class="bg-transparent border-2 border-white text-white px-8 py-4 rounded-full font-semibold hover:bg-white hover:text-brand-dark transition flex items-center justify-center">
+                    Solutions for Spas
+                </a>
+            </div>
+        </div>
+        
+        <!-- Scroll indicator -->
+        <div class="absolute bottom-10 left-1/2 transform -translate-x-1/2 animate-bounce">
+            <a href="#features" class="text-white opacity-70 hover:opacity-100">
+                <i class="fa-solid fa-chevron-down text-3xl"></i>
+            </a>
+        </div>
+    </header>
+
+    <!-- Introduction / Features Section -->
+    <section id="features" class="py-24 bg-white relative">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-brand-accent text-sm font-bold tracking-widest uppercase mb-2">The Curati Experience</h2>
+                <h3 class="text-4xl md:text-5xl text-brand-dark mb-4">Harmony in Every Note</h3>
+                <div class="w-24 h-1 bg-brand-gold mx-auto rounded"></div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-12">
+                <!-- Feature 1 -->
+                <div class="text-center group p-6 rounded-2xl hover:shadow-2xl transition duration-300 border border-gray-100">
+                    <div class="w-20 h-20 mx-auto bg-teal-50 rounded-full flex items-center justify-center mb-6 group-hover:scale-110 transition duration-300">
+                        <i class="fa-solid fa-wave-square text-3xl text-brand-accent"></i>
+                    </div>
+                    <h4 class="text-2xl font-serif text-brand-dark mb-3">432 Hz Tuning</h4>
+                    <p class="text-gray-600 leading-relaxed">
+                        Immerse yourself in music tuned to 432 Hz, known as the "miracle tone". It resonates with the universe's natural frequency, promoting profound healing and reducing stress.
+                    </p>
+                </div>
+
+                <!-- Feature 2 -->
+                <div class="text-center group p-6 rounded-2xl hover:shadow-2xl transition duration-300 border border-gray-100">
+                    <div class="w-20 h-20 mx-auto bg-teal-50 rounded-full flex items-center justify-center mb-6 group-hover:scale-110 transition duration-300">
+                        <i class="fa-solid fa-sliders text-3xl text-brand-accent"></i>
+                    </div>
+                    <h4 class="text-2xl font-serif text-brand-dark mb-3">Custom Playlists</h4>
+                    <p class="text-gray-600 leading-relaxed">
+                        Don't just listen; create. Mix bespoke relaxing frequencies with ambient music to craft the perfect auditory environment for meditation, sleep, or intense focus.
+                    </p>
+                </div>
+
+                <!-- Feature 3 -->
+                <div class="text-center group p-6 rounded-2xl hover:shadow-2xl transition duration-300 border border-gray-100">
+                    <div class="w-20 h-20 mx-auto bg-teal-50 rounded-full flex items-center justify-center mb-6 group-hover:scale-110 transition duration-300">
+                        <i class="fa-solid fa-globe text-3xl text-brand-accent"></i>
+                    </div>
+                    <h4 class="text-2xl font-serif text-brand-dark mb-3">Multilingual Interface</h4>
+                    <p class="text-gray-600 leading-relaxed">
+                        Curati speaks your language. Navigate effortlessly in <span class="font-semibold">English, Spanish, French, Portuguese, and Dutch</span>. Designed for a global audience.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Frequencies Details Section with Split Layout -->
+    <section id="frequencies" class="py-20 bg-gray-50 overflow-hidden">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col lg:flex-row items-center gap-16">
+                <!-- Image side -->
+                <div class="w-full lg:w-1/2 relative">
+                    <!-- Placeholder using Unsplash for a spa/meditation feel -->
+                    <img src="https://images.unsplash.com/photo-1600334089648-b0d9d3028eb2?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Person meditating" class="rounded-3xl shadow-2xl relative z-10" loading="lazy">
+                    <!-- Decorative element behind image -->
+                    <div class="absolute -bottom-6 -right-6 w-full h-full border-4 border-brand-gold rounded-3xl z-0 hidden sm:block"></div>
+                    <div class="absolute -top-6 -left-6 w-32 h-32 bg-brand-accent opacity-20 rounded-full blur-2xl z-0"></div>
+                </div>
+
+                <!-- Text side -->
+                <div class="w-full lg:w-1/2">
+                    <h2 class="text-brand-accent text-sm font-bold tracking-widest uppercase mb-2">Curated Sounds</h2>
+                    <h3 class="text-4xl text-brand-dark mb-6">Tailored for Every Intention</h3>
+                    <p class="text-gray-600 mb-8 text-lg leading-relaxed">
+                        Whether you are looking to unwind after a long day or need absolute concentration, Curati App provides the perfect acoustic backdrop. Choose from our pre-designed sessions or blend your own.
+                    </p>
+                    
+                    <ul class="space-y-6">
+                        <li class="flex items-start">
+                            <div class="flex-shrink-0 mt-1">
+                                <i class="fa-solid fa-lotus text-brand-gold text-2xl"></i>
+                            </div>
+                            <div class="ml-4">
+                                <h5 class="text-xl font-semibold text-brand-dark">Meditation & Mindfulness</h5>
+                                <p class="text-gray-500 mt-1">Deep theta waves combined with soothing nature sounds to guide you into a state of profound peace.</p>
+                            </div>
+                        </li>
+                        <li class="flex items-start">
+                            <div class="flex-shrink-0 mt-1">
+                                <i class="fa-solid fa-hands text-brand-gold text-2xl"></i>
+                            </div>
+                            <div class="ml-4">
+                                <h5 class="text-xl font-semibold text-brand-dark">Massage & Therapy</h5>
+                                <p class="text-gray-500 mt-1">Continuous, uninterrupted 432 Hz flows designed to help muscles relax and elevate the therapeutic experience.</p>
+                            </div>
+                        </li>
+                        <li class="flex items-start">
+                            <div class="flex-shrink-0 mt-1">
+                                <i class="fa-solid fa-brain text-brand-gold text-2xl"></i>
+                            </div>
+                            <div class="ml-4">
+                                <h5 class="text-xl font-semibold text-brand-dark">Focus & Concentration</h5>
+                                <p class="text-gray-500 mt-1">Binaural beats optimized for cognitive enhancement, perfect for working or studying without distractions.</p>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- For Business Section (Hotels & Spas) -->
+    <section id="business" class="py-24 relative bg-brand-dark text-white">
+        <!-- Background Image with heavy overlay -->
+        <div class="absolute inset-0 z-0">
+            <img src="https://images.unsplash.com/photo-1571896349842-33c89424de2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80" alt="Luxury Spa Hotel" class="w-full h-full object-cover opacity-20" loading="lazy">
+        </div>
+        
+        <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16 max-w-3xl mx-auto">
+                <h2 class="text-brand-gold text-sm font-bold tracking-widest uppercase mb-2">B2B Solutions</h2>
+                <h3 class="text-4xl md:text-5xl mb-6 font-serif">Elevate Your Guest Experience</h3>
+                <p class="text-gray-300 text-lg">
+                    Curati App is the perfect partner for Boutique Hotels, Wellness Centers, and Luxury Spas. Transform your spaces with ambient sounds that leave a lasting impression.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <!-- Business Card 1 -->
+                <div class="glass-card p-8 rounded-2xl hover:bg-white/10 transition duration-300 border border-gray-600/50">
+                    <i class="fa-solid fa-hotel text-4xl text-brand-gold mb-4"></i>
+                    <h4 class="text-2xl font-serif mb-3">Boutique Hotels</h4>
+                    <p class="text-gray-300 leading-relaxed mb-4">
+                        Provide guests with complimentary access to curated sleep and relaxation playlists in their rooms. Create a signature scent-and-sound identity for your lobby.
+                    </p>
+                    <a href="#" class="text-brand-accent hover:text-white font-semibold flex items-center gap-2 transition">
+                        Learn more <i class="fa-solid fa-arrow-right text-sm"></i>
+                    </a>
+                </div>
+
+                <!-- Business Card 2 -->
+                <div class="glass-card p-8 rounded-2xl hover:bg-white/10 transition duration-300 border border-gray-600/50">
+                    <i class="fa-solid fa-spa text-4xl text-brand-gold mb-4"></i>
+                    <h4 class="text-2xl font-serif mb-3">Wellness & Spa Centers</h4>
+                    <p class="text-gray-300 leading-relaxed mb-4">
+                        Standardize the audio experience across all treatment rooms. Allow therapists to easily select frequencies tailored to specific massages or therapies.
+                    </p>
+                    <a href="#" class="text-brand-accent hover:text-white font-semibold flex items-center gap-2 transition">
+                        Partner with us <i class="fa-solid fa-arrow-right text-sm"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- App Download / CTA Section -->
+    <section id="contact" class="py-20 bg-brand-accent">
+        <div class="max-w-4xl mx-auto px-4 text-center">
+            <h2 class="text-4xl font-serif text-white mb-6">Ready to find your frequency?</h2>
+            <p class="text-teal-100 mb-10 text-lg">
+                Available globally. Choose your language: English, Español, Français, Português, or Nederlands.
+            </p>
+            <div class="flex flex-col sm:flex-row justify-center gap-4">
+                <a href="#" class="bg-black text-white px-8 py-3 rounded-lg flex items-center justify-center gap-3 hover:bg-gray-800 transition transform hover:-translate-y-1">
+                    <i class="fa-brands fa-apple text-3xl"></i>
+                    <div class="text-left">
+                        <span class="block text-xs">Download on the</span>
+                        <span class="block text-xl font-semibold">App Store</span>
+                    </div>
+                </a>
+                <a href="#" class="bg-black text-white px-8 py-3 rounded-lg flex items-center justify-center gap-3 hover:bg-gray-800 transition transform hover:-translate-y-1">
+                    <i class="fa-brands fa-google-play text-2xl"></i>
+                    <div class="text-left">
+                        <span class="block text-xs">GET IT ON</span>
+                        <span class="block text-xl font-semibold">Google Play</span>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-gray-200 pt-16 pb-8 mt-auto">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-12">
+                <div class="col-span-1 md:col-span-2">
+                    <a href="#" class="text-brand-dark font-serif text-2xl font-bold tracking-wider flex items-center gap-2 mb-4">
+                        <i class="fa-solid fa-spa text-brand-gold"></i>
+                        CURATI
+                    </a>
+                    <p class="text-gray-500 max-w-sm">
+                        Curati App provides premium 432 Hz music and relaxing frequencies to elevate your mental and physical wellbeing.
+                    </p>
+                    <div class="flex gap-4 mt-6">
+                        <a href="#" class="text-gray-400 hover:text-brand-accent transition"><i class="fa-brands fa-instagram text-xl"></i></a>
+                        <a href="#" class="text-gray-400 hover:text-brand-accent transition"><i class="fa-brands fa-facebook text-xl"></i></a>
+                        <a href="#" class="text-gray-400 hover:text-brand-accent transition"><i class="fa-brands fa-twitter text-xl"></i></a>
+                    </div>
+                </div>
+                <div>
+                    <h5 class="font-bold text-brand-dark mb-4">Company</h5>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-500 hover:text-brand-accent transition">About Us</a></li>
+                        <li><a href="#" class="text-gray-500 hover:text-brand-accent transition">Contact</a></li>
+                        <li><a href="#" class="text-gray-500 hover:text-brand-accent transition">Careers</a></li>
+                        <li><a href="#" class="text-gray-500 hover:text-brand-accent transition">Press</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h5 class="font-bold text-brand-dark mb-4">Legal</h5>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-500 hover:text-brand-accent transition">Terms of Service</a></li>
+                        <li><a href="#" class="text-gray-500 hover:text-brand-accent transition">Privacy Policy</a></li>
+                        <li><a href="#" class="text-gray-500 hover:text-brand-accent transition">Cookie Policy</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="border-t border-gray-200 pt-8 flex flex-col md:flex-row justify-between items-center text-sm text-gray-400">
+                <p>&copy; 2024 Curati App. All rights reserved.</p>
+                <div class="flex gap-4 mt-4 md:mt-0">
+                    <span>EN</span> | <span>ES</span> | <span>FR</span> | <span>PT</span> | <span>NL</span>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const navbar = document.getElementById('navbar');
+            const mobileBtn = document.getElementById('mobile-menu-btn');
+            const mobileMenu = document.getElementById('mobile-menu');
+            const links = document.querySelectorAll('a[href^="#"]');
+
+            // Handle Navbar Background on Scroll
+            window.addEventListener('scroll', () => {
+                if (window.scrollY > 50) {
+                    navbar.classList.add('bg-white', 'shadow-md');
+                    navbar.classList.remove('bg-transparent');
+                    
+                    // Change text colors for light background
+                    const textElements = navbar.querySelectorAll('.text-white, .text-gray-100');
+                    textElements.forEach(el => {
+                        // Skip the button
+                        if(!el.classList.contains('bg-brand-gold')) {
+                            el.classList.remove('text-white', 'text-gray-100');
+                            el.classList.add('text-brand-dark');
+                        }
+                    });
+                } else {
+                    navbar.classList.remove('bg-white', 'shadow-md');
+                    navbar.classList.add('bg-transparent');
+                    
+                    // Revert text colors for transparent background
+                    const textElements = navbar.querySelectorAll('.text-brand-dark');
+                    textElements.forEach(el => {
+                         if(!el.classList.contains('bg-brand-gold')) {
+                            el.classList.remove('text-brand-dark');
+                            el.classList.add('text-white', 'text-gray-100');
+                         }
+                    });
+                }
+            });
+
+            // Toggle Mobile Menu
+            mobileBtn.addEventListener('click', () => {
+                mobileMenu.classList.toggle('hidden');
+                // Change icon based on state
+                const icon = mobileBtn.querySelector('i');
+                if(mobileMenu.classList.contains('hidden')) {
+                    icon.classList.remove('fa-xmark');
+                    icon.classList.add('fa-bars');
+                } else {
+                    icon.classList.remove('fa-bars');
+                    icon.classList.add('fa-xmark');
+                    // Ensure navbar has background when menu opens
+                    navbar.classList.add('bg-white', 'shadow-md');
+                    const textElements = navbar.querySelectorAll('.text-white, .text-gray-100');
+                    textElements.forEach(el => {
+                        if(!el.classList.contains('bg-brand-gold')) {
+                            el.classList.remove('text-white', 'text-gray-100');
+                            el.classList.add('text-brand-dark');
+                        }
+                    });
+                }
+            });
+
+            // Close mobile menu on link click and smooth scroll
+            links.forEach(link => {
+                link.addEventListener('click', function (e) {
+                    const targetId = this.getAttribute('href');
+                    if (targetId === '#') return;
+                    
+                    e.preventDefault();
+                    
+                    const targetElement = document.querySelector(targetId);
+                    if (targetElement) {
+                        targetElement.scrollIntoView({
+                            behavior: 'smooth'
+                        });
+                        
+                        // Close mobile menu if open
+                        if (!mobileMenu.classList.contains('hidden')) {
+                            mobileMenu.classList.add('hidden');
+                            const icon = mobileBtn.querySelector('i');
+                            icon.classList.remove('fa-xmark');
+                            icon.classList.add('fa-bars');
+                        }
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
