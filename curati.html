@@ -4,51 +4,42 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Curati App | Premium Wellness Frequencies</title>
-    <!-- Tailwind CSS for styling -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- FontAwesome for icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Google Fonts: Inter for clean typography and Playfair Display for elegant headings -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
-    <!-- Custom configuration for Tailwind colors to match a spa/wellness aesthetic -->
     <script>
         tailwind.config = {
             theme: {
                 extend: {
                     colors: {
                         brand: {
-                            light: '#f3f4f6', // Light gray background
-                            dark: '#1f2937',  // Dark slate for text
-                            accent: '#0d9488', // Teal/Aqua for relaxing vibes
-                            gold: '#d97706',   // Gold for premium feel
+                            light: '#f3f4f6',
+                            dark: '#1f2937',
+                            accent: '#0d9488',
+                            gold: '#d97706'
                         }
                     },
                     fontFamily: {
                         sans: ['Inter', 'sans-serif'],
-                        serif: ['Playfair Display', 'serif'],
+                        serif: ['Playfair Display', 'serif']
                     }
                 }
             }
-        }
+        };
     </script>
     <style>
-        /* Custom styles for animations and specific tweaks */
         body {
             font-family: 'Inter', sans-serif;
             color: #1f2937;
             background-color: #f8fafc;
         }
-        h1, h2, h3, .serif-font {
-            font-family: 'Playfair Display', serif;
-        }
+        h1, h2, h3, .serif-font { font-family: 'Playfair Display', serif; }
         .hero-bg {
-            /* Fallback dark background if image fails */
-            background-color: #1a202c; 
-            /* Subtle gradient overlay */
+            background-color: #1a202c;
             background-image: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.4)), url('https://images.unsplash.com/photo-1544161515-4ab6ce6db874?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80');
             background-size: cover;
             background-position: center;
-            background-attachment: fixed; /* Parallax effect */
+            background-attachment: fixed;
         }
         .fade-in-up {
             animation: fadeInUp 1s ease-out forwards;
@@ -56,189 +47,158 @@
             transform: translateY(20px);
         }
         @keyframes fadeInUp {
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            to { opacity: 1; transform: translateY(0); }
         }
         .delay-100 { animation-delay: 0.1s; }
         .delay-200 { animation-delay: 0.2s; }
         .delay-300 { animation-delay: 0.3s; }
-
-        /* Glassmorphism effect for cards */
         .glass-card {
             background: rgba(255, 255, 255, 0.85);
             backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.2);
             box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1);
         }
+        #language-menu button[aria-selected="true"] {
+            background: #f3f4f6;
+            color: #0d9488;
+            font-weight: 600;
+        }
     </style>
 </head>
 <body class="antialiased flex flex-col min-h-screen">
 
-    <!-- Navigation -->
     <nav class="fixed w-full z-50 transition-all duration-300" id="navbar">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-20">
-                <!-- Logo -->
                 <div class="flex-shrink-0 flex items-center">
-                    <a href="#" class="text-white font-serif text-3xl font-bold tracking-wider flex items-center gap-2">
+                    <a href="#" class="text-white font-serif text-3xl font-bold tracking-wider flex items-center gap-2" aria-label="Curati home">
                         <i class="fa-solid fa-spa text-brand-gold"></i>
                         CURATI
                     </a>
                 </div>
-                
-                <!-- Desktop Menu -->
+
                 <div class="hidden md:flex space-x-8 items-center">
-                    <a href="#features" class="text-gray-100 hover:text-brand-gold transition px-3 py-2 text-sm uppercase tracking-wide">Experience</a>
-                    <a href="#frequencies" class="text-gray-100 hover:text-brand-gold transition px-3 py-2 text-sm uppercase tracking-wide">Frequencies</a>
-                    <a href="#business" class="text-gray-100 hover:text-brand-gold transition px-3 py-2 text-sm uppercase tracking-wide">For Business</a>
-                    <a href="#contact" class="bg-brand-gold text-white px-6 py-2 rounded-full text-sm font-semibold hover:bg-yellow-600 transition shadow-lg">Get the App</a>
+                    <a href="#features" data-i18n="nav.experience" class="text-gray-100 hover:text-brand-gold transition px-3 py-2 text-sm uppercase tracking-wide">Experience</a>
+                    <a href="#frequencies" data-i18n="nav.frequencies" class="text-gray-100 hover:text-brand-gold transition px-3 py-2 text-sm uppercase tracking-wide">Frequencies</a>
+                    <a href="#business" data-i18n="nav.business" class="text-gray-100 hover:text-brand-gold transition px-3 py-2 text-sm uppercase tracking-wide">For Business</a>
+
+                    <div class="relative" id="language-switcher">
+                        <button id="language-button" type="button" class="language-button inline-flex items-center gap-2 rounded-full border border-white/50 px-4 py-2 text-sm font-semibold text-white hover:bg-white/10 transition" aria-haspopup="true" aria-expanded="false" title="Translate">
+                            <i class="fa-solid fa-language" aria-hidden="true"></i>
+                            <span id="language-label" data-i18n="language.button">Translate</span>
+                        </button>
+                        <div id="language-menu" class="hidden absolute right-0 mt-2 w-48 rounded-xl bg-white p-2 shadow-2xl ring-1 ring-black/5">
+                            <button type="button" data-language-option="en" data-i18n="language.english" class="w-full rounded-lg px-3 py-2 text-left text-sm text-brand-dark hover:bg-gray-100 transition" aria-selected="true">English</button>
+                            <button type="button" data-language-option="es" data-i18n="language.spanish" class="w-full rounded-lg px-3 py-2 text-left text-sm text-brand-dark hover:bg-gray-100 transition" aria-selected="false">Español</button>
+                            <button type="button" data-language-option="fr" data-i18n="language.french" class="w-full rounded-lg px-3 py-2 text-left text-sm text-brand-dark hover:bg-gray-100 transition" aria-selected="false">Français</button>
+                            <button type="button" data-language-option="pt" data-i18n="language.portuguese" class="w-full rounded-lg px-3 py-2 text-left text-sm text-brand-dark hover:bg-gray-100 transition" aria-selected="false">Português</button>
+                            <button type="button" data-language-option="nl" data-i18n="language.dutch" class="w-full rounded-lg px-3 py-2 text-left text-sm text-brand-dark hover:bg-gray-100 transition" aria-selected="false">Nederlands</button>
+                        </div>
+                    </div>
+
+                    <a href="#contact" data-i18n="nav.getApp" class="bg-brand-gold text-white px-6 py-2 rounded-full text-sm font-semibold hover:bg-yellow-600 transition shadow-lg">Get the App</a>
                 </div>
 
-                <!-- Mobile menu button -->
-                <div class="md:hidden flex items-center">
-                    <button id="mobile-menu-btn" class="text-white hover:text-brand-gold focus:outline-none">
-                        <i class="fa-solid fa-bars text-2xl"></i>
+                <div class="md:hidden flex items-center gap-2">
+                    <div class="relative" id="language-switcher-mobile">
+                        <button id="language-button-mobile" type="button" class="language-button inline-flex items-center gap-2 rounded-full border border-white/50 px-3 py-2 text-xs font-semibold text-white hover:bg-white/10 transition" aria-haspopup="true" aria-expanded="false" title="Translate">
+                            <i class="fa-solid fa-language" aria-hidden="true"></i>
+                            <span id="language-label-mobile" data-i18n="language.button">Translate</span>
+                        </button>
+                        <div id="language-menu-mobile" class="hidden absolute right-0 mt-2 w-44 rounded-xl bg-white p-2 shadow-2xl ring-1 ring-black/5">
+                            <button type="button" data-language-option="en" data-i18n="language.english" class="w-full rounded-lg px-3 py-2 text-left text-sm text-brand-dark hover:bg-gray-100 transition" aria-selected="true">English</button>
+                            <button type="button" data-language-option="es" data-i18n="language.spanish" class="w-full rounded-lg px-3 py-2 text-left text-sm text-brand-dark hover:bg-gray-100 transition" aria-selected="false">Español</button>
+                            <button type="button" data-language-option="fr" data-i18n="language.french" class="w-full rounded-lg px-3 py-2 text-left text-sm text-brand-dark hover:bg-gray-100 transition" aria-selected="false">Français</button>
+                            <button type="button" data-language-option="pt" data-i18n="language.portuguese" class="w-full rounded-lg px-3 py-2 text-left text-sm text-brand-dark hover:bg-gray-100 transition" aria-selected="false">Português</button>
+                            <button type="button" data-language-option="nl" data-i18n="language.dutch" class="w-full rounded-lg px-3 py-2 text-left text-sm text-brand-dark hover:bg-gray-100 transition" aria-selected="false">Nederlands</button>
+                        </div>
+                    </div>
+                    <button id="mobile-menu-btn" type="button" class="text-white hover:text-brand-gold focus:outline-none" aria-label="Open menu" aria-expanded="false">
+                        <i class="fa-solid fa-bars text-2xl" aria-hidden="true"></i>
                     </button>
                 </div>
             </div>
         </div>
 
-        <!-- Mobile Menu Panel -->
         <div id="mobile-menu" class="hidden md:hidden bg-white shadow-xl absolute w-full transition-all">
             <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3 text-center">
-                <a href="#features" class="block px-3 py-4 text-brand-dark hover:text-brand-accent hover:bg-gray-50 text-base font-medium">Experience</a>
-                <a href="#frequencies" class="block px-3 py-4 text-brand-dark hover:text-brand-accent hover:bg-gray-50 text-base font-medium">Frequencies</a>
-                <a href="#business" class="block px-3 py-4 text-brand-dark hover:text-brand-accent hover:bg-gray-50 text-base font-medium">For Business</a>
-                <a href="#contact" class="block px-3 py-4 text-brand-gold font-bold hover:bg-gray-50">Get the App</a>
+                <a href="#features" data-i18n="nav.experience" class="block px-3 py-4 text-brand-dark hover:text-brand-accent hover:bg-gray-50 text-base font-medium">Experience</a>
+                <a href="#frequencies" data-i18n="nav.frequencies" class="block px-3 py-4 text-brand-dark hover:text-brand-accent hover:bg-gray-50 text-base font-medium">Frequencies</a>
+                <a href="#business" data-i18n="nav.business" class="block px-3 py-4 text-brand-dark hover:text-brand-accent hover:bg-gray-50 text-base font-medium">For Business</a>
+                <a href="#contact" data-i18n="nav.getApp" class="block px-3 py-4 text-brand-gold font-bold hover:bg-gray-50">Get the App</a>
             </div>
         </div>
     </nav>
 
-    <!-- Hero Section -->
     <header class="hero-bg h-screen flex items-center justify-center text-center relative pt-20">
         <div class="absolute inset-0 bg-gradient-to-b from-transparent to-brand-dark opacity-60"></div>
         <div class="relative z-10 max-w-4xl px-4 sm:px-6 lg:px-8">
-            <span class="text-brand-gold tracking-[0.2em] uppercase text-sm font-semibold mb-4 block fade-in-up">Welcome to your sanctuary</span>
+            <span data-i18n="hero.eyebrow" class="text-brand-gold tracking-[0.2em] uppercase text-sm font-semibold mb-4 block fade-in-up">Welcome to your sanctuary</span>
             <h1 class="text-5xl md:text-7xl text-white mb-6 leading-tight fade-in-up delay-100">
-                Elevate Every Moment with <span class="text-brand-gold italic">Curati App</span>
+                <span data-i18n="hero.title">Elevate Every Moment with</span> <span data-i18n="hero.titleAccent" class="text-brand-gold italic">Curati App</span>
             </h1>
-            <p class="text-lg md:text-2xl text-gray-200 mb-10 font-light max-w-2xl mx-auto fade-in-up delay-200">
-                Discover the power of 432 Hz music and tailored relaxing frequencies. Designed for deep meditation, therapeutic massages, and creating perfect atmospheres in boutique hotels.
-            </p>
+            <p data-i18n="hero.description" class="text-lg md:text-2xl text-gray-200 mb-10 font-light max-w-2xl mx-auto fade-in-up delay-200">Discover the power of 432 Hz music and tailored relaxing frequencies. Designed for deep meditation, therapeutic massages, and creating perfect atmospheres in boutique hotels.</p>
             <div class="flex flex-col sm:flex-row gap-4 justify-center fade-in-up delay-300">
-                <a href="#features" class="bg-brand-accent text-white px-8 py-4 rounded-full font-semibold hover:bg-teal-700 transition shadow-lg flex items-center justify-center gap-2">
-                    <i class="fa-solid fa-play"></i> Start Relaxing Now
-                </a>
-                <a href="#business" class="bg-transparent border-2 border-white text-white px-8 py-4 rounded-full font-semibold hover:bg-white hover:text-brand-dark transition flex items-center justify-center">
-                    Solutions for Spas
-                </a>
+                <a href="#features" data-i18n="hero.start" class="bg-brand-accent text-white px-8 py-4 rounded-full font-semibold hover:bg-teal-700 transition shadow-lg flex items-center justify-center gap-2"><i class="fa-solid fa-play" aria-hidden="true"></i> Start Relaxing Now</a>
+                <a href="#business" data-i18n="hero.solutions" class="bg-transparent border-2 border-white text-white px-8 py-4 rounded-full font-semibold hover:bg-white hover:text-brand-dark transition flex items-center justify-center">Solutions for Spas</a>
             </div>
         </div>
-        
-        <!-- Scroll indicator -->
         <div class="absolute bottom-10 left-1/2 transform -translate-x-1/2 animate-bounce">
-            <a href="#features" class="text-white opacity-70 hover:opacity-100">
-                <i class="fa-solid fa-chevron-down text-3xl"></i>
-            </a>
+            <a href="#features" class="text-white opacity-70 hover:opacity-100" aria-label="Scroll to experience"><i class="fa-solid fa-chevron-down text-3xl" aria-hidden="true"></i></a>
         </div>
     </header>
 
-    <!-- Introduction / Features Section -->
     <section id="features" class="py-24 bg-white relative">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center mb-16">
-                <h2 class="text-brand-accent text-sm font-bold tracking-widest uppercase mb-2">The Curati Experience</h2>
-                <h3 class="text-4xl md:text-5xl text-brand-dark mb-4">Harmony in Every Note</h3>
+                <h2 data-i18n="features.eyebrow" class="text-brand-accent text-sm font-bold tracking-widest uppercase mb-2">The Curati Experience</h2>
+                <h3 data-i18n="features.title" class="text-4xl md:text-5xl text-brand-dark mb-4">Harmony in Every Note</h3>
                 <div class="w-24 h-1 bg-brand-gold mx-auto rounded"></div>
             </div>
-
             <div class="grid grid-cols-1 md:grid-cols-3 gap-12">
-                <!-- Feature 1 -->
                 <div class="text-center group p-6 rounded-2xl hover:shadow-2xl transition duration-300 border border-gray-100">
-                    <div class="w-20 h-20 mx-auto bg-teal-50 rounded-full flex items-center justify-center mb-6 group-hover:scale-110 transition duration-300">
-                        <i class="fa-solid fa-wave-square text-3xl text-brand-accent"></i>
-                    </div>
-                    <h4 class="text-2xl font-serif text-brand-dark mb-3">432 Hz Tuning</h4>
-                    <p class="text-gray-600 leading-relaxed">
-                        Immerse yourself in music tuned to 432 Hz, known as the "miracle tone". It resonates with the universe's natural frequency, promoting profound healing and reducing stress.
-                    </p>
+                    <div class="w-20 h-20 mx-auto bg-teal-50 rounded-full flex items-center justify-center mb-6 group-hover:scale-110 transition duration-300"><i class="fa-solid fa-wave-square text-3xl text-brand-accent" aria-hidden="true"></i></div>
+                    <h4 data-i18n="features.tuningTitle" class="text-2xl font-serif text-brand-dark mb-3">432 Hz Tuning</h4>
+                    <p data-i18n="features.tuningText" class="text-gray-600 leading-relaxed">Immerse yourself in music tuned to 432 Hz, known as the &quot;miracle tone&quot;. It resonates with the universe's natural frequency, promoting profound healing and reducing stress.</p>
                 </div>
-
-                <!-- Feature 2 -->
                 <div class="text-center group p-6 rounded-2xl hover:shadow-2xl transition duration-300 border border-gray-100">
-                    <div class="w-20 h-20 mx-auto bg-teal-50 rounded-full flex items-center justify-center mb-6 group-hover:scale-110 transition duration-300">
-                        <i class="fa-solid fa-sliders text-3xl text-brand-accent"></i>
-                    </div>
-                    <h4 class="text-2xl font-serif text-brand-dark mb-3">Custom Playlists</h4>
-                    <p class="text-gray-600 leading-relaxed">
-                        Don't just listen; create. Mix bespoke relaxing frequencies with ambient music to craft the perfect auditory environment for meditation, sleep, or intense focus.
-                    </p>
+                    <div class="w-20 h-20 mx-auto bg-teal-50 rounded-full flex items-center justify-center mb-6 group-hover:scale-110 transition duration-300"><i class="fa-solid fa-sliders text-3xl text-brand-accent" aria-hidden="true"></i></div>
+                    <h4 data-i18n="features.playlistsTitle" class="text-2xl font-serif text-brand-dark mb-3">Custom Playlists</h4>
+                    <p data-i18n="features.playlistsText" class="text-gray-600 leading-relaxed">Don't just listen; create. Mix bespoke relaxing frequencies with ambient music to craft the perfect auditory environment for meditation, sleep, or intense focus.</p>
                 </div>
-
-                <!-- Feature 3 -->
                 <div class="text-center group p-6 rounded-2xl hover:shadow-2xl transition duration-300 border border-gray-100">
-                    <div class="w-20 h-20 mx-auto bg-teal-50 rounded-full flex items-center justify-center mb-6 group-hover:scale-110 transition duration-300">
-                        <i class="fa-solid fa-globe text-3xl text-brand-accent"></i>
-                    </div>
-                    <h4 class="text-2xl font-serif text-brand-dark mb-3">Multilingual Interface</h4>
-                    <p class="text-gray-600 leading-relaxed">
-                        Curati speaks your language. Navigate effortlessly in <span class="font-semibold">English, Spanish, French, Portuguese, and Dutch</span>. Designed for a global audience.
-                    </p>
+                    <div class="w-20 h-20 mx-auto bg-teal-50 rounded-full flex items-center justify-center mb-6 group-hover:scale-110 transition duration-300"><i class="fa-solid fa-globe text-3xl text-brand-accent" aria-hidden="true"></i></div>
+                    <h4 data-i18n="features.multilingualTitle" class="text-2xl font-serif text-brand-dark mb-3">Multilingual Interface</h4>
+                    <p data-i18n-html="features.multilingualText" class="text-gray-600 leading-relaxed">Curati speaks your language. Navigate effortlessly in <span class="font-semibold">English, Spanish, French, Portuguese, and Dutch</span>. Designed for a global audience.</p>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Frequencies Details Section with Split Layout -->
     <section id="frequencies" class="py-20 bg-gray-50 overflow-hidden">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex flex-col lg:flex-row items-center gap-16">
-                <!-- Image side -->
                 <div class="w-full lg:w-1/2 relative">
-                    <!-- Placeholder using Unsplash for a spa/meditation feel -->
-                    <img src="https://images.unsplash.com/photo-1600334089648-b0d9d3028eb2?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Person meditating" class="rounded-3xl shadow-2xl relative z-10" loading="lazy">
-                    <!-- Decorative element behind image -->
+                    <img data-i18n-alt="images.meditationAlt" src="https://images.unsplash.com/photo-1600334089648-b0d9d3028eb2?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Person meditating" class="rounded-3xl shadow-2xl relative z-10" loading="lazy">
                     <div class="absolute -bottom-6 -right-6 w-full h-full border-4 border-brand-gold rounded-3xl z-0 hidden sm:block"></div>
                     <div class="absolute -top-6 -left-6 w-32 h-32 bg-brand-accent opacity-20 rounded-full blur-2xl z-0"></div>
                 </div>
-
-                <!-- Text side -->
                 <div class="w-full lg:w-1/2">
-                    <h2 class="text-brand-accent text-sm font-bold tracking-widest uppercase mb-2">Curated Sounds</h2>
-                    <h3 class="text-4xl text-brand-dark mb-6">Tailored for Every Intention</h3>
-                    <p class="text-gray-600 mb-8 text-lg leading-relaxed">
-                        Whether you are looking to unwind after a long day or need absolute concentration, Curati App provides the perfect acoustic backdrop. Choose from our pre-designed sessions or blend your own.
-                    </p>
-                    
+                    <h2 data-i18n="frequencies.eyebrow" class="text-brand-accent text-sm font-bold tracking-widest uppercase mb-2">Curated Sounds</h2>
+                    <h3 data-i18n="frequencies.title" class="text-4xl text-brand-dark mb-6">Tailored for Every Intention</h3>
+                    <p data-i18n="frequencies.description" class="text-gray-600 mb-8 text-lg leading-relaxed">Whether you are looking to unwind after a long day or need absolute concentration, Curati App provides the perfect acoustic backdrop. Choose from our pre-designed sessions or blend your own.</p>
                     <ul class="space-y-6">
                         <li class="flex items-start">
-                            <div class="flex-shrink-0 mt-1">
-                                <i class="fa-solid fa-lotus text-brand-gold text-2xl"></i>
-                            </div>
-                            <div class="ml-4">
-                                <h5 class="text-xl font-semibold text-brand-dark">Meditation & Mindfulness</h5>
-                                <p class="text-gray-500 mt-1">Deep theta waves combined with soothing nature sounds to guide you into a state of profound peace.</p>
-                            </div>
+                            <div class="flex-shrink-0 mt-1"><i class="fa-solid fa-lotus text-brand-gold text-2xl" aria-hidden="true"></i></div>
+                            <div class="ml-4"><h5 data-i18n="frequencies.meditationTitle" class="text-xl font-semibold text-brand-dark">Meditation &amp; Mindfulness</h5><p data-i18n="frequencies.meditationText" class="text-gray-500 mt-1">Deep theta waves combined with soothing nature sounds to guide you into a state of profound peace.</p></div>
                         </li>
                         <li class="flex items-start">
-                            <div class="flex-shrink-0 mt-1">
-                                <i class="fa-solid fa-hands text-brand-gold text-2xl"></i>
-                            </div>
-                            <div class="ml-4">
-                                <h5 class="text-xl font-semibold text-brand-dark">Massage & Therapy</h5>
-                                <p class="text-gray-500 mt-1">Continuous, uninterrupted 432 Hz flows designed to help muscles relax and elevate the therapeutic experience.</p>
-                            </div>
+                            <div class="flex-shrink-0 mt-1"><i class="fa-solid fa-hands text-brand-gold text-2xl" aria-hidden="true"></i></div>
+                            <div class="ml-4"><h5 data-i18n="frequencies.massageTitle" class="text-xl font-semibold text-brand-dark">Massage &amp; Therapy</h5><p data-i18n="frequencies.massageText" class="text-gray-500 mt-1">Continuous, uninterrupted 432 Hz flows designed to help muscles relax and elevate the therapeutic experience.</p></div>
                         </li>
                         <li class="flex items-start">
-                            <div class="flex-shrink-0 mt-1">
-                                <i class="fa-solid fa-brain text-brand-gold text-2xl"></i>
-                            </div>
-                            <div class="ml-4">
-                                <h5 class="text-xl font-semibold text-brand-dark">Focus & Concentration</h5>
-                                <p class="text-gray-500 mt-1">Binaural beats optimized for cognitive enhancement, perfect for working or studying without distractions.</p>
-                            </div>
+                            <div class="flex-shrink-0 mt-1"><i class="fa-solid fa-brain text-brand-gold text-2xl" aria-hidden="true"></i></div>
+                            <div class="ml-4"><h5 data-i18n="frequencies.focusTitle" class="text-xl font-semibold text-brand-dark">Focus &amp; Concentration</h5><p data-i18n="frequencies.focusText" class="text-gray-500 mt-1">Binaural beats optimized for cognitive enhancement, perfect for working or studying without distractions.</p></div>
                         </li>
                     </ul>
                 </div>
@@ -246,202 +206,258 @@
         </div>
     </section>
 
-    <!-- For Business Section (Hotels & Spas) -->
     <section id="business" class="py-24 relative bg-brand-dark text-white">
-        <!-- Background Image with heavy overlay -->
         <div class="absolute inset-0 z-0">
-            <img src="https://images.unsplash.com/photo-1571896349842-33c89424de2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80" alt="Luxury Spa Hotel" class="w-full h-full object-cover opacity-20" loading="lazy">
+            <img data-i18n-alt="images.hotelAlt" src="https://images.unsplash.com/photo-1571896349842-33c89424de2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80" alt="Luxury Spa Hotel" class="w-full h-full object-cover opacity-20" loading="lazy">
         </div>
-        
         <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center mb-16 max-w-3xl mx-auto">
-                <h2 class="text-brand-gold text-sm font-bold tracking-widest uppercase mb-2">B2B Solutions</h2>
-                <h3 class="text-4xl md:text-5xl mb-6 font-serif">Elevate Your Guest Experience</h3>
-                <p class="text-gray-300 text-lg">
-                    Curati App is the perfect partner for Boutique Hotels, Wellness Centers, and Luxury Spas. Transform your spaces with ambient sounds that leave a lasting impression.
-                </p>
+                <h2 data-i18n="business.eyebrow" class="text-brand-gold text-sm font-bold tracking-widest uppercase mb-2">B2B Solutions</h2>
+                <h3 data-i18n="business.title" class="text-4xl md:text-5xl mb-6 font-serif">Elevate Your Guest Experience</h3>
+                <p data-i18n="business.description" class="text-gray-300 text-lg">Curati App is the perfect partner for Boutique Hotels, Wellness Centers, and Luxury Spas. Transform your spaces with ambient sounds that leave a lasting impression.</p>
             </div>
-
             <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <!-- Business Card 1 -->
                 <div class="glass-card p-8 rounded-2xl hover:bg-white/10 transition duration-300 border border-gray-600/50">
-                    <i class="fa-solid fa-hotel text-4xl text-brand-gold mb-4"></i>
-                    <h4 class="text-2xl font-serif mb-3">Boutique Hotels</h4>
-                    <p class="text-gray-300 leading-relaxed mb-4">
-                        Provide guests with complimentary access to curated sleep and relaxation playlists in their rooms. Create a signature scent-and-sound identity for your lobby.
-                    </p>
-                    <a href="#" class="text-brand-accent hover:text-white font-semibold flex items-center gap-2 transition">
-                        Learn more <i class="fa-solid fa-arrow-right text-sm"></i>
-                    </a>
+                    <i class="fa-solid fa-hotel text-4xl text-brand-gold mb-4" aria-hidden="true"></i>
+                    <h4 data-i18n="business.hotelsTitle" class="text-2xl font-serif mb-3">Boutique Hotels</h4>
+                    <p data-i18n="business.hotelsText" class="text-gray-300 leading-relaxed mb-4">Provide guests with complimentary access to curated sleep and relaxation playlists in their rooms. Create a signature scent-and-sound identity for your lobby.</p>
+                    <a href="#contact" data-i18n="business.learnMore" class="text-brand-accent hover:text-white font-semibold flex items-center gap-2 transition">Learn more <i class="fa-solid fa-arrow-right text-sm" aria-hidden="true"></i></a>
                 </div>
-
-                <!-- Business Card 2 -->
                 <div class="glass-card p-8 rounded-2xl hover:bg-white/10 transition duration-300 border border-gray-600/50">
-                    <i class="fa-solid fa-spa text-4xl text-brand-gold mb-4"></i>
-                    <h4 class="text-2xl font-serif mb-3">Wellness & Spa Centers</h4>
-                    <p class="text-gray-300 leading-relaxed mb-4">
-                        Standardize the audio experience across all treatment rooms. Allow therapists to easily select frequencies tailored to specific massages or therapies.
-                    </p>
-                    <a href="#" class="text-brand-accent hover:text-white font-semibold flex items-center gap-2 transition">
-                        Partner with us <i class="fa-solid fa-arrow-right text-sm"></i>
-                    </a>
+                    <i class="fa-solid fa-spa text-4xl text-brand-gold mb-4" aria-hidden="true"></i>
+                    <h4 data-i18n="business.spaTitle" class="text-2xl font-serif mb-3">Wellness &amp; Spa Centers</h4>
+                    <p data-i18n="business.spaText" class="text-gray-300 leading-relaxed mb-4">Standardize the audio experience across all treatment rooms. Allow therapists to easily select frequencies tailored to specific massages or therapies.</p>
+                    <a href="#contact" data-i18n="business.partner" class="text-brand-accent hover:text-white font-semibold flex items-center gap-2 transition">Partner with us <i class="fa-solid fa-arrow-right text-sm" aria-hidden="true"></i></a>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- App Download / CTA Section -->
     <section id="contact" class="py-20 bg-brand-accent">
         <div class="max-w-4xl mx-auto px-4 text-center">
-            <h2 class="text-4xl font-serif text-white mb-6">Ready to find your frequency?</h2>
-            <p class="text-teal-100 mb-10 text-lg">
-                Available globally. Choose your language: English, Español, Français, Português, or Nederlands.
-            </p>
+            <h2 data-i18n="contact.title" class="text-4xl font-serif text-white mb-6">Ready to find your frequency?</h2>
+            <p data-i18n="contact.description" class="text-teal-100 mb-10 text-lg">Available globally. Choose your language: English, Español, Français, Português, or Nederlands.</p>
             <div class="flex flex-col sm:flex-row justify-center gap-4">
-                <a href="#" class="bg-black text-white px-8 py-3 rounded-lg flex items-center justify-center gap-3 hover:bg-gray-800 transition transform hover:-translate-y-1">
-                    <i class="fa-brands fa-apple text-3xl"></i>
-                    <div class="text-left">
-                        <span class="block text-xs">Download on the</span>
-                        <span class="block text-xl font-semibold">App Store</span>
-                    </div>
-                </a>
-                <a href="#" class="bg-black text-white px-8 py-3 rounded-lg flex items-center justify-center gap-3 hover:bg-gray-800 transition transform hover:-translate-y-1">
-                    <i class="fa-brands fa-google-play text-2xl"></i>
-                    <div class="text-left">
-                        <span class="block text-xs">GET IT ON</span>
-                        <span class="block text-xl font-semibold">Google Play</span>
-                    </div>
-                </a>
+                <a href="#contact" data-i18n="contact.appStore" class="bg-black text-white px-8 py-3 rounded-lg flex items-center justify-center gap-3 hover:bg-gray-800 transition transform hover:-translate-y-1"><i class="fa-brands fa-apple text-3xl" aria-hidden="true"></i><span><span data-i18n="contact.downloadOn" class="block text-xs">Download on the</span><span data-i18n="contact.appStoreName" class="block text-xl font-semibold">App Store</span></span></a>
+                <a href="#contact" data-i18n="contact.googlePlay" class="bg-black text-white px-8 py-3 rounded-lg flex items-center justify-center gap-3 hover:bg-gray-800 transition transform hover:-translate-y-1"><i class="fa-brands fa-google-play text-2xl" aria-hidden="true"></i><span><span data-i18n="contact.getItOn" class="block text-xs">GET IT ON</span><span data-i18n="contact.googlePlayName" class="block text-xl font-semibold">Google Play</span></span></a>
             </div>
         </div>
     </section>
 
-    <!-- Footer -->
     <footer class="bg-white border-t border-gray-200 pt-16 pb-8 mt-auto">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-12">
                 <div class="col-span-1 md:col-span-2">
-                    <a href="#" class="text-brand-dark font-serif text-2xl font-bold tracking-wider flex items-center gap-2 mb-4">
-                        <i class="fa-solid fa-spa text-brand-gold"></i>
-                        CURATI
-                    </a>
-                    <p class="text-gray-500 max-w-sm">
-                        Curati App provides premium 432 Hz music and relaxing frequencies to elevate your mental and physical wellbeing.
-                    </p>
+                    <a href="#" class="text-brand-dark font-serif text-2xl font-bold tracking-wider flex items-center gap-2 mb-4"><i class="fa-solid fa-spa text-brand-gold" aria-hidden="true"></i>CURATI</a>
+                    <p data-i18n="footer.description" class="text-gray-500 max-w-sm">Curati App provides premium 432 Hz music and relaxing frequencies to elevate your mental and physical wellbeing.</p>
                     <div class="flex gap-4 mt-6">
-                        <a href="#" class="text-gray-400 hover:text-brand-accent transition"><i class="fa-brands fa-instagram text-xl"></i></a>
-                        <a href="#" class="text-gray-400 hover:text-brand-accent transition"><i class="fa-brands fa-facebook text-xl"></i></a>
-                        <a href="#" class="text-gray-400 hover:text-brand-accent transition"><i class="fa-brands fa-twitter text-xl"></i></a>
+                        <a href="#contact" class="text-gray-400 hover:text-brand-accent transition" aria-label="Instagram"><i class="fa-brands fa-instagram text-xl" aria-hidden="true"></i></a>
+                        <a href="#contact" class="text-gray-400 hover:text-brand-accent transition" aria-label="Facebook"><i class="fa-brands fa-facebook text-xl" aria-hidden="true"></i></a>
+                        <a href="#contact" class="text-gray-400 hover:text-brand-accent transition" aria-label="Twitter"><i class="fa-brands fa-twitter text-xl" aria-hidden="true"></i></a>
                     </div>
                 </div>
                 <div>
-                    <h5 class="font-bold text-brand-dark mb-4">Company</h5>
+                    <h5 data-i18n="footer.company" class="font-bold text-brand-dark mb-4">Company</h5>
                     <ul class="space-y-2">
-                        <li><a href="#" class="text-gray-500 hover:text-brand-accent transition">About Us</a></li>
-                        <li><a href="#" class="text-gray-500 hover:text-brand-accent transition">Contact</a></li>
-                        <li><a href="#" class="text-gray-500 hover:text-brand-accent transition">Careers</a></li>
-                        <li><a href="#" class="text-gray-500 hover:text-brand-accent transition">Press</a></li>
+                        <li><a href="#contact" data-i18n="footer.about" class="text-gray-500 hover:text-brand-accent transition">About Us</a></li>
+                        <li><a href="#contact" data-i18n="footer.contact" class="text-gray-500 hover:text-brand-accent transition">Contact</a></li>
+                        <li><a href="#contact" data-i18n="footer.careers" class="text-gray-500 hover:text-brand-accent transition">Careers</a></li>
+                        <li><a href="#contact" data-i18n="footer.press" class="text-gray-500 hover:text-brand-accent transition">Press</a></li>
                     </ul>
                 </div>
                 <div>
-                    <h5 class="font-bold text-brand-dark mb-4">Legal</h5>
+                    <h5 data-i18n="footer.legal" class="font-bold text-brand-dark mb-4">Legal</h5>
                     <ul class="space-y-2">
-                        <li><a href="#" class="text-gray-500 hover:text-brand-accent transition">Terms of Service</a></li>
-                        <li><a href="#" class="text-gray-500 hover:text-brand-accent transition">Privacy Policy</a></li>
-                        <li><a href="#" class="text-gray-500 hover:text-brand-accent transition">Cookie Policy</a></li>
+                        <li><a href="#contact" data-i18n="footer.terms" class="text-gray-500 hover:text-brand-accent transition">Terms of Service</a></li>
+                        <li><a href="#contact" data-i18n="footer.privacy" class="text-gray-500 hover:text-brand-accent transition">Privacy Policy</a></li>
+                        <li><a href="#contact" data-i18n="footer.cookies" class="text-gray-500 hover:text-brand-accent transition">Cookie Policy</a></li>
                     </ul>
                 </div>
             </div>
             <div class="border-t border-gray-200 pt-8 flex flex-col md:flex-row justify-between items-center text-sm text-gray-400">
-                <p>&copy; 2024 Curati App. All rights reserved.</p>
-                <div class="flex gap-4 mt-4 md:mt-0">
-                    <span>EN</span> | <span>ES</span> | <span>FR</span> | <span>PT</span> | <span>NL</span>
-                </div>
+                <p data-i18n="footer.copyright">&copy; 2024 Curati App. All rights reserved.</p>
+                <div class="flex gap-4 mt-4 md:mt-0"><span>EN</span> | <span>ES</span> | <span>FR</span> | <span>PT</span> | <span>NL</span></div>
             </div>
         </div>
     </footer>
 
     <script>
+        const translations = {
+            en: {
+                "language.button": "Translate", "language.english": "English", "language.spanish": "Español", "language.french": "Français", "language.portuguese": "Português", "language.dutch": "Nederlands",
+                "nav.experience": "Experience", "nav.frequencies": "Frequencies", "nav.business": "For Business", "nav.getApp": "Get the App",
+                "hero.eyebrow": "Welcome to your sanctuary", "hero.title": "Elevate Every Moment with", "hero.titleAccent": "Curati App", "hero.description": "Discover the power of 432 Hz music and tailored relaxing frequencies. Designed for deep meditation, therapeutic massages, and creating perfect atmospheres in boutique hotels.", "hero.start": "Start Relaxing Now", "hero.solutions": "Solutions for Spas",
+                "features.eyebrow": "The Curati Experience", "features.title": "Harmony in Every Note", "features.tuningTitle": "432 Hz Tuning", "features.tuningText": "Immerse yourself in music tuned to 432 Hz, known as the \"miracle tone\". It resonates with the universe's natural frequency, promoting profound healing and reducing stress.", "features.playlistsTitle": "Custom Playlists", "features.playlistsText": "Don't just listen; create. Mix bespoke relaxing frequencies with ambient music to craft the perfect auditory environment for meditation, sleep, or intense focus.", "features.multilingualTitle": "Multilingual Interface", "features.multilingualText": "Curati speaks your language. Navigate effortlessly in <span class=\"font-semibold\">English, Spanish, French, Portuguese, and Dutch</span>. Designed for a global audience.",
+                "frequencies.eyebrow": "Curated Sounds", "frequencies.title": "Tailored for Every Intention", "frequencies.description": "Whether you are looking to unwind after a long day or need absolute concentration, Curati App provides the perfect acoustic backdrop. Choose from our pre-designed sessions or blend your own.", "frequencies.meditationTitle": "Meditation & Mindfulness", "frequencies.meditationText": "Deep theta waves combined with soothing nature sounds to guide you into a state of profound peace.", "frequencies.massageTitle": "Massage & Therapy", "frequencies.massageText": "Continuous, uninterrupted 432 Hz flows designed to help muscles relax and elevate the therapeutic experience.", "frequencies.focusTitle": "Focus & Concentration", "frequencies.focusText": "Binaural beats optimized for cognitive enhancement, perfect for working or studying without distractions.",
+                "business.eyebrow": "B2B Solutions", "business.title": "Elevate Your Guest Experience", "business.description": "Curati App is the perfect partner for Boutique Hotels, Wellness Centers, and Luxury Spas. Transform your spaces with ambient sounds that leave a lasting impression.", "business.hotelsTitle": "Boutique Hotels", "business.hotelsText": "Provide guests with complimentary access to curated sleep and relaxation playlists in their rooms. Create a signature scent-and-sound identity for your lobby.", "business.learnMore": "Learn more", "business.spaTitle": "Wellness & Spa Centers", "business.spaText": "Standardize the audio experience across all treatment rooms. Allow therapists to easily select frequencies tailored to specific massages or therapies.", "business.partner": "Partner with us",
+                "contact.title": "Ready to find your frequency?", "contact.description": "Available globally. Choose your language: English, Español, Français, Português, or Nederlands.", "contact.downloadOn": "Download on the", "contact.appStoreName": "App Store", "contact.getItOn": "GET IT ON", "contact.googlePlayName": "Google Play",
+                "footer.description": "Curati App provides premium 432 Hz music and relaxing frequencies to elevate your mental and physical wellbeing.", "footer.company": "Company", "footer.about": "About Us", "footer.contact": "Contact", "footer.careers": "Careers", "footer.press": "Press", "footer.legal": "Legal", "footer.terms": "Terms of Service", "footer.privacy": "Privacy Policy", "footer.cookies": "Cookie Policy", "footer.copyright": "© 2024 Curati App. All rights reserved.",
+                "images.meditationAlt": "Person meditating", "images.hotelAlt": "Luxury spa hotel"
+            },
+            es: {
+                "language.button": "Traducir", "language.english": "English", "language.spanish": "Español", "language.french": "Français", "language.portuguese": "Português", "language.dutch": "Nederlands",
+                "nav.experience": "Experiencia", "nav.frequencies": "Frecuencias", "nav.business": "Para empresas", "nav.getApp": "Obtener la app",
+                "hero.eyebrow": "Bienvenido a tu santuario", "hero.title": "Eleva cada momento con", "hero.titleAccent": "Curati App", "hero.description": "Descubre el poder de la música de 432 Hz y las frecuencias relajantes personalizadas. Diseñada para la meditación profunda, los masajes terapéuticos y ambientes perfectos en hoteles boutique.", "hero.start": "Comenzar a relajarte", "hero.solutions": "Soluciones para spas",
+                "features.eyebrow": "La experiencia Curati", "features.title": "Armonía en cada nota", "features.tuningTitle": "Afinación de 432 Hz", "features.tuningText": "Sumérgete en música afinada a 432 Hz, conocida como el \"tono milagroso\". Resuena con la frecuencia natural del universo, favoreciendo la sanación profunda y reduciendo el estrés.", "features.playlistsTitle": "Listas personalizadas", "features.playlistsText": "No solo escuches; crea. Combina frecuencias relajantes con música ambiental para crear el entorno sonoro perfecto para meditar, dormir o concentrarte.", "features.multilingualTitle": "Interfaz multilingüe", "features.multilingualText": "Curati habla tu idioma. Navega fácilmente en <span class=\"font-semibold\">inglés, español, francés, portugués y holandés</span>. Diseñada para una audiencia global.",
+                "frequencies.eyebrow": "Sonidos seleccionados", "frequencies.title": "Adaptados a cada intención", "frequencies.description": "Ya sea que quieras desconectarte después de un día largo o necesites concentración absoluta, Curati App ofrece el ambiente acústico perfecto. Elige sesiones prediseñadas o crea la tuya.", "frequencies.meditationTitle": "Meditación y atención plena", "frequencies.meditationText": "Ondas theta profundas combinadas con sonidos suaves de la naturaleza para guiarte hacia una paz profunda.", "frequencies.massageTitle": "Masaje y terapia", "frequencies.massageText": "Flujos continuos e ininterrumpidos de 432 Hz diseñados para relajar los músculos y elevar la experiencia terapéutica.", "frequencies.focusTitle": "Enfoque y concentración", "frequencies.focusText": "Ritmos binaurales optimizados para mejorar la cognición, perfectos para trabajar o estudiar sin distracciones.",
+                "business.eyebrow": "Soluciones B2B", "business.title": "Eleva la experiencia de tus huéspedes", "business.description": "Curati App es el socio perfecto para hoteles boutique, centros de bienestar y spas de lujo. Transforma tus espacios con sonidos ambientales que dejan una impresión duradera.", "business.hotelsTitle": "Hoteles boutique", "business.hotelsText": "Ofrece a tus huéspedes acceso gratuito a listas seleccionadas para dormir y relajarse en sus habitaciones. Crea una identidad distintiva de aroma y sonido para tu lobby.", "business.learnMore": "Saber más", "business.spaTitle": "Centros de bienestar y spa", "business.spaText": "Estandariza la experiencia de audio en todas las salas de tratamiento. Permite que los terapeutas seleccionen fácilmente frecuencias adaptadas a cada masaje o terapia.", "business.partner": "Asóciate con nosotros",
+                "contact.title": "¿Listo para encontrar tu frecuencia?", "contact.description": "Disponible globalmente. Elige tu idioma: inglés, español, francés, portugués u holandés.", "contact.downloadOn": "Descarga en", "contact.appStoreName": "App Store", "contact.getItOn": "DISPONIBLE EN", "contact.googlePlayName": "Google Play",
+                "footer.description": "Curati App ofrece música premium de 432 Hz y frecuencias relajantes para elevar tu bienestar mental y físico.", "footer.company": "Empresa", "footer.about": "Sobre nosotros", "footer.contact": "Contacto", "footer.careers": "Empleos", "footer.press": "Prensa", "footer.legal": "Legal", "footer.terms": "Términos de servicio", "footer.privacy": "Política de privacidad", "footer.cookies": "Política de cookies", "footer.copyright": "© 2024 Curati App. Todos los derechos reservados.",
+                "images.meditationAlt": "Persona meditando", "images.hotelAlt": "Hotel spa de lujo"
+            },
+            fr: {
+                "language.button": "Traduire", "language.english": "English", "language.spanish": "Español", "language.french": "Français", "language.portuguese": "Português", "language.dutch": "Nederlands",
+                "nav.experience": "Expérience", "nav.frequencies": "Fréquences", "nav.business": "Pour les entreprises", "nav.getApp": "Obtenir l'application",
+                "hero.eyebrow": "Bienvenue dans votre sanctuaire", "hero.title": "Sublimez chaque instant avec", "hero.titleAccent": "Curati App", "hero.description": "Découvrez le pouvoir de la musique à 432 Hz et des fréquences relaxantes personnalisées. Conçue pour la méditation profonde, les massages thérapeutiques et les atmosphères parfaites des hôtels boutique.", "hero.start": "Commencer à se détendre", "hero.solutions": "Solutions pour les spas",
+                "features.eyebrow": "L'expérience Curati", "features.title": "L'harmonie dans chaque note", "features.tuningTitle": "Accordage à 432 Hz", "features.tuningText": "Plongez dans une musique accordée à 432 Hz, connue comme le \"ton miracle\". Elle résonne avec la fréquence naturelle de l'univers, favorisant une guérison profonde et réduisant le stress.", "features.playlistsTitle": "Listes personnalisées", "features.playlistsText": "N'écoutez pas seulement; créez. Mélangez des fréquences relaxantes et une musique d'ambiance pour créer l'environnement sonore idéal pour la méditation, le sommeil ou la concentration.", "features.multilingualTitle": "Interface multilingue", "features.multilingualText": "Curati parle votre langue. Naviguez facilement en <span class=\"font-semibold\">anglais, espagnol, français, portugais et néerlandais</span>. Conçue pour un public mondial.",
+                "frequencies.eyebrow": "Sons sélectionnés", "frequencies.title": "Adaptés à chaque intention", "frequencies.description": "Que vous souhaitiez décompresser après une longue journée ou vous concentrer pleinement, Curati App offre le décor acoustique idéal. Choisissez une session conçue pour vous ou créez la vôtre.", "frequencies.meditationTitle": "Méditation et pleine conscience", "frequencies.meditationText": "Des ondes thêta profondes associées à des sons apaisants de la nature pour vous guider vers une paix profonde.", "frequencies.massageTitle": "Massage et thérapie", "frequencies.massageText": "Des flux continus et ininterrompus de 432 Hz conçus pour détendre les muscles et enrichir l'expérience thérapeutique.", "frequencies.focusTitle": "Concentration et attention", "frequencies.focusText": "Des battements binauraux optimisés pour améliorer les capacités cognitives, parfaits pour travailler ou étudier sans distraction.",
+                "business.eyebrow": "Solutions B2B", "business.title": "Sublimez l'expérience de vos clients", "business.description": "Curati App est le partenaire idéal des hôtels boutique, centres de bien-être et spas de luxe. Transformez vos espaces avec des sons d'ambiance qui laissent une impression durable.", "business.hotelsTitle": "Hôtels boutique", "business.hotelsText": "Offrez à vos clients un accès gratuit à des playlists de sommeil et de relaxation dans leur chambre. Créez une identité olfactive et sonore pour votre lobby.", "business.learnMore": "En savoir plus", "business.spaTitle": "Centres de bien-être et spas", "business.spaText": "Harmonisez l'expérience audio dans toutes les salles de soins. Permettez aux thérapeutes de choisir facilement des fréquences adaptées à chaque massage ou thérapie.", "business.partner": "Devenir partenaire",
+                "contact.title": "Prêt à trouver votre fréquence ?", "contact.description": "Disponible dans le monde entier. Choisissez votre langue : anglais, espagnol, français, portugais ou néerlandais.", "contact.downloadOn": "Télécharger sur", "contact.appStoreName": "App Store", "contact.getItOn": "DISPONIBLE SUR", "contact.googlePlayName": "Google Play",
+                "footer.description": "Curati App propose une musique premium à 432 Hz et des fréquences relaxantes pour élever votre bien-être mental et physique.", "footer.company": "Entreprise", "footer.about": "À propos", "footer.contact": "Contact", "footer.careers": "Carrières", "footer.press": "Presse", "footer.legal": "Mentions légales", "footer.terms": "Conditions d'utilisation", "footer.privacy": "Politique de confidentialité", "footer.cookies": "Politique relative aux cookies", "footer.copyright": "© 2024 Curati App. Tous droits réservés.",
+                "images.meditationAlt": "Personne en méditation", "images.hotelAlt": "Hôtel spa de luxe"
+            },
+            pt: {
+                "language.button": "Traduzir", "language.english": "English", "language.spanish": "Español", "language.french": "Français", "language.portuguese": "Português", "language.dutch": "Nederlands",
+                "nav.experience": "Experiência", "nav.frequencies": "Frequências", "nav.business": "Para empresas", "nav.getApp": "Baixar o app",
+                "hero.eyebrow": "Bem-vindo ao seu santuário", "hero.title": "Eleve cada momento com o", "hero.titleAccent": "Curati App", "hero.description": "Descubra o poder da música de 432 Hz e das frequências relaxantes personalizadas. Criada para meditação profunda, massagens terapêuticas e ambientes perfeitos em hotéis boutique.", "hero.start": "Começar a relaxar", "hero.solutions": "Soluções para spas",
+                "features.eyebrow": "A experiência Curati", "features.title": "Harmonia em cada nota", "features.tuningTitle": "Afinação em 432 Hz", "features.tuningText": "Mergulhe em músicas afinadas em 432 Hz, conhecidas como o \"tom milagroso\". Elas ressoam com a frequência natural do universo, promovendo cura profunda e reduzindo o estresse.", "features.playlistsTitle": "Playlists personalizadas", "features.playlistsText": "Não apenas ouça; crie. Misture frequências relaxantes com música ambiente para criar o ambiente sonoro perfeito para meditação, sono ou foco intenso.", "features.multilingualTitle": "Interface multilíngue", "features.multilingualText": "A Curati fala a sua língua. Navegue facilmente em <span class=\"font-semibold\">inglês, espanhol, francês, português e holandês</span>. Criada para um público global.",
+                "frequencies.eyebrow": "Sons selecionados", "frequencies.title": "Feitos para cada intenção", "frequencies.description": "Seja para relaxar depois de um longo dia ou buscar concentração absoluta, o Curati App oferece o cenário acústico perfeito. Escolha sessões prontas ou crie a sua.", "frequencies.meditationTitle": "Meditação e atenção plena", "frequencies.meditationText": "Ondas theta profundas combinadas com sons suaves da natureza para conduzir você a um estado de paz profunda.", "frequencies.massageTitle": "Massagem e terapia", "frequencies.massageText": "Fluxos contínuos e ininterruptos de 432 Hz projetados para relaxar os músculos e elevar a experiência terapêutica.", "frequencies.focusTitle": "Foco e concentração", "frequencies.focusText": "Batidas binaurais otimizadas para aprimoramento cognitivo, perfeitas para trabalhar ou estudar sem distrações.",
+                "business.eyebrow": "Soluções B2B", "business.title": "Eleve a experiência dos seus hóspedes", "business.description": "O Curati App é o parceiro ideal para hotéis boutique, centros de bem-estar e spas de luxo. Transforme seus espaços com sons ambientes que deixam uma impressão duradoura.", "business.hotelsTitle": "Hotéis boutique", "business.hotelsText": "Ofereça aos hóspedes acesso gratuito a playlists selecionadas de sono e relaxamento nos quartos. Crie uma identidade marcante de aroma e som para o lobby.", "business.learnMore": "Saiba mais", "business.spaTitle": "Centros de bem-estar e spas", "business.spaText": "Padronize a experiência de áudio em todas as salas de tratamento. Permita que terapeutas escolham facilmente frequências adequadas a cada massagem ou terapia.", "business.partner": "Seja nosso parceiro",
+                "contact.title": "Pronto para encontrar sua frequência?", "contact.description": "Disponível globalmente. Escolha seu idioma: inglês, espanhol, francês, português ou holandês.", "contact.downloadOn": "Baixe na", "contact.appStoreName": "App Store", "contact.getItOn": "DISPONÍVEL NO", "contact.googlePlayName": "Google Play",
+                "footer.description": "O Curati App oferece música premium em 432 Hz e frequências relaxantes para elevar seu bem-estar mental e físico.", "footer.company": "Empresa", "footer.about": "Sobre nós", "footer.contact": "Contato", "footer.careers": "Carreiras", "footer.press": "Imprensa", "footer.legal": "Legal", "footer.terms": "Termos de serviço", "footer.privacy": "Política de privacidade", "footer.cookies": "Política de cookies", "footer.copyright": "© 2024 Curati App. Todos os direitos reservados.",
+                "images.meditationAlt": "Pessoa meditando", "images.hotelAlt": "Hotel spa de luxo"
+            },
+            nl: {
+                "language.button": "Vertalen", "language.english": "English", "language.spanish": "Español", "language.french": "Français", "language.portuguese": "Português", "language.dutch": "Nederlands",
+                "nav.experience": "Ervaring", "nav.frequencies": "Frequenties", "nav.business": "Voor bedrijven", "nav.getApp": "Download de app",
+                "hero.eyebrow": "Welkom in jouw toevluchtsoord", "hero.title": "Til elk moment naar een hoger niveau met", "hero.titleAccent": "Curati App", "hero.description": "Ontdek de kracht van 432 Hz-muziek en ontspannende frequenties op maat. Ontworpen voor diepe meditatie, therapeutische massages en de perfecte sfeer in boetiekhotels.", "hero.start": "Begin met ontspannen", "hero.solutions": "Oplossingen voor spa's",
+                "features.eyebrow": "De Curati-ervaring", "features.title": "Harmonie in elke noot", "features.tuningTitle": "432 Hz-afstemming", "features.tuningText": "Dompel jezelf onder in muziek die is afgestemd op 432 Hz, ook wel de \"wondertoon\" genoemd. Deze muziek resoneert met de natuurlijke frequentie van het universum en bevordert diepe ontspanning.", "features.playlistsTitle": "Afspeellijsten op maat", "features.playlistsText": "Luister niet alleen; maak zelf. Combineer ontspannende frequenties met sfeermuziek voor de perfecte omgeving voor meditatie, slaap of intense concentratie.", "features.multilingualTitle": "Meertalige interface", "features.multilingualText": "Curati spreekt jouw taal. Navigeer moeiteloos in <span class=\"font-semibold\">Engels, Spaans, Frans, Portugees en Nederlands</span>. Ontworpen voor een wereldwijd publiek.",
+                "frequencies.eyebrow": "Geselecteerde klanken", "frequencies.title": "Afgestemd op elke intentie", "frequencies.description": "Of je nu wilt ontspannen na een lange dag of absolute concentratie nodig hebt, Curati App biedt de perfecte akoestische achtergrond. Kies een ontworpen sessie of maak je eigen mix.", "frequencies.meditationTitle": "Meditatie en mindfulness", "frequencies.meditationText": "Diepe theta-golven gecombineerd met rustgevende natuurgeluiden om je naar een staat van diepe vrede te begeleiden.", "frequencies.massageTitle": "Massage en therapie", "frequencies.massageText": "Continue, ononderbroken 432 Hz-klanken die zijn ontworpen om spieren te ontspannen en de therapeutische ervaring te verdiepen.", "frequencies.focusTitle": "Focus en concentratie", "frequencies.focusText": "Binaural beats, geoptimaliseerd voor cognitieve verbetering, ideaal om zonder afleiding te werken of studeren.",
+                "business.eyebrow": "B2B-oplossingen", "business.title": "Til de ervaring van je gasten naar een hoger niveau", "business.description": "Curati App is de perfecte partner voor boetiekhotels, wellnesscentra en luxe spa's. Transformeer je ruimtes met sfeergeluiden die een blijvende indruk achterlaten.", "business.hotelsTitle": "Boetiekhotels", "business.hotelsText": "Geef gasten gratis toegang tot geselecteerde slaap- en ontspanningsafspeellijsten in hun kamers. Creëer een kenmerkende geur- en geluidsidentiteit voor je lobby.", "business.learnMore": "Meer informatie", "business.spaTitle": "Wellness- en spacentra", "business.spaText": "Standaardiseer de audio-ervaring in alle behandelkamers. Laat therapeuten eenvoudig frequenties kiezen die passen bij specifieke massages of therapieën.", "business.partner": "Werk met ons samen",
+                "contact.title": "Klaar om jouw frequentie te vinden?", "contact.description": "Wereldwijd beschikbaar. Kies je taal: Engels, Spaans, Frans, Portugees of Nederlands.", "contact.downloadOn": "Download in de", "contact.appStoreName": "App Store", "contact.getItOn": "BESCHIKBAAR IN", "contact.googlePlayName": "Google Play",
+                "footer.description": "Curati App biedt premium 432 Hz-muziek en ontspannende frequenties om je mentale en fysieke welzijn te versterken.", "footer.company": "Bedrijf", "footer.about": "Over ons", "footer.contact": "Contact", "footer.careers": "Vacatures", "footer.press": "Pers", "footer.legal": "Juridisch", "footer.terms": "Servicevoorwaarden", "footer.privacy": "Privacybeleid", "footer.cookies": "Cookiebeleid", "footer.copyright": "© 2024 Curati App. Alle rechten voorbehouden.",
+                "images.meditationAlt": "Persoon die mediteert", "images.hotelAlt": "Luxe spa-hotel"
+            }
+        };
+
         document.addEventListener('DOMContentLoaded', () => {
             const navbar = document.getElementById('navbar');
             const mobileBtn = document.getElementById('mobile-menu-btn');
             const mobileMenu = document.getElementById('mobile-menu');
             const links = document.querySelectorAll('a[href^="#"]');
+            const switchers = [
+                { root: document.getElementById('language-switcher'), button: document.getElementById('language-button'), menu: document.getElementById('language-menu') },
+                { root: document.getElementById('language-switcher-mobile'), button: document.getElementById('language-button-mobile'), menu: document.getElementById('language-menu-mobile') }
+            ];
 
-            // Handle Navbar Background on Scroll
+            function applyLanguage(language) {
+                const pack = translations[language] || translations.en;
+                document.documentElement.lang = language;
+                document.querySelectorAll('[data-i18n]').forEach(element => {
+                    const value = pack[element.dataset.i18n];
+                    if (value !== undefined) element.textContent = value;
+                });
+                document.querySelectorAll('[data-i18n-html]').forEach(element => {
+                    const value = pack[element.dataset.i18nHtml];
+                    if (value !== undefined) element.innerHTML = value;
+                });
+                document.querySelectorAll('[data-i18n-alt]').forEach(element => {
+                    const value = pack[element.dataset.i18nAlt];
+                    if (value !== undefined) element.alt = value;
+                });
+                document.getElementById('language-label').textContent = pack['language.button'];
+                document.getElementById('language-label-mobile').textContent = pack['language.button'];
+                document.querySelectorAll('[data-language-option]').forEach(option => {
+                    const selected = option.dataset.languageOption === language;
+                    option.setAttribute('aria-selected', String(selected));
+                });
+                localStorage.setItem('curati-language', language);
+            }
+
+            function closeLanguageMenus() {
+                switchers.forEach(({button, menu}) => {
+                    if (!button || !menu) return;
+                    menu.classList.add('hidden');
+                    button.setAttribute('aria-expanded', 'false');
+                });
+            }
+
+            switchers.forEach(({root, button, menu}) => {
+                if (!root || !button || !menu) return;
+                button.addEventListener('click', event => {
+                    event.stopPropagation();
+                    const isOpen = !menu.classList.contains('hidden');
+                    closeLanguageMenus();
+                    if (!isOpen) {
+                        menu.classList.remove('hidden');
+                        button.setAttribute('aria-expanded', 'true');
+                    }
+                });
+                menu.querySelectorAll('[data-language-option]').forEach(option => {
+                    option.addEventListener('click', () => {
+                        applyLanguage(option.dataset.languageOption);
+                        closeLanguageMenus();
+                    });
+                });
+            });
+            document.addEventListener('click', closeLanguageMenus);
+
+            const storedLanguage = localStorage.getItem('curati-language');
+            applyLanguage(translations[storedLanguage] ? storedLanguage : 'en');
+
             window.addEventListener('scroll', () => {
                 if (window.scrollY > 50) {
                     navbar.classList.add('bg-white', 'shadow-md');
                     navbar.classList.remove('bg-transparent');
-                    
-                    // Change text colors for light background
-                    const textElements = navbar.querySelectorAll('.text-white, .text-gray-100');
-                    textElements.forEach(el => {
-                        // Skip the button
-                        if(!el.classList.contains('bg-brand-gold')) {
-                            el.classList.remove('text-white', 'text-gray-100');
-                            el.classList.add('text-brand-dark');
+                    navbar.querySelectorAll('.text-white, .text-gray-100').forEach(element => {
+                        if (!element.classList.contains('bg-brand-gold')) {
+                            element.classList.remove('text-white', 'text-gray-100');
+                            element.classList.add('text-brand-dark');
                         }
                     });
                 } else {
                     navbar.classList.remove('bg-white', 'shadow-md');
                     navbar.classList.add('bg-transparent');
-                    
-                    // Revert text colors for transparent background
-                    const textElements = navbar.querySelectorAll('.text-brand-dark');
-                    textElements.forEach(el => {
-                         if(!el.classList.contains('bg-brand-gold')) {
-                            el.classList.remove('text-brand-dark');
-                            el.classList.add('text-white', 'text-gray-100');
-                         }
+                    navbar.querySelectorAll('.text-brand-dark').forEach(element => {
+                        if (!element.classList.contains('bg-brand-gold')) {
+                            element.classList.remove('text-brand-dark');
+                            element.classList.add('text-white', 'text-gray-100');
+                        }
                     });
                 }
             });
 
-            // Toggle Mobile Menu
             mobileBtn.addEventListener('click', () => {
                 mobileMenu.classList.toggle('hidden');
-                // Change icon based on state
+                const open = !mobileMenu.classList.contains('hidden');
+                mobileBtn.setAttribute('aria-expanded', String(open));
                 const icon = mobileBtn.querySelector('i');
-                if(mobileMenu.classList.contains('hidden')) {
-                    icon.classList.remove('fa-xmark');
-                    icon.classList.add('fa-bars');
-                } else {
-                    icon.classList.remove('fa-bars');
-                    icon.classList.add('fa-xmark');
-                    // Ensure navbar has background when menu opens
+                icon.classList.toggle('fa-bars', !open);
+                icon.classList.toggle('fa-xmark', open);
+                if (open) {
                     navbar.classList.add('bg-white', 'shadow-md');
-                    const textElements = navbar.querySelectorAll('.text-white, .text-gray-100');
-                    textElements.forEach(el => {
-                        if(!el.classList.contains('bg-brand-gold')) {
-                            el.classList.remove('text-white', 'text-gray-100');
-                            el.classList.add('text-brand-dark');
+                    navbar.querySelectorAll('.text-white, .text-gray-100').forEach(element => {
+                        if (!element.classList.contains('bg-brand-gold')) {
+                            element.classList.remove('text-white', 'text-gray-100');
+                            element.classList.add('text-brand-dark');
                         }
                     });
                 }
             });
 
-            // Close mobile menu on link click and smooth scroll
             links.forEach(link => {
-                link.addEventListener('click', function (e) {
-                    const targetId = this.getAttribute('href');
+                link.addEventListener('click', event => {
+                    const targetId = link.getAttribute('href');
                     if (targetId === '#') return;
-                    
-                    e.preventDefault();
-                    
+                    event.preventDefault();
                     const targetElement = document.querySelector(targetId);
-                    if (targetElement) {
-                        targetElement.scrollIntoView({
-                            behavior: 'smooth'
-                        });
-                        
-                        // Close mobile menu if open
-                        if (!mobileMenu.classList.contains('hidden')) {
-                            mobileMenu.classList.add('hidden');
-                            const icon = mobileBtn.querySelector('i');
-                            icon.classList.remove('fa-xmark');
-                            icon.classList.add('fa-bars');
-                        }
+                    if (targetElement) targetElement.scrollIntoView({behavior: 'smooth'});
+                    if (!mobileMenu.classList.contains('hidden')) {
+                        mobileMenu.classList.add('hidden');
+                        mobileBtn.setAttribute('aria-expanded', 'false');
+                        const icon = mobileBtn.querySelector('i');
+                        icon.classList.remove('fa-xmark');
+                        icon.classList.add('fa-bars');
                     }
                 });
             });
@@ -449,3 +465,4 @@
     </script>
 </body>
 </html>
+
