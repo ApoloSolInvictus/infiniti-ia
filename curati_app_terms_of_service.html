@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Terms of Service | Curati App</title>
+    
+    <!-- Tailwind CSS for styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- FontAwesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Fonts: Inter (Sans) and JetBrains Mono (Tech vibe) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@100;400;700&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        base: {
+                            900: '#050505', // Very dark background
+                            800: '#111111', // Card background
+                            700: '#222222', // Borders
+                            400: '#a1a1aa', // Muted text
+                            100: '#f4f4f5', // Primary text
+                        },
+                        accent: {
+                            DEFAULT: '#eab308', // Gold accent for Curati vibe
+                            glow: 'rgba(234, 179, 8, 0.15)'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        body {
+            background-color: #050505;
+            color: #f4f4f5;
+            /* Subtle grid background to match the tech/AI aesthetic */
+            background-image: 
+                linear-gradient(to right, #111 1px, transparent 1px),
+                linear-gradient(to bottom, #111 1px, transparent 1px);
+            background-size: 40px 40px;
+            background-attachment: fixed;
+        }
+        
+        .glass-panel {
+            background: rgba(17, 17, 17, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid #222;
+        }
+
+        .text-glow {
+            text-shadow: 0 0 20px rgba(234, 179, 8, 0.3);
+        }
+
+        /* Styling for the content area to make it highly readable */
+        .prose-custom h2 {
+            font-size: 1.5rem;
+            font-weight: 500;
+            color: #fff;
+            margin-top: 2.5rem;
+            margin-bottom: 1rem;
+            letter-spacing: -0.025em;
+        }
+        .prose-custom p {
+            color: #a1a1aa;
+            line-height: 1.75;
+            margin-bottom: 1.25rem;
+            font-size: 0.95rem;
+        }
+        .prose-custom ul {
+            list-style-type: disc;
+            padding-left: 1.5rem;
+            color: #a1a1aa;
+            margin-bottom: 1.25rem;
+        }
+        .prose-custom li {
+            margin-bottom: 0.5rem;
+            line-height: 1.75;
+        }
+    </style>
+</head>
+<body class="antialiased min-h-screen flex flex-col font-sans selection:bg-accent selection:text-black">
+
+    <!-- Navigation -->
+    <nav class="fixed w-full z-50 glass-panel border-b-0 transition-all duration-300">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <!-- Logo -->
+                <div class="flex-shrink-0 flex items-center">
+                    <a href="curati.html" class="text-white font-mono text-xl font-bold tracking-tighter flex items-center gap-2 hover:text-accent transition">
+                        <i class="fa-solid fa-spa text-accent"></i>
+                        CURATI_APP
+                    </a>
+                </div>
+                
+                <!-- Back to Home -->
+                <div class="flex items-center">
+                    <a href="curati.html" class="text-xs font-mono text-base-400 hover:text-white transition flex items-center gap-2 uppercase tracking-widest border border-base-700 px-4 py-2 rounded-full hover:border-accent">
+                        <i class="fa-solid fa-arrow-left"></i> Return
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Page Header -->
+    <header class="pt-32 pb-12 sm:pt-40 sm:pb-16 px-4">
+        <div class="max-w-3xl mx-auto">
+            <div class="inline-block border border-accent/30 bg-accent/10 text-accent font-mono text-xs px-3 py-1 rounded-full mb-6 tracking-widest uppercase">
+                Legal Information
+            </div>
+            <h1 class="text-4xl md:text-5xl font-semibold text-white tracking-tight mb-4 text-glow">
+                Terms of Service
+            </h1>
+            <p class="text-base-400 font-mono text-sm border-l-2 border-base-700 pl-4 mt-6">
+                EFFECTIVE DATE: <span class="text-white">OCTOBER 2026</span><br>
+                APPLICABLE FOR: <span class="text-white">GLOBAL USERS (EN, ES, FR, PT, NL)</span>
+            </p>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-grow px-4 pb-24">
+        <div class="max-w-3xl mx-auto glass-panel p-6 sm:p-10 rounded-2xl relative overflow-hidden">
+            
+            <!-- Decorative background element inside card -->
+            <div class="absolute top-0 right-0 w-64 h-64 bg-accent opacity-5 blur-[100px] rounded-full pointer-events-none"></div>
+
+            <div class="prose-custom relative z-10">
+                
+                <p>
+                    Please read these Terms of Service ("Terms") carefully before using the Curati App (the "Service") operated by our team. Your access to and use of the Service is conditioned on your acceptance of and compliance with these Terms.
+                </p>
+
+                <h2>1. Acceptance of Terms</h2>
+                <p>
+                    By downloading, accessing, or using the Curati App across any of our supported languages (English, Español, Français, Português, Nederlands), you agree to be bound by these Terms. If you disagree with any part of the terms, then you may not access the Service.
+                </p>
+
+                <h2>2. Description of Service</h2>
+                <p>
+                    Curati App provides users with a specialized library of relaxing frequencies, ambient music tuned to 432 Hz, and tools to create personalized wellness playlists. The Service is intended for use in relaxation, massage therapy, meditation, concentration, and to enhance the atmosphere of boutique hotels and spas.
+                </p>
+
+                <!-- Special Callout for Intellectual Property & Creator -->
+                <div class="my-10 p-6 border border-accent/40 bg-accent/5 rounded-xl relative overflow-hidden group">
+                    <div class="absolute top-0 left-0 w-1 h-full bg-accent"></div>
+                    
+                    <h3 class="text-white font-mono text-sm uppercase tracking-widest mb-3 flex items-center gap-2">
+                        <i class="fa-solid fa-copyright text-accent"></i> Intellectual Property & Authorship
+                    </h3>
+                    
+                    <p class="text-base-100 text-base leading-relaxed mb-0">
+                        All audio content, 432 Hz frequencies, soundscapes, and structural designs within the Curati App are the exclusive intellectual property of <strong>Dj Ronny Woods</strong>, the creator and visionary behind the app. 
+                    </p>
+                    <p class="text-base-100 text-base leading-relaxed mb-0 mt-2">
+                        These unique compositions have been meticulously generated and crafted using advanced Artificial Intelligence directed exclusively by Dj Ronny Woods. Users are granted a limited license to listen to and utilize these sounds within the app, but may not rip, distribute, sell, or claim ownership over any audio track.
+                    </p>
+                    <p class="text-base-400 text-sm mt-4 mb-0 border-t border-base-700 pt-4 font-mono">
+                        // Protecting the integrity of the 432 Hz wellness experience.
+                    </p>
+                </div>
+
+                <h2>3. User Accounts and Playlists</h2>
+                <p>
+                    When you create an account with us, you must provide information that is accurate and complete. You are responsible for safeguarding the password that you use to access the Service and for any activities or actions under your password.
+                </p>
+                <ul>
+                    <li>You may create, save, and modify personal playlists combining our provided 432 Hz frequencies.</li>
+                    <li>You agree not to use the Service for any illegal or unauthorized purpose.</li>
+                </ul>
+
+                <h2>4. Commercial Use (Hotels & Spas)</h2>
+                <p>
+                    Curati App offers specialized tiers for commercial entities, such as boutique hotels, wellness centers, and spas. 
+                </p>
+                <ul>
+                    <li><strong>B2B Licensing:</strong> Commercial playback of Curati App's audio content in public spaces, lobbies, or treatment rooms requires a valid commercial subscription.</li>
+                    <li><strong>Guest Access:</strong> Hotels partnering with Curati App may provide temporary app access to their guests as part of their hospitality package, subject to specific commercial agreements.</li>
+                </ul>
+
+                <h2>5. Limitation of Liability</h2>
+                <p>
+                    In no event shall Curati App, nor its directors, employees, partners, agents, suppliers, or affiliates, be liable for any indirect, incidental, special, consequential or punitive damages, including without limitation, loss of profits, data, use, goodwill, or other intangible losses, resulting from your access to or use of or inability to access or use the Service.
+                </p>
+
+                <h2>6. Changes to Terms</h2>
+                <p>
+                    We reserve the right, at our sole discretion, to modify or replace these Terms at any time. By continuing to access or use our Service after those revisions become effective, you agree to be bound by the revised terms.
+                </p>
+
+                <h2>7. Contact Information</h2>
+                <p>
+                    For inquiries regarding these Terms, commercial licensing, or general support, please reach out to us at: <br>
+                    <span class="font-mono text-accent mt-2 inline-block">info@wstudio3d.com</span>
+                </p>
+
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t border-base-700 bg-base-900 py-8">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center gap-4">
+            
+            <div class="flex items-center gap-2">
+                <i class="fa-solid fa-spa text-base-400 text-sm"></i>
+                <span class="text-base-400 font-mono text-xs uppercase tracking-wider">© 2026 Curati App. Built by Dj Ronny Woods.</span>
+            </div>
+            
+            <div class="flex gap-6 text-xs font-mono uppercase tracking-widest text-base-400">
+                <a href="curati_terms.html" class="text-white transition">Terms</a>
+                <a href="curati_privacy.html" class="hover:text-white transition">Privacy</a>
+                <a href="#" class="hover:text-white transition">Contact</a>
+            </div>
+            
+        </div>
+    </footer>
+
+</body>
+</html>

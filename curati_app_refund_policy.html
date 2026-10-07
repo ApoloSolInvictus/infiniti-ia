@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Refund Policy | Curati App</title>
+    
+    <!-- Tailwind CSS for styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- FontAwesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Fonts: Inter (Sans) and JetBrains Mono (Tech vibe) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@100;400;700&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        base: {
+                            900: '#050505', // Very dark background
+                            800: '#111111', // Card background
+                            700: '#222222', // Borders
+                            400: '#a1a1aa', // Muted text
+                            100: '#f4f4f5', // Primary text
+                        },
+                        accent: {
+                            DEFAULT: '#eab308', // Gold accent for Curati vibe
+                            glow: 'rgba(234, 179, 8, 0.15)'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        body {
+            background-color: #050505;
+            color: #f4f4f5;
+            /* Subtle grid background to match the tech/AI aesthetic */
+            background-image: 
+                linear-gradient(to right, #111 1px, transparent 1px),
+                linear-gradient(to bottom, #111 1px, transparent 1px);
+            background-size: 40px 40px;
+            background-attachment: fixed;
+        }
+        
+        .glass-panel {
+            background: rgba(17, 17, 17, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid #222;
+        }
+
+        .text-glow {
+            text-shadow: 0 0 20px rgba(234, 179, 8, 0.3);
+        }
+
+        /* Styling for the content area to make it highly readable */
+        .prose-custom h2 {
+            font-size: 1.5rem;
+            font-weight: 500;
+            color: #fff;
+            margin-top: 2.5rem;
+            margin-bottom: 1rem;
+            letter-spacing: -0.025em;
+        }
+        .prose-custom p {
+            color: #a1a1aa;
+            line-height: 1.75;
+            margin-bottom: 1.25rem;
+            font-size: 0.95rem;
+        }
+        .prose-custom ul {
+            list-style-type: disc;
+            padding-left: 1.5rem;
+            color: #a1a1aa;
+            margin-bottom: 1.25rem;
+        }
+        .prose-custom li {
+            margin-bottom: 0.5rem;
+            line-height: 1.75;
+        }
+    </style>
+</head>
+<body class="antialiased min-h-screen flex flex-col font-sans selection:bg-accent selection:text-black">
+
+    <!-- Navigation -->
+    <nav class="fixed w-full z-50 glass-panel border-b-0 transition-all duration-300">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <!-- Logo -->
+                <div class="flex-shrink-0 flex items-center">
+                    <a href="curati.html" class="text-white font-mono text-xl font-bold tracking-tighter flex items-center gap-2 hover:text-accent transition">
+                        <i class="fa-solid fa-spa text-accent"></i>
+                        CURATI_APP
+                    </a>
+                </div>
+                
+                <!-- Back to Home -->
+                <div class="flex items-center">
+                    <a href="curati.html" class="text-xs font-mono text-base-400 hover:text-white transition flex items-center gap-2 uppercase tracking-widest border border-base-700 px-4 py-2 rounded-full hover:border-accent">
+                        <i class="fa-solid fa-arrow-left"></i> Return
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Page Header -->
+    <header class="pt-32 pb-12 sm:pt-40 sm:pb-16 px-4">
+        <div class="max-w-3xl mx-auto">
+            <div class="inline-block border border-accent/30 bg-accent/10 text-accent font-mono text-xs px-3 py-1 rounded-full mb-6 tracking-widest uppercase">
+                Legal Information
+            </div>
+            <h1 class="text-4xl md:text-5xl font-semibold text-white tracking-tight mb-4 text-glow">
+                Refund Policy
+            </h1>
+            <p class="text-base-400 font-mono text-sm border-l-2 border-base-700 pl-4 mt-6">
+                EFFECTIVE DATE: <span class="text-white">OCTOBER 2026</span><br>
+                APPLICABLE FOR: <span class="text-white">GLOBAL USERS (EN, ES, FR, PT, NL)</span>
+            </p>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-grow px-4 pb-24">
+        <div class="max-w-3xl mx-auto glass-panel p-6 sm:p-10 rounded-2xl relative overflow-hidden">
+            
+            <!-- Decorative background element inside card -->
+            <div class="absolute top-0 right-0 w-64 h-64 bg-accent opacity-5 blur-[100px] rounded-full pointer-events-none"></div>
+
+            <div class="prose-custom relative z-10">
+                
+                <p>
+                    Thank you for choosing Curati App. We are committed to providing you with the highest quality wellness frequencies and 432 Hz audio experiences. Please read this policy carefully before making any purchases or subscriptions within our application.
+                </p>
+
+                <!-- Special Callout for No Refunds Policy -->
+                <div class="my-10 p-6 border border-red-500/40 bg-red-500/5 rounded-xl relative overflow-hidden group">
+                    <div class="absolute top-0 left-0 w-1 h-full bg-red-500"></div>
+                    
+                    <h3 class="text-white font-mono text-sm uppercase tracking-widest mb-3 flex items-center gap-2">
+                        <i class="fa-solid fa-triangle-exclamation text-red-500"></i> All Sales Are Final
+                    </h3>
+                    
+                    <p class="text-base-100 text-base leading-relaxed mb-0">
+                        <strong>No Refunds:</strong> Because Curati App provides comprehensive and transparent information regarding all features, functionalities, and audio content prior to purchase, <strong>we do not accept returns or issue refunds once a payment has been processed and the app has been used.</strong>
+                    </p>
+                    <p class="text-base-400 text-sm mt-4 mb-0 border-t border-base-700 pt-4 font-mono">
+                        // Digital goods are deemed "used" upon login and access to the audio library.
+                    </p>
+                </div>
+
+                <h2>1. Upfront Transparency</h2>
+                <p>
+                    We ensure that all users—whether individuals seeking personal meditation tools or boutique hotels integrating our services—have full access to descriptive materials outlining exactly what the Curati App offers. The app's purpose, the nature of the 432 Hz music generated by Dj Ronny Woods, and the playlist creation capabilities are clearly communicated prior to any financial transaction.
+                </p>
+
+                <h2>2. Instant Digital Access</h2>
+                <p>
+                    Due to the digital nature of the Curati App, your purchase grants you immediate access to our exclusive, AI-generated premium audio library. As this digital content cannot be "returned" in a traditional sense, we cannot offer refunds once the content has been accessed.
+                </p>
+
+                <h2>3. Subscription Cancellations</h2>
+                <p>
+                    If you are on a recurring subscription plan (e.g., for commercial use in Spas and Hotels), you may cancel your subscription at any time to prevent future billing.
+                </p>
+                <ul>
+                    <li>Cancellation will stop all future payments.</li>
+                    <li>You will retain access to the app's features until the end of your current paid billing cycle.</li>
+                    <li>No partial or prorated refunds will be issued for the remaining days in your current billing cycle.</li>
+                </ul>
+
+                <h2>4. App Performance & Compatibility</h2>
+                <p>
+                    It is the user's responsibility to ensure that their mobile device or sound system is compatible with the Curati App prior to purchasing. We do not issue refunds for issues related to device incompatibility or user-end network connectivity.
+                </p>
+
+                <h2>5. Contact & Support</h2>
+                <p>
+                    If you experience technical difficulties accessing the app after payment, our support team is ready to assist you to ensure you receive the service you paid for. Please contact us at: <br>
+                    <span class="font-mono text-accent mt-2 inline-block">info@wstudio3d.com</span>
+                </p>
+
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t border-base-700 bg-base-900 py-8">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center gap-4">
+            
+            <div class="flex items-center gap-2">
+                <i class="fa-solid fa-spa text-base-400 text-sm"></i>
+                <span class="text-base-400 font-mono text-xs uppercase tracking-wider">© 2026 Curati App. Built by Dj Ronny Woods.</span>
+            </div>
+            
+            <div class="flex gap-6 text-xs font-mono uppercase tracking-widest text-base-400">
+                <a href="curati_terms.html" class="hover:text-white transition">Terms</a>
+                <a href="curati_privacy.html" class="hover:text-white transition">Privacy</a>
+                <a href="curati_refund.html" class="text-white transition">Refunds</a>
+            </div>
+            
+        </div>
+    </footer>
+
+</body>
+</html>
