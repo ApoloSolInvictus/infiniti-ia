@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Friends - Tienda de Juguetes para Mascotas CR</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;700&display=swap');
+        
+        body {
+            font-family: 'Nunito', sans-serif;
+            background-color: #fff9f0;
+            color: #333;
+        }
+        
+        h1, h2, h3, .brand-font {
+            font-family: 'Fredoka One', cursive;
+        }
+
+        .cat-bounce {
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {transform: translateY(0);}
+            40% {transform: translateY(-20px);}
+            60% {transform: translateY(-10px);}
+        }
+
+        .mouse-toy {
+            position: relative;
+            display: inline-block;
+            transition: transform 0.3s ease;
+        }
+
+        .mouse-toy:hover {
+            transform: scale(1.1) rotate(5deg);
+        }
+
+        .tail {
+            position: absolute;
+            right: -15px;
+            bottom: 10px;
+            width: 30px;
+            height: 4px;
+            background-color: #8b5a2b;
+            border-radius: 5px;
+            transform: rotate(-20deg);
+        }
+
+        .eye {
+            position: absolute;
+            top: 20px;
+            width: 10px;
+            height: 10px;
+            background-color: white;
+            border-radius: 50%;
+            border: 2px solid black;
+        }
+        .eye::after {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 4px;
+            height: 4px;
+            background-color: black;
+            border-radius: 50%;
+        }
+        .eye-left { left: 15px; }
+        .eye-right { left: 30px; }
+        
+        /* Simulación de la esponja en CSS */
+        .sponge-body {
+            width: 80px;
+            height: 60px;
+            background: linear-gradient(135deg, #c4a1ff 0%, #a46cf8 100%);
+            border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+            box-shadow: inset -5px -5px 10px rgba(0,0,0,0.1);
+        }
+        .sponge-body.pink {
+            background: linear-gradient(135deg, #ffb6c1 0%, #ff8da1 100%);
+        }
+
+    </style>
+</head>
+<body class="antialiased">
+
+    <!-- Navigation -->
+    <nav class="bg-orange-400 p-4 shadow-md sticky top-0 z-50">
+        <div class="container mx-auto flex justify-between items-center">
+            <div class="text-white text-3xl brand-font tracking-wider flex items-center gap-2">
+                <i class="fas fa-paw"></i> Friends
+            </div>
+            <ul class="flex space-x-6 text-white font-bold hidden md:flex">
+                <li><a href="#inicio" class="hover:text-orange-200 transition">Inicio</a></li>
+                <li><a href="#producto" class="hover:text-orange-200 transition">Nuestro Producto Estrella</a></li>
+                <li><a href="#ventajas" class="hover:text-orange-200 transition">Por qué Elegirnos</a></li>
+                <li><a href="#contacto" class="bg-white text-orange-500 px-4 py-2 rounded-full hover:bg-orange-100 transition">Distribuir</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <header id="inicio" class="bg-orange-100 py-20 text-center relative overflow-hidden">
+        <div class="container mx-auto px-4 relative z-10">
+            <h1 class="text-5xl md:text-6xl text-orange-600 mb-4 cat-bounce">¡Diversión Irresistible para tu Michi!</h1>
+            <p class="text-xl md:text-2xl text-gray-700 mb-8 max-w-2xl mx-auto">Hecho en Costa Rica. Juguetes pensados en la textura que ellos aman.</p>
+            <a href="#producto" class="bg-orange-500 text-white text-xl px-8 py-3 rounded-full font-bold shadow-lg hover:bg-orange-600 transition transform hover:-translate-y-1 inline-block">Conoce el "Mousse-Mouse"</a>
+        </div>
+        <!-- Elementos decorativos -->
+        <i class="fas fa-cat text-8xl text-orange-200 absolute bottom-0 left-10 opacity-50"></i>
+        <i class="fas fa-fish text-6xl text-orange-200 absolute top-10 right-20 opacity-50 transform rotate-45"></i>
+    </header>
+
+    <!-- Product Showcase -->
+    <section id="producto" class="py-20 bg-white">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl text-orange-500 mb-4">El Ratón de Esponja Original</h2>
+                <p class="text-lg text-gray-600">Suave, clavable y perfecto para cazar.</p>
+            </div>
+
+            <div class="flex flex-col md:flex-row items-center justify-center gap-12">
+                <!-- Product Image/CSS Rep -->
+                <div class="w-full md:w-1/2 flex justify-center">
+                    <div class="bg-orange-50 rounded-3xl p-10 shadow-inner text-center">
+                        <div class="flex justify-center gap-8 mb-6">
+                            <div class="mouse-toy">
+                                <div class="sponge-body"></div>
+                                <div class="eye eye-left"></div>
+                                <div class="eye eye-right"></div>
+                                <div class="tail"></div>
+                            </div>
+                            <div class="mouse-toy mt-10">
+                                <div class="sponge-body pink"></div>
+                                <div class="eye eye-left"></div>
+                                <div class="eye eye-right"></div>
+                                <div class="tail"></div>
+                            </div>
+                        </div>
+                        <p class="text-gray-500 text-sm italic">*Ilustración de nuestro concepto basado en la forma clásica de gota.</p>
+                    </div>
+                </div>
+
+                <!-- Product Details -->
+                <div class="w-full md:w-1/2">
+                    <h3 class="text-3xl text-gray-800 mb-6">¿De qué está hecho?</h3>
+                    <ul class="space-y-4">
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-green-500 mt-1 mr-3 text-xl"></i>
+                            <div>
+                                <strong class="text-xl">Cuerpo de Esponja de Alta Densidad:</strong>
+                                <p class="text-gray-600">Utilizamos material tipo "beauty blender" sin pintar. Su textura es el paraíso para las garras y dientes de los gatos.</p>
+                            </div>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-green-500 mt-1 mr-3 text-xl"></i>
+                            <div>
+                                <strong class="text-xl">Ojos Locos Divertidos:</strong>
+                                <p class="text-gray-600">Añaden personalidad y movimiento errático cuando el juguete rueda por el piso.</p>
+                            </div>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-green-500 mt-1 mr-3 text-xl"></i>
+                            <div>
+                                <strong class="text-xl">Cola Peluda Cazable:</strong>
+                                <p class="text-gray-600">El toque final que activa el instinto de caza de cualquier felino.</p>
+                            </div>
+                        </li>
+                    </ul>
+                    <div class="mt-8 p-4 bg-yellow-100 rounded-lg border-l-4 border-yellow-500">
+                        <p class="font-bold text-yellow-800">Costo accesible, máxima diversión. ¡A los dueños les encanta porque es económico reponerlos!</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- B2B Section (Para Supermercados y Veterinarias) -->
+    <section id="ventajas" class="py-20 bg-orange-50">
+        <div class="container mx-auto px-4">
+            <h2 class="text-4xl text-center text-orange-500 mb-16">Oportunidad para Negocios</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Card 1 -->
+                <div class="bg-white p-8 rounded-2xl shadow-md text-center hover:shadow-xl transition">
+                    <div class="w-16 h-16 bg-orange-100 text-orange-500 rounded-full flex items-center justify-center text-2xl mx-auto mb-4">
+                        <i class="fas fa-store"></i>
+                    </div>
+                    <h3 class="text-2xl mb-2">Ideal para Mini Supers</h3>
+                    <p class="text-gray-600">Empaque compacto tipo display para colocar cerca de la caja registradora. Perfecto para compras de impulso.</p>
+                </div>
+
+                <!-- Card 2 -->
+                <div class="bg-white p-8 rounded-2xl shadow-md text-center hover:shadow-xl transition">
+                    <div class="w-16 h-16 bg-orange-100 text-orange-500 rounded-full flex items-center justify-center text-2xl mx-auto mb-4">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <h3 class="text-2xl mb-2">Alto Margen de Ganancia</h3>
+                    <p class="text-gray-600">Precio mayorista altamente competitivo que permite a comercios y veterinarias obtener excelentes rendimientos (hasta 100%).</p>
+                </div>
+
+                <!-- Card 3 -->
+                <div class="bg-white p-8 rounded-2xl shadow-md text-center hover:shadow-xl transition">
+                    <div class="w-16 h-16 bg-orange-100 text-orange-500 rounded-full flex items-center justify-center text-2xl mx-auto mb-4">
+                        <i class="fas fa-heart"></i>
+                    </div>
+                    <h3 class="text-2xl mb-2">Rotación Rápida</h3>
+                    <p class="text-gray-600">Con más de 775,000 gatos en Costa Rica, los dueños siempre buscan juguetes nuevos. La textura asegura recompra.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA / Contact -->
+    <section id="contacto" class="py-20 bg-orange-500 text-white text-center">
+        <div class="container mx-auto px-4">
+            <h2 class="text-4xl mb-6">¿Quieres vender juguetes "Friends"?</h2>
+            <p class="text-xl mb-8 max-w-2xl mx-auto">Únete a nuestra red de distribución en Costa Rica. Ideal para supermercados, pulperías y clínicas veterinarias.</p>
+            
+            <form class="max-w-md mx-auto bg-white p-6 rounded-xl shadow-lg text-left">
+                <div class="mb-4">
+                    <label class="block text-gray-700 font-bold mb-2">Nombre del Comercio</label>
+                    <input type="text" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 text-gray-800" placeholder="Ej: Mini Super La Estrella">
+                </div>
+                <div class="mb-4">
+                    <label class="block text-gray-700 font-bold mb-2">Tipo de Negocio</label>
+                    <select class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 text-gray-800">
+                        <option>Supermercado / Mini Super</option>
+                        <option>Clínica Veterinaria</option>
+                        <option>Pet Shop</option>
+                        <option>Otro</option>
+                    </select>
+                </div>
+                <div class="mb-6">
+                    <label class="block text-gray-700 font-bold mb-2">Teléfono / WhatsApp</label>
+                    <input type="tel" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 text-gray-800" placeholder="8888-8888">
+                </div>
+                <button type="button" onclick="alert('¡Gracias! Pronto nos contactaremos para enviarte los precios de mayorista.')" class="w-full bg-orange-600 text-white font-bold py-3 rounded-lg hover:bg-orange-700 transition">Solicitar Catálogo Mayorista</button>
+            </form>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-gray-400 py-8 text-center">
+        <div class="container mx-auto px-4">
+            <div class="text-2xl brand-font text-white mb-4">
+                <i class="fas fa-paw text-orange-500"></i> Friends
+            </div>
+            <p>San José, Costa Rica | Producción Local</p>
+            <p class="mt-4 text-sm">&copy; 2026 Friends Pets CR. Todos los derechos reservados.</p>
+        </div>
+    </footer>
+
+</body>
+</html>
